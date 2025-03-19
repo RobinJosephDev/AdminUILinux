@@ -12,21 +12,9 @@ interface FormOrder {
 
 interface ViewOrderTaxProps {
   formOrder: FormOrder;
-  setFormOrder: (order: FormOrder) => void;
 }
 
-const ViewOrderTax: React.FC<ViewOrderTaxProps> = ({ formOrder, setFormOrder }) => {
-  useEffect(() => {
-    const gst = parseFloat(formOrder.gst || '0');
-    const pst = parseFloat(formOrder.pst || '0');
-    const hst = parseFloat(formOrder.hst || '0');
-    const qst = parseFloat(formOrder.qst || '0');
-    const basePrice = parseFloat(formOrder.base_price || '0');
-
-    const total = basePrice + gst + pst + hst + qst;
-    setFormOrder({ ...formOrder, final_price: total.toFixed(2) });
-  }, [formOrder.gst, formOrder.pst, formOrder.hst, formOrder.qst, formOrder.base_price]);
-
+const ViewOrderTax: React.FC<ViewOrderTaxProps> = ({ formOrder }) => {
   return (
     <fieldset className="form-section">
       <legend>Tax</legend>

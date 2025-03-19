@@ -1,18 +1,12 @@
-import React from 'react';
-
-interface Discount {
-  type?: string;
-  charge?: string | number;
-  percent?: string | number;
-}
+import { FC } from 'react';
+import { Charge } from '../../../types/OrderTypes';
 
 interface ViewOrderDiscountsProps {
-  discount?: Discount;
+  discount: Charge;
   index: number;
-  onRemove: (index: number) => void;
 }
 
-function ViewOrderDiscounts({ discount = {}, index, onRemove }: ViewOrderDiscountsProps) {
+const ViewOrderDiscounts: FC<ViewOrderDiscountsProps> = ({ discount }) => {
   return (
     <div className="contact-form">
       <div className="form-group">
@@ -29,6 +23,6 @@ function ViewOrderDiscounts({ discount = {}, index, onRemove }: ViewOrderDiscoun
       </div>
     </div>
   );
-}
+};
 
 export default ViewOrderDiscounts;

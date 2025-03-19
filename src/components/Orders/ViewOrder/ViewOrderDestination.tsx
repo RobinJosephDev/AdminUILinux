@@ -1,32 +1,12 @@
-import React from 'react';
-import { DeleteOutlined } from '@ant-design/icons';
-
-interface Destination {
-  address?: string;
-  city?: string;
-  state?: string;
-  postal?: string;
-  country?: string;
-  date?: string;
-  time?: string;
-  currency?: string;
-  equipment?: string;
-  pickup_po?: string;
-  phone?: string;
-  packages?: string;
-  weight?: string;
-  dimensions?: string;
-  notes?: string;
-}
+import { FC } from 'react';
+import { Location } from '../../../types/OrderTypes';
 
 interface ViewOrderDestinationProps {
-  order: any;
-  destination?: Destination;
+  destination: Location;
   index: number;
-  onRemove: (index: number) => void;
 }
 
-function ViewOrderDestination({ order, destination = {}, index, onRemove }: ViewOrderDestinationProps) {
+const ViewOrderDestination: FC<ViewOrderDestinationProps> = ({ destination }) => {
   return (
     <fieldset className="form-section">
       <div className="form-row" style={{ display: 'flex', gap: '1rem' }}>
@@ -97,6 +77,6 @@ function ViewOrderDestination({ order, destination = {}, index, onRemove }: View
       </div>
     </fieldset>
   );
-}
+};
 
 export default ViewOrderDestination;

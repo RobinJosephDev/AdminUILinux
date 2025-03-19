@@ -1,32 +1,12 @@
-import { DeleteOutlined } from '@ant-design/icons';
-import React from 'react';
-
-interface Origin {
-  address?: string;
-  city?: string;
-  state?: string;
-  postal?: string;
-  country?: string;
-  date?: string;
-  time?: string;
-  currency?: string;
-  equipment?: string;
-  pickup_po?: string;
-  phone?: string;
-  packages?: string;
-  weight?: string;
-  dimensions?: string;
-  notes?: string;
-}
+import { FC } from 'react';
+import { Location } from '../../../types/OrderTypes';
 
 interface ViewOrderOriginProps {
-  order: any; // Adjust type as needed
-  origin?: Origin;
+  origin: Location;
   index: number;
-  onRemove?: (index: number) => void;
 }
 
-const ViewOrderOrigin: React.FC<ViewOrderOriginProps> = ({ order, origin = {}, index, onRemove }) => {
+const ViewOrderOrigin: FC<ViewOrderOriginProps> = ({ origin }) => {
   return (
     <fieldset className="form-section">
       <div className="form-row" style={{ display: 'flex', gap: '1rem' }}>
@@ -95,11 +75,6 @@ const ViewOrderOrigin: React.FC<ViewOrderOriginProps> = ({ order, origin = {}, i
         <label>Notes</label>
         <div>{origin.notes || ''}</div>
       </div>
-      {onRemove && (
-        <button onClick={() => onRemove(index)} style={{ marginTop: '1rem', color: 'red', border: 'none', background: 'none', cursor: 'pointer' }}>
-          <DeleteOutlined /> Remove
-        </button>
-      )}
     </fieldset>
   );
 };

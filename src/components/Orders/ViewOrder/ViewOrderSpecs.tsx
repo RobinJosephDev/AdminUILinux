@@ -1,36 +1,45 @@
 import React from 'react';
-
-interface FormOrder {
-  hot?: boolean;
-  team?: boolean;
-  air_ride?: boolean;
-  tarp?: boolean;
-  hazmat?: boolean;
-}
+import { Order } from '../../../types/OrderTypes';
 
 interface ViewOrderSpecsProps {
-  formOrder: FormOrder;
-  setFormOrder: (order: FormOrder) => void;
+  formOrder: Order;
 }
 
-const ViewOrderSpecs: React.FC<ViewOrderSpecsProps> = ({ formOrder, setFormOrder }) => {
+const ViewOrderSpecs: React.FC<ViewOrderSpecsProps> = ({ formOrder }) => {
   return (
     <fieldset className="form-section">
       <legend>Load Specifications</legend>
       <div className="form-row" style={{ display: 'flex', gap: '1rem' }}>
-        {['hot', 'team', 'air_ride', 'tarp', 'hazmat'].map((spec) => (
-          <div className="form-group" style={{ flex: 1 }} key={spec}>
-            <label htmlFor={spec} style={{ display: 'inline-flex', alignItems: 'center', width: '100%' }}>
-              {spec.replace('_', ' ').toUpperCase()}
-              <input
-                type="checkbox"
-                checked={formOrder[spec as keyof FormOrder] || false}
-                onChange={(e) => setFormOrder({ ...formOrder, [spec]: e.target.checked })}
-                id={spec}
-              />
-            </label>
-          </div>
-        ))}
+        <div className="form-group" style={{ flex: 1 }}>
+          <label htmlFor="hot" style={{ display: 'block' }}>
+            Hot
+          </label>
+          <span>{formOrder.hot ? 'Yes' : 'No'}</span>
+        </div>
+        <div className="form-group" style={{ flex: 1 }}>
+          <label htmlFor="team" style={{ display: 'block' }}>
+            Team
+          </label>
+          <span>{formOrder.team ? 'Yes' : 'No'}</span>
+        </div>
+        <div className="form-group" style={{ flex: 1 }}>
+          <label htmlFor="air_ride" style={{ display: 'block' }}>
+            Air ride
+          </label>
+          <span>{formOrder.air_ride ? 'Yes' : 'No'}</span>
+        </div>
+        <div className="form-group" style={{ flex: 1 }}>
+          <label htmlFor="tarp" style={{ display: 'block' }}>
+            TARP
+          </label>
+          <span>{formOrder.tarp ? 'Yes' : 'No'}</span>
+        </div>
+        <div className="form-group" style={{ flex: 1 }}>
+          <label htmlFor="hazmat" style={{ display: 'block' }}>
+            Hazmat
+          </label>
+          <span>{formOrder.hazmat ? 'Yes' : 'No'}</span>
+        </div>
       </div>
     </fieldset>
   );

@@ -1,19 +1,12 @@
-import React from 'react';
-
-interface Charge {
-  type?: string;
-  charge?: string;
-  percent?: string;
-}
+import { FC } from 'react';
+import { Charge } from '../../../types/OrderTypes';
 
 interface ViewOrderChargesProps {
-  order: any;
-  charge?: Charge;
+  charge: Charge;
   index: number;
-  onRemove: (index: number) => void;
 }
 
-function ViewOrderCharges({ order, charge = {}, index, onRemove }: ViewOrderChargesProps) {
+const ViewOrderCharges: FC<ViewOrderChargesProps> = ({ charge }) => {
   return (
     <div className="contact-form">
       <div className="form-group">
