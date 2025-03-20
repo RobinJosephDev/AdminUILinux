@@ -109,29 +109,40 @@ const useEditCarrier = (carrier: Carrier | null, onClose: () => void, onUpdate: 
           return;
         }
 
-        const response = await axios.put(`${API_URL}/carrier/${formCarrier.id}`, formCarrier, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+      const headers = { Authorization: `Bearer ${token}` };
+      const formData = new FormData();
 
-        Swal.fire({
-          icon: 'success',
-          title: 'Success!',
-          text: 'Carrier details updated.',
-        });
+      Object.keys(formCarrier).forEach((key) => {
+        const value = formCarrier[key as keyof Carrier];
 
-        onUpdate(response.data);
-        onClose();
-      } catch (error) {
-        console.error('Error updating carrier:', error);
-        Swal.fire({
-          icon: 'error',
-          title: 'Oops...',
-          text: 'Failed to update carrier.',
-        });
+        if (key === 'form_1099' || key === 'advertise' || key === 'approved' || key === 'csa_approved' || key === 'hazmat') {
+          formData.append(key, value ? '1' : '0');
+        } else if (key !== 'brok_carr_aggmt' && key !== 'coi_cert') {
+          formData.append(key, String(value || ''));
+        }
+      });
+
+      if (formCarrier.brok_carr_aggmt && formCarrier.brok_carr_aggmt instanceof File) {
+        formData.append("brok_carr_aggmt", formCarrier.brok_carr_aggmt);
       }
+      
+      if (formCarrier.coi_cert && formCarrier.coi_cert instanceof File) {
+        formData.append("coi_cert", formCarrier.coi_cert);
+      }      
+
+      const response = formCarrier.id
+        ? await axios.put(`${API_URL}/carrier/${formCarrier.id}`, formCarrier, { headers })
+        : await axios.post(`${API_URL}/carrier`, formCarrier, { headers });
+
+      Swal.fire(formCarrier.id ? 'Success!' : 'Saved!', 'Carrier updated successfully.', 'success');
+      onUpdate(response.data);
+      onClose();
+    } catch (error: any) {
+      console.error('Error saving/updating carrier:', error.response ? error.response.data : error.message);
+      Swal.fire('Error', 'An error occurred while processing the carrier.', 'error');
     }
   };
-
+  }
   //Contacts
   const handleAddContact = () => {
     setFormCarrier((prevCarrier) =>

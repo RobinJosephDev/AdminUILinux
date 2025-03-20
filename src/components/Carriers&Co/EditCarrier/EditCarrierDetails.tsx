@@ -80,49 +80,34 @@ function EditCarrierDetails({ formCarrier, setFormCarrier }: EditCarrierDetailsP
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-
-    const allowedTypes = [
-      'application/msword',
-      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-      'application/pdf',
-      'image/jpeg',
-      'image/png',
-      'image/gif',
-      'image/tiff',
-      'image/bmp',
-    ];
-
-    if (!allowedTypes.includes(file.type)) {
-      alert('Only DOC, DOCX, PDF, JPG, JPEG, PNG, GIF, TIFF, and BMP files are allowed.');
-      return;
-    }
-
-    if (file.size > MAX_FILE_SIZE) {
-      alert('File size must be less than 10MB.');
-      return;
-    }
-
-    setUploading(true);
-
+  
     const formData = new FormData();
     formData.append('brok_carr_aggmt', file);
-
+  
     const token = localStorage.getItem('token');
-
+  
     try {
       const response = await fetch(`${API_URL}/upload`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` },
         body: formData,
       });
-
+  
       const data = await response.json();
-      console.log('Upload response:', data); // Add this line
-
-      if (data.fileUrl) {
-        setFormCarrier((prevCarrier) => ({
+      console.log('Upload response:', data); // Debugging log
+  
+      // ✅ Fix the response handling
+      if (data.files?.brok_carr_aggmt?.fileUrl) {
+        // Ensure fileUrl is absolute
+        const baseURL = API_URL.replace('/api', ''); // Get base URL from API
+        const fullFileUrl = data.files.brok_carr_aggmt.fileUrl.startsWith('http')
+          ? data.files.brok_carr_aggmt.fileUrl
+          : `${baseURL}${data.files.brok_carr_aggmt.fileUrl}`;
+  
+          setFormCarrier((prevCarrier) => ({
           ...prevCarrier,
-          brok_carr_aggmt: data.fileUrl,
+          brok_carr_aggmt: fullFileUrl, // Store full file URL
+          brok_carr_aggmt_name: data.files.brok_carr_aggmt.fileName, // Store original filename
         }));
       } else {
         console.error('File URL not returned in response', data);

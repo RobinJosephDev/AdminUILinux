@@ -56,29 +56,31 @@ const EditCargoInsurance: React.FC<EditCargoInsuranceProps> = ({ formCarrier, se
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-
+  
     const formData = new FormData();
     formData.append('coi_cert', file);
-
+  
     const token = localStorage.getItem('token');
-
+  
     try {
       const response = await fetch(`${API_URL}/upload`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` },
         body: formData,
       });
-
+  
       const data = await response.json();
       console.log('Upload response:', data); // Debugging log
-
+  
       // ✅ Fix the response handling
       if (data.files?.coi_cert?.fileUrl) {
         // Ensure fileUrl is absolute
         const baseURL = API_URL.replace('/api', ''); // Get base URL from API
-        const fullFileUrl = data.files.coi_cert.fileUrl.startsWith('http') ? data.files.coi_cert.fileUrl : `${baseURL}${data.files.coi_cert.fileUrl}`;
-
-        setFormCarrier((prevCarrier) => ({
+        const fullFileUrl = data.files.coi_cert.fileUrl.startsWith('http')
+          ? data.files.coi_cert.fileUrl
+          : `${baseURL}${data.files.coi_cert.fileUrl}`;
+  
+          setFormCarrier((prevCarrier) => ({
           ...prevCarrier,
           coi_cert: fullFileUrl, // Store full file URL
           coi_cert_name: data.files.coi_cert.fileName, // Store original filename
@@ -94,6 +96,7 @@ const EditCargoInsurance: React.FC<EditCargoInsuranceProps> = ({ formCarrier, se
       setUploading(false);
     }
   };
+
 
   const fields = [
     { label: 'Cargo Insurance Provider', key: 'ci_provider', type: 'text', placeholder: 'Provider' },
