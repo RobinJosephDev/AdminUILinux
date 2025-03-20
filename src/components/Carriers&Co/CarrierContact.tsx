@@ -1,5 +1,5 @@
 import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
-import { useCallback, useState } from 'react';
+import { FC, useCallback, useState } from 'react';
 import { z } from 'zod';
 import DOMPurify from 'dompurify';
 import { Contact } from '../../types/CarrierTypes';
@@ -36,7 +36,7 @@ const contactSchema = z.object({
     .optional(),
 });
 
-const CarrierContact: React.FC<CarrierContactProps> = ({ contacts, index, handleContactChange, handleRemoveContact, onAddContact }) => {
+const CarrierContact: FC<CarrierContactProps> = ({ contacts, index, handleContactChange, handleRemoveContact, onAddContact }) => {
   const contact = contacts[index] ?? {};
   const [errors, setErrors] = useState<Record<string, string>>({});
 

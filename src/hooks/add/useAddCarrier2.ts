@@ -143,7 +143,7 @@ export const useAddCarrier = (onClose: () => void, onSuccess: () => void) => {
         const value = carrier[key as keyof Carrier];
 
         if (key === 'form_1099' || key === 'advertise' || key === 'approved' || key === 'csa_approved' || key === 'hazmat') {
-          formData.append(key, value ? '1' : '0');
+          formData.append(key, value ? '1' : '0'); // Convert booleans to 1/0
         } else if (key !== 'brok_carr_aggmt' && key !== 'coi_cert') {
           formData.append(key, String(value || ''));
         }
@@ -155,11 +155,12 @@ export const useAddCarrier = (onClose: () => void, onSuccess: () => void) => {
       
       if (carrier.coi_cert && carrier.coi_cert instanceof File) {
         formData.append("coi_cert", carrier.coi_cert);
-      }      
+      }
+      
 
       const response = carrier.id
-        ? await axios.put(`${API_URL}/carrier/${carrier.id}`, carrier, { headers })
-        : await axios.post(`${API_URL}/carrier`, carrier, { headers });
+        ? await axios.put(`${API_URL}/carrier/${carrier.id}`, formData, { headers })
+        : await axios.post(`${API_URL}/carrier`, formData, { headers });
 
       Swal.fire(carrier.id ? 'Success!' : 'Saved!', 'Carrier added successfully.', 'success');
       clearCarrierForm();

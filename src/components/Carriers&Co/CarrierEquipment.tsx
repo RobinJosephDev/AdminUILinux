@@ -15,7 +15,7 @@ interface CarrierEquipmentProps {
 const equipmentTypeOptions = ["Dry Van 53'", "Reefer 53'", "Flatbed 53'"];
 
 const equipmentTypeSchema = z.object({
-  type: z.enum(equipmentTypeOptions as [string, ...string[]], {
+  equipments: z.enum(equipmentTypeOptions as [string, ...string[]], {
     errorMap: () => ({ message: 'Invalid equipment type' }),
   }),
 });
@@ -56,7 +56,7 @@ const CarrierEquipment: React.FC<CarrierEquipmentProps> = ({ equipments, index, 
         <label htmlFor={`equipment-${index}`}>Equipment Type</label>
         <select
           id={`equipment-${index}`}
-          name="type"
+          name="equipment"
           value={equipment.equipment || ''}
           onChange={(e) => validateAndSetEquipment('equipment', e.target.value)}
           style={{ width: '180px', padding: '8px' }}

@@ -121,7 +121,6 @@ const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
   }
 };
 
-
   const fields = [
     { key: 'carr_type', label: 'Carrier Type', placeholder: 'Enter carrier type' },
     { key: 'rating', label: 'Rating', placeholder: 'Enter Rating' },
