@@ -105,6 +105,7 @@ const ViewVendorForm: FC<ViewVendorFormProps> = ({ vendor, onClose }) => {
 
         <fieldset className="form-section">
           <legend>Contacts</legend>
+          <hr />
           <div className="form-row">
             {Array.isArray(formVendor.contacts) &&
               formVendor.contacts.map((contact, index) => <ViewVendorContact key={index} contact={contact} index={index} />)}

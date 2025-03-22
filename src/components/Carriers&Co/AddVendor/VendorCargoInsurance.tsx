@@ -68,6 +68,7 @@ const VendorCargoInsurance: FC<VendorCargoInsuranceProps> = ({ vendor, setVendor
   return (
     <fieldset className="form-section">
       <legend>Cargo Insurance Details</legend>
+      <hr />
       <div className="form-grid" style={{ display: 'grid', gap: '1rem', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))' }}>
         {fields.map(({ label, key, type, placeholder }) => (
           <div className="form-group" key={key}>

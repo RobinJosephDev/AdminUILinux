@@ -9,7 +9,7 @@ const ViewVendorMailingAddress: FC<ViewVendorMailingAddressProps> = ({ formVendo
   return (
     <fieldset>
       <legend>Mailing Address</legend>
-
+      <hr />
       {!formVendor.sameAsPrimary && (
         <>
           <div className="form-row" style={{ display: "flex", gap: "1rem" }}>

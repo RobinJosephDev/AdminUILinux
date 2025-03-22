@@ -29,6 +29,7 @@ const EditVendorType: React.FC<EditVendorTypeProps> = ({ formVendor, setFormVend
   return (
     <fieldset className="form-section">
       <legend>Vendor Type</legend>
+      <hr />
       <div className="form-row" style={{ display: 'flex', gap: '1rem' }}>
         <div className="form-group" style={{ width: '24%' }}>
           <label htmlFor="type">

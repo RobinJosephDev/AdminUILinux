@@ -1,7 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Order } from '../../../types/OrderTypes';
 import { z } from 'zod';
-import axios from 'axios';
 
 interface OrderShipmentProps {
   order: Order;
@@ -58,9 +57,12 @@ const OrderShipment: React.FC<OrderShipmentProps> = ({ order, setOrder }) => {
   return (
     <fieldset className="form-section">
       <legend>Shipment</legend>
+      <hr />
       <div className="form-grid" style={{ display: 'grid', gap: '1rem', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))' }}>
         <div className="form-group" style={{ flex: '1 1 45%' }}>
-          <label htmlFor="equipment">Equipment</label>
+          <label htmlFor="equipment">
+            Equipment <span style={{ color: 'red' }}>*</span>
+          </label>
           <select id="equipment" value={order.equipment} onChange={(e) => setOrder((prevOrder) => ({ ...prevOrder, equipment: e.target.value }))}>
             <option value="">Select...</option>
             {equipmentOptions.map((option) => (
@@ -76,7 +78,9 @@ const OrderShipment: React.FC<OrderShipmentProps> = ({ order, setOrder }) => {
           )}
         </div>
         <div className="form-group" style={{ flex: '1 1 45%' }}>
-          <label htmlFor="loadType">Load Type</label>
+          <label htmlFor="loadType">
+            Load Type <span style={{ color: 'red' }}>*</span>
+          </label>
           <select id="loadType" value={order.load_type} onChange={(e) => setOrder((prevOrder) => ({ ...prevOrder, load_type: e.target.value }))}>
             <option value="">Select...</option>
             {loadTypeOptions.map((option) => (

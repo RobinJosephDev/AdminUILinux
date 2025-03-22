@@ -1,22 +1,45 @@
 import { useState, useEffect } from 'react';
+import DOMPurify from 'dompurify';
+import { z } from 'zod';
+import { Lead } from '../../../types/LeadTypes';
 import axios from 'axios';
 import Swal from 'sweetalert2';
-import { Lead, User } from '../../../types/LeadTypes';
+import { User } from '../../Account/UserTypes';
 
 interface EditAdditionalInfoProps {
   formLead: Lead;
-  setFormLead: (form: Lead) => void;
+  setFormLead: React.Dispatch<React.SetStateAction<Lead>>;
 }
 
-const API_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api';
-
-const sanitizeInput = (value: string): string => {
-  return value.trim().replace(/<\/?[^>]+(>|$)/g, ''); // Remove HTML tags to prevent XSS
-};
+const addInfoSchema = z.object({
+  follow_up_date: z.string().optional(),
+  contact_person: z
+    .string()
+    .max(200, 'Contact name must be at most 200 characters long')
+    .regex(/^[a-zA-Z0-9\s.,'-]*$/, 'Only letters, numbers,spaces, apostrophes, periods, commas, and hyphens allowed')
+    .optional(),
+  lead_type: z.enum(['AB', 'BC', 'BDS', 'CA', 'DPD MAGMA', 'MB', 'ON', 'Super Leads', 'TBAB', 'USA'], {
+    errorMap: () => ({ message: 'Invalid lead type' }),
+  }),
+  equipment_type: z.enum(['Van', 'Reefer', 'Flatbed', 'Triaxle', 'Maxi', 'Btrain', 'Roll tite'], {
+    errorMap: () => ({ message: 'Invalid equipment type' }),
+  }),
+  assigned_to: z
+    .string()
+    .min(1, 'Assigned To is required')
+    .max(200, 'Assigned To must be at most 200 characters long')
+    .regex(/^[a-zA-Z\s'-]+$/, 'Only letters, spaces, apostrophes, and hyphens allowed'),
+  notes: z
+    .string()
+    .max(500, 'Notes must be at most 200 characters long')
+    .regex(/^[a-zA-Z0-9\s.,'-]*$/, 'Only letters, numbers,spaces, apostrophes, periods, commas, and hyphens allowed')
+    .optional(),
+});
 
 const EditAdditionalInfo: React.FC<EditAdditionalInfoProps> = ({ formLead, setFormLead }) => {
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const API_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api';
   const [employees, setEmployees] = useState<User[]>([]);
-  const equipmentTypeOptions = ['Van', 'Reefer', 'Flatbed', 'Triaxle', 'Maxi', 'Btrain', 'Roll tite'];
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -25,19 +48,11 @@ const EditAdditionalInfo: React.FC<EditAdditionalInfoProps> = ({ formLead, setFo
         if (!token) {
           throw new Error('No token found. Please log in.');
         }
-
         const response = await axios.get<User[]>(`${API_URL}/users`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         });
-
-        if (response.status === 200 && Array.isArray(response.data)) {
-          const employees = response.data.filter((user) => user.role === 'employee');
-          setEmployees(employees);
-        } else {
-          throw new Error('Invalid response format.');
-        }
+        const employees = response.data.filter((user) => user.role === 'employee');
+        setEmployees(employees);
       } catch (error: any) {
         console.error('Error fetching users:', error);
         Swal.fire({
@@ -50,65 +65,107 @@ const EditAdditionalInfo: React.FC<EditAdditionalInfoProps> = ({ formLead, setFo
         });
       }
     };
-
     fetchUsers();
-  }, []);
+  }, [API_URL]);
 
-  const handleChange = (field: keyof Lead, value: string) => {
-    const sanitizedValue = sanitizeInput(value);
-    setFormLead({ ...formLead, [field]: sanitizedValue });
+  const validateAndSetLead = (field: keyof Lead, value: string) => {
+    const sanitizedValue = DOMPurify.sanitize(value);
+    let error = '';
+
+    const tempLead = { ...formLead, [field]: sanitizedValue };
+    const result = addInfoSchema.safeParse(tempLead);
+
+    if (!result.success) {
+      const fieldError = result.error.errors.find((err) => err.path[0] === field);
+      error = fieldError ? fieldError.message : '';
+    }
+
+    setErrors((prevErrors) => ({ ...prevErrors, [field]: error }));
+    setFormLead(tempLead);
   };
+
+  const fields = [
+    { label: 'Next Follow-Up Date', key: 'follow_up_date', type: 'date', placeholder: 'Enter follow-up date' },
+    { label: 'Contact Person', key: 'contact_person', type: 'text', placeholder: 'Enter contact person' },
+  ];
 
   return (
     <fieldset className="form-section">
       <legend>Additional Information</legend>
       <hr />
       <div className="form-row" style={{ display: 'flex', gap: '1rem' }}>
-        <div className="form-group" style={{ flex: 1 }}>
-          <label htmlFor="follow_up_date">Next Follow-Up Date</label>
-          <input
-            type="date"
-            id="follow_up_date"
-            value={formLead.follow_up_date || ''}
-            onChange={(e) => handleChange('follow_up_date', e.target.value)}
-          />
-        </div>
+        {fields.map(({ label, key, type, placeholder }) => (
+          <div className="form-group" key={key} style={{ flex: 1 }}>
+            <label htmlFor={key}>{label}</label>
+            <input
+              type={type}
+              id={key}
+              placeholder={placeholder}
+              value={(formLead[key as keyof Lead] as string | number) || ''}
+              onChange={(e) => validateAndSetLead(key as keyof Lead, e.target.value)}
+            />
+            {errors[key] && (
+              <span className="error" style={{ color: 'red' }}>
+                {errors[key]}
+              </span>
+            )}
+          </div>
+        ))}
+
         <div className="form-group" style={{ flex: 1 }}>
           <label htmlFor="equipmentType">Equipment Type</label>
-          <select id="equipmentType" value={formLead.equipment_type || ''} onChange={(e) => handleChange('equipment_type', e.target.value)}>
+          <select
+            id="equipmentType"
+            value={formLead.equipment_type || ''}
+            onChange={(e) => setFormLead((prevLead) => ({ ...prevLead, equipment_type: e.target.value }))}
+          >
             <option value="">Select Equipment Type</option>
-            {equipmentTypeOptions.map((option) => (
-              <option key={option} value={option}>
-                {option}
-              </option>
-            ))}
+            <option value="Van">Van</option>
+            <option value="Reefer">Reefer</option>
+            <option value="Flatbed">Flatbed</option>
+            <option value="Triaxle">Triaxle</option>
+            <option value="Maxi">Maxi</option>
+            <option value="Btrain">Btrain</option>
+            <option value="Roll tite">Roll tite</option>
           </select>
+          {errors.equipment_type && (
+            <span className="error" style={{ color: 'red' }}>
+              {errors.equipment_type}
+            </span>
+          )}
         </div>
         <div className="form-group" style={{ flex: 1 }}>
           <label htmlFor="assignedTo">Assigned To</label>
-          <select id="assignedTo" value={formLead.assigned_to || ''} onChange={(e) => handleChange('assigned_to', e.target.value)}>
+          <select id="assignedTo" value={formLead.assigned_to} onChange={(e) => validateAndSetLead('assigned_to', e.target.value)}>
             <option value="">Select Employee</option>
             {employees.map((user) => (
-              <option key={user.id} value={user.id}>
+              <option key={user.name} value={user.name}>
                 {user.name}
               </option>
             ))}
           </select>
+          {errors.assigned_to && (
+            <span className="error" style={{ color: 'red' }}>
+              {errors.assigned_to}
+            </span>
+          )}
         </div>
-        <div className="form-group" style={{ flex: 1 }}>
-          <label htmlFor="contactPerson">Contact Person</label>
-          <input
-            type="text"
-            id="contactPerson"
-            value={formLead.contact_person || ''}
-            onChange={(e) => handleChange('contact_person', e.target.value)}
-            pattern="^[a-zA-Z\s]+$" // Only allow letters and spaces
-            maxLength={100}
-          />
-        </div>
+      </div>
+      <div className="form-row" style={{ display: 'flex' }}>
         <div className="form-group" style={{ flex: 1 }}>
           <label htmlFor="notes">Notes</label>
-          <textarea id="notes" value={formLead.notes || ''} onChange={(e) => handleChange('notes', e.target.value)} maxLength={500} />
+          <textarea
+            id="notes"
+            placeholder="Enter notes"
+            value={formLead.notes || ''}
+            onChange={(e) => validateAndSetLead('notes', e.target.value)}
+            style={{ width: '100%', minHeight: '100px' }}
+          />
+          {errors.notes && (
+            <span className="error" style={{ color: 'red' }}>
+              {errors.notes}
+            </span>
+          )}
         </div>
       </div>
     </fieldset>

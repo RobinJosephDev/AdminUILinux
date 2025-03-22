@@ -11,24 +11,24 @@ interface VendorDetailsProps {
 const vendorDetailSchema = z.object({
   legal_name: z
     .string()
-    .max(200, 'Legal Name must be at most 200 characters long')
-    .regex(/^[a-zA-Z0-9\s.,'-]*$/, 'Only letters, numbers,spaces, apostrophes, periods, commas, and hyphens allowed')
-    .optional(),
+    .min(1, 'Legal Name is required')
+    .max(100, 'Legal Name must be at most 100 characters long')
+    .regex(/^[a-zA-Z0-9\s.,'-]*$/, 'Only letters, numbers,spaces, apostrophes, periods, commas, and hyphens allowed'),
   remit_name: z
     .string()
+    .min(1, 'Remit Name is required')
     .max(200, 'Remit Name must be at most 200 characters long')
-    .regex(/^[a-zA-Z0-9\s.,'-]*$/, 'Only letters, numbers,spaces, apostrophes, periods, commas, and hyphens allowed')
-    .optional(),
+    .regex(/^[a-zA-Z0-9\s.,'-]*$/, 'Only letters, numbers,spaces, apostrophes, periods, commas, and hyphens allowed'),
   vendor_type: z
     .string()
+    .min(1, 'Vendor Type is required')
     .max(50, 'Vendor Type must be at most 50 characters long')
-    .regex(/^[a-zA-Z0-9\s.,'-]*$/, 'Only letters, numbers,spaces, apostrophes, periods, commas, and hyphens allowed')
-    .optional(),
+    .regex(/^[a-zA-Z0-9\s.,'-]*$/, 'Only letters, numbers,spaces, apostrophes, periods, commas, and hyphens allowed'),
   service: z
     .string()
+    .min(1, 'Service is required')
     .max(100, 'Service must be at most 100 characters long')
-    .regex(/^[a-zA-Z0-9\s.,'-]*$/, 'Only letters, numbers,spaces, apostrophes, periods, commas, and hyphens allowed')
-    .optional(),
+    .regex(/^[a-zA-Z0-9\s.,'-]*$/, 'Only letters, numbers,spaces, apostrophes, periods, commas, and hyphens allowed'),
   scac: z
     .string()
     .max(10, 'SCAC must be at most 10 characters long')
@@ -82,10 +82,10 @@ const VendorDetails: FC<VendorDetailsProps> = ({ vendor, setVendor }) => {
   };
 
   const fields = [
-    { label: 'Legal Name', key: 'legal_name', placeholder: 'Enter legal name' },
-    { label: 'Remit Name', key: 'remit_name', placeholder: 'Enter remit name' },
-    { label: 'Vendor Type', key: 'vendor_type', placeholder: 'Enter vendor type' },
-    { label: 'Service', key: 'service', placeholder: 'Enter service type' },
+    { label: 'Legal Name', key: 'legal_name', placeholder: 'Enter legal name', required: true },
+    { label: 'Remit Name', key: 'remit_name', placeholder: 'Enter remit name', required: true },
+    { label: 'Vendor Type', key: 'vendor_type', placeholder: 'Enter vendor type', required: true },
+    { label: 'Service', key: 'service', placeholder: 'Enter service type', required: true },
     { label: 'SCAC', key: 'scac', placeholder: 'Enter SCAC code' },
     { label: 'Docket#', key: 'docket_number', placeholder: 'Enter docket number' },
     { label: 'Vendor Code', key: 'vendor_code', placeholder: 'Enter vendor code' },
@@ -98,10 +98,13 @@ const VendorDetails: FC<VendorDetailsProps> = ({ vendor, setVendor }) => {
   return (
     <fieldset className="form-section">
       <legend>Vendor Details</legend>
+      <hr />
       <div className="form-grid" style={{ display: 'grid', gap: '1rem', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))' }}>
-        {fields.map(({ label, key, placeholder }) => (
+        {fields.map(({ label, key, placeholder, required }) => (
           <div className="form-group" key={key}>
-            <label htmlFor={key}>{label}</label>
+            <label htmlFor={key}>
+              {label} {required && <span style={{ color: 'red' }}>*</span>}
+            </label>{' '}
             <input
               type="text"
               id={key}

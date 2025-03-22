@@ -41,6 +41,7 @@ const EditInternalNotes: React.FC<EditInternalNotesProps> = ({ formCarrier, setF
   return (
     <fieldset className="form-section">
       <legend>Internal Notes</legend>
+      <hr />
       <div className="form-row" style={{ display: 'flex', gap: '1rem' }}>
         {fields.map(({ label, key, placeholder }) => (
           <div className="form-group" style={{ flex: 1 }} key={key}>

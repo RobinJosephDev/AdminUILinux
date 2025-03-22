@@ -9,6 +9,7 @@ const ViewOrderSpecs: React.FC<ViewOrderSpecsProps> = ({ formOrder }) => {
   return (
     <fieldset className="form-section">
       <legend>Load Specifications</legend>
+      <hr />
       <div className="form-row" style={{ display: 'flex', gap: '1rem' }}>
         <div className="form-group" style={{ flex: 1 }}>
           <label htmlFor="hot" style={{ display: 'block' }}>

@@ -23,6 +23,7 @@ const ViewCargoInsurance: FC<ViewCargoInsuranceProps> = ({ formCarrier }) => {
   return (
     <fieldset className="form-section">
       <legend>Cargo Insurance Details</legend>
+      <hr />
       <div className="form-row" style={{ display: "flex", gap: "1rem" }}>
         <div className="form-group" style={{ flex: 1 }}>
           <label>Cargo Insurance Provider</label>

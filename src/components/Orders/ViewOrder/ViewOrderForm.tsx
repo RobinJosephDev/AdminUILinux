@@ -71,6 +71,7 @@ const ViewOrderForm: React.FC<ViewOrderFormProps> = ({ order, onClose }) => {
         <ViewOrderShipment formOrder={formOrder} />
         <fieldset className="form-section">
           <legend>Origin</legend>
+          <hr />
           <div className="form-row">
             {formOrder.origin_location.map((origin, index) => (
               <ViewOrderOrigin key={index} origin={origin} index={index} />
@@ -79,6 +80,7 @@ const ViewOrderForm: React.FC<ViewOrderFormProps> = ({ order, onClose }) => {
         </fieldset>
         <fieldset className="form-section">
           <legend>Destination</legend>
+          <hr />
           <div className="form-row">
             {formOrder.destination_location.map((destination, index) => (
               <ViewOrderDestination key={index} destination={destination} index={index} />
@@ -90,6 +92,7 @@ const ViewOrderForm: React.FC<ViewOrderFormProps> = ({ order, onClose }) => {
 
         <fieldset className="form-section">
           <legend>Charges</legend>
+          <hr />
           <div className="form-row">
             {formOrder.charges.map((charge, index) => (
               <ViewOrderCharges key={index} charge={charge} index={index} />
@@ -98,6 +101,7 @@ const ViewOrderForm: React.FC<ViewOrderFormProps> = ({ order, onClose }) => {
         </fieldset>
         <fieldset className="form-section">
           <legend>Discounts</legend>
+          <hr />
           <div className="form-row">
             {formOrder.discounts.map((discount, index) => (
               <ViewOrderDiscounts key={index} discount={discount} index={index} />

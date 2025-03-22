@@ -11,14 +11,14 @@ interface GeneralProps {
 const carrierSchema = z.object({
   dba: z
     .string()
+    .min(1, 'DBA is required')
     .max(100, 'DBA cannot exceed 100 characters')
-    .regex(/^[a-zA-Z0-9\s.,'-]*$/, 'Only letters, numbers, spaces, apostrophes, periods, commas, and hyphens allowed')
-    .optional(),
+    .regex(/^[a-zA-Z0-9\s.,'-]+$/, 'Only letters, numbers, spaces, apostrophes, periods, commas, and hyphens allowed'),
   legal_name: z
     .string()
+    .min(1, 'Legal Name is required')
     .max(100, 'Legal Name cannot exceed 100 characters')
-    .regex(/^[a-zA-Z0-9\s.,'-]*$/, 'Only letters, numbers, spaces, apostrophes, periods, commas, and hyphens allowed')
-    .optional(),
+    .regex(/^[a-zA-Z0-9\s.,'-]+$/, 'Only letters, numbers, spaces, apostrophes, periods, commas, and hyphens allowed'),
   remit_name: z
     .string()
     .max(100, 'Remit Name cannot exceed 100 characters')
@@ -52,8 +52,8 @@ const carrierSchema = z.object({
 });
 
 const fields = [
-  { key: 'dba', label: 'DBA', placeholder: 'Enter DBA', type: 'text' },
-  { key: 'legal_name', label: 'Legal Name', placeholder: 'Enter Legal Name', type: 'text' },
+  { key: 'dba', label: 'DBA', placeholder: 'Enter DBA', type: 'text', required: true },
+  { key: 'legal_name', label: 'Legal Name', placeholder: 'Enter Legal Name', type: 'text', required: true },
   { key: 'remit_name', label: 'Remit Name', placeholder: 'Enter Remit Name', type: 'text' },
   { key: 'acc_no', label: 'Account Number', placeholder: 'Enter Account Number', type: 'text' },
   { key: 'branch', label: 'Branch', placeholder: 'Enter Branch', type: 'text' },
@@ -93,28 +93,10 @@ const General: React.FC<GeneralProps> = ({ carrier, setCarrier }) => {
   return (
     <fieldset className="form-section">
       <legend>General</legend>
-
+      <hr />
       <div className="form-grid" style={{ display: 'grid', gap: '1rem', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))' }}>
-        <div className="form-group" style={{ flex: '1 1 45%' }}>
-          <label htmlFor="pref_curr">Preferred Currency</label>
-          <select
-            id="pref_curr"
-            value={carrier.pref_curr || ''}
-            onChange={(e) => setCarrier((prevCarrier) => ({ ...prevCarrier, pref_curr: e.target.value }))}
-          >
-            <option value="">Select Currency</option>
-            <option value="USD">USD</option>
-            <option value="CAD">CAD</option>
-          </select>
-          {errors.pref_curr && (
-            <span className="error" style={{ color: 'red' }}>
-              {errors.pref_curr}
-            </span>
-          )}
-        </div>
-
         {/* Dynamic Input Fields */}
-        {fields.map(({ key, label, placeholder, type }) => (
+        {fields.map(({ key, label, placeholder, type, required }) => (
           <div key={key}>
             <div className="form-group" style={{ flex: '1 1 45%' }} key={key}>
               {type === 'boolean' ? (
@@ -132,8 +114,9 @@ const General: React.FC<GeneralProps> = ({ carrier, setCarrier }) => {
                 </div>
               ) : (
                 <div className="form-group" style={{ flex: '1 1 45%' }}>
-                  <label htmlFor={key}>{label}</label>
-
+                  <label htmlFor={key}>
+                    {label} {required && <span style={{ color: 'red' }}>*</span>}
+                  </label>{' '}
                   <input
                     type="text"
                     id={key}
@@ -151,6 +134,23 @@ const General: React.FC<GeneralProps> = ({ carrier, setCarrier }) => {
             </div>
           </div>
         ))}
+        <div className="form-group" style={{ flex: '1 1 45%' }}>
+          <label htmlFor="pref_curr">Preferred Currency</label>
+          <select
+            id="pref_curr"
+            value={carrier.pref_curr || ''}
+            onChange={(e) => setCarrier((prevCarrier) => ({ ...prevCarrier, pref_curr: e.target.value }))}
+          >
+            <option value="">Select Currency</option>
+            <option value="USD">USD</option>
+            <option value="CAD">CAD</option>
+          </select>
+          {errors.pref_curr && (
+            <span className="error" style={{ color: 'red' }}>
+              {errors.pref_curr}
+            </span>
+          )}
+        </div>
       </div>
     </fieldset>
   );

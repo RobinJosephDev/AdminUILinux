@@ -46,6 +46,7 @@ const AddCarrierForm: React.FC<AddCarrierFormProps> = ({ onClose, onSuccess }) =
 
         <fieldset className="form-section">
           <legend>Contacts</legend>
+          <hr />
           <div className="form-row">
             {carrier.contacts.map((contact, index) => (
               <CarrierContact
@@ -67,6 +68,7 @@ const AddCarrierForm: React.FC<AddCarrierFormProps> = ({ onClose, onSuccess }) =
 
         <fieldset className="form-section">
           <legend>Equipment</legend>
+          <hr />
           <div className="form-row">
             {carrier.equipments.map((equipment, index) => (
               <CarrierEquipment
@@ -88,6 +90,7 @@ const AddCarrierForm: React.FC<AddCarrierFormProps> = ({ onClose, onSuccess }) =
 
         <fieldset className="form-section">
           <legend>Lanes</legend>
+          <hr />
           <div className="form-row">
             {carrier.lanes.map((lane, index) => (
               <CarrierLane

@@ -139,6 +139,7 @@ const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
   return (
     <fieldset className="form-section">
       <legend>Carrier Details</legend>
+      <hr />
       <div
         className="form-grid"
         style={{

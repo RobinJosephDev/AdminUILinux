@@ -10,6 +10,7 @@ const OrderSpecs: React.FC<OrderSpecsProps> = ({ formOrder, setFormOrder }) => {
   return (
     <fieldset className="form-section">
       <legend>Load Specifications</legend>
+      <hr />
       <div className="form-row" style={{ display: 'flex', gap: '1rem' }}>
         {[
           { id: 'hot', label: 'Hot' },

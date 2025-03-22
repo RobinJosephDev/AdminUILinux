@@ -52,6 +52,7 @@ const EditOrderForm: React.FC<EditOrderFormProps> = ({ order, onClose, onUpdate 
 
             <fieldset className="form-section">
               <legend>Origin</legend>
+              <hr />
               <div className="form-row">
                 {formOrder.origin_location?.map((origin, index) => (
                   <OrderOrigin
@@ -73,6 +74,7 @@ const EditOrderForm: React.FC<EditOrderFormProps> = ({ order, onClose, onUpdate 
 
             <fieldset className="form-section">
               <legend>Destination</legend>
+              <hr />
               <div className="form-row">
                 {formOrder.destination_location.map((destination, index) => (
                   <OrderDestination
@@ -97,6 +99,7 @@ const EditOrderForm: React.FC<EditOrderFormProps> = ({ order, onClose, onUpdate 
 
             <fieldset className="form-section">
               <legend>Charges</legend>
+              <hr />
               <div className="form-row">
                 {formOrder.charges.map((charge, index) => (
                   <OrderCharges
@@ -118,6 +121,7 @@ const EditOrderForm: React.FC<EditOrderFormProps> = ({ order, onClose, onUpdate 
 
             <fieldset className="form-section">
               <legend>Discounts</legend>
+              <hr />
               <div className="form-row">
                 {formOrder.discounts.map((discount, index) => (
                   <OrderDiscounts

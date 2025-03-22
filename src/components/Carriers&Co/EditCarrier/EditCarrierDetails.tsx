@@ -139,6 +139,7 @@ function EditCarrierDetails({ formCarrier, setFormCarrier }: EditCarrierDetailsP
   return (
     <fieldset className="form-section">
       <legend>Carrier Details</legend>
+      <hr />
       <div
         className="form-grid"
         style={{

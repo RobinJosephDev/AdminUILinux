@@ -19,26 +19,26 @@ const useLeadTable = () => {
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const [rowsPerPage, setRowsPerPage] = useState<number>(10);
 
+  //Fetching
+  const fetchLeads = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) throw new Error('No token found');
+
+      setLoading(true);
+      const { data } = await axios.get<Lead[]>(`${API_URL}/lead`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      setLeads(data);
+    } catch (error) {
+      console.error('Error loading leads:', error);
+      handleFetchError(error);
+    } finally {
+      setLoading(false);
+    }
+  };
   useEffect(() => {
-    const fetchLeads = async () => {
-      try {
-        const token = localStorage.getItem('token');
-        if (!token) throw new Error('No token found');
-
-        setLoading(true);
-        const response = await axios.get<{ data: Lead[] }>(`${API_URL}/lead`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-
-        setLeads(Array.isArray(response.data.data) ? response.data.data : []);
-      } catch (error) {
-        console.error('Error loading leads:', error);
-        handleFetchError(error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchLeads();
   }, []);
 
@@ -158,6 +158,7 @@ const useLeadTable = () => {
   const totalPages = Math.ceil(filteredLeads.length / rowsPerPage);
 
   return {
+    fetchLeads,
     leads,
     loading,
     searchQuery,

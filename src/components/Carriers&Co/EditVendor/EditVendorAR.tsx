@@ -41,6 +41,7 @@ const EditVendorAR: React.FC<EditVendorARProps> = ({ formVendor, setFormVendor }
   return (
     <fieldset className="form-section">
       <legend>Account Receivable Details</legend>
+      <hr />
       <div className="form-row" style={{ display: 'flex', gap: '1rem' }}>
         {fields.map(({ label, name }) => (
           <div className="form-group" style={{ flex: 1 }} key={name}>

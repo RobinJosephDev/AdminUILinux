@@ -47,7 +47,7 @@ const ViewCarrierDetails: FC<ViewCarrierDetailsProps> = ({ formCarrier }) => {
   return (
     <fieldset className="form-section">
       <legend>Carrier Details</legend>
-
+      <hr />
       <div className="form-row" style={{ display: "flex", gap: "1rem" }}>
         <div className="form-group" style={{ flex: 1 }}>
           <label>Carrier Type</label>

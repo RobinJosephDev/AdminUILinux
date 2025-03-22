@@ -42,6 +42,7 @@ const OrderRevenue: React.FC<OrderRevenueProps> = ({ formOrder, setFormOrder }) 
   return (
     <fieldset className="form-section">
       <legend>Revenue</legend>
+      <hr />
       <div
         className="form-grid"
         style={{

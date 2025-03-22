@@ -9,6 +9,7 @@ const ViewVendorType: FC<ViewVendorTypeProps> = ({ formVendor }) => {
   return (
     <fieldset className="form-section">
       <legend>Vendor Type</legend>
+      <hr />
       <div className="form-row" style={{ display: "flex", gap: "1rem" }}>
         <div className="form-group" style={{ flex: 1 }}>
           <label>Vendor Type</label>

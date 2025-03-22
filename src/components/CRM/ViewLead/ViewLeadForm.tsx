@@ -71,8 +71,8 @@ const ViewLeadForm: React.FC<ViewLeadFormProps> = ({ lead, onClose }) => {
           </div>
         </fieldset>
         <div className="form-actions">
-          <button type="button" className="btn-cancel" onClick={onClose}>
-            Close
+          <button type="button" className="btn-cancel" onClick={onClose} style={{ padding: '9px 15px' }}>
+            Cancel
           </button>
         </div>
       </form>

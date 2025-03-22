@@ -68,6 +68,7 @@ const EditVendorLiabilityInsurance: React.FC<EditVendorLiabilityInsuranceProps> 
   return (
     <fieldset className="form-section">
       <legend>Liability Insurance Details</legend>
+      <hr />
       <div className="form-grid" style={{ display: 'grid', gap: '1rem', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))' }}>
         {fields.map(({ label, key, type }) => (
           <div className="form-group" key={key}>

@@ -61,7 +61,7 @@ const LiabilityInsurance: React.FC<LiabilityInsuranceProps> = ({ carrier, setCar
   return (
     <fieldset className="form-section">
       <legend>Liability Insurance Details</legend>
-
+      <hr />
       <div className="form-grid" style={{ display: 'grid', gap: '1rem', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))' }}>
         {fields.map(({ label, key, type, placeholder }) => (
           <div key={key} className="form-group" style={{ flex: 1 }}>

@@ -84,6 +84,7 @@ const OrderTax: React.FC<OrderTaxProps> = ({ order, setOrder }) => {
   return (
     <fieldset className="form-section">
       <legend>Tax</legend>
+      <hr />
       <div
         className="form-grid"
         style={{

@@ -9,7 +9,7 @@ import useEditLead from '../../../hooks/edit/useEditLead';
 interface EditLeadFormProps {
   lead: Lead | null;
   onClose: () => void;
-  onUpdate: (updatedLead: Lead) => void;
+  onUpdate: (lead: Lead) => void;
 }
 
 const EditLeadForm: React.FC<EditLeadFormProps> = ({ lead, onClose, onUpdate }) => {
@@ -35,8 +35,9 @@ const EditLeadForm: React.FC<EditLeadFormProps> = ({ lead, onClose, onUpdate }) 
             {formLead.contacts.map((contact, index) => (
               <LeadContactForm
                 key={index}
+                contacts={formLead.contacts}
                 index={index}
-                contact={contact}
+                onAddContact={handleAddContact}
                 handleContactChange={handleContactChange}
                 handleRemoveContact={handleRemoveContact}
               />

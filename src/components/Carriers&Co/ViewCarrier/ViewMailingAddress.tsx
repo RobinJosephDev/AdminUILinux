@@ -9,7 +9,7 @@ const ViewMailingAddress: FC<ViewMailingAddressProps> = ({ formCarrier }) => {
   return (
     <fieldset>
       <legend>Mailing Address</legend>
-
+      <hr />
       <div className="form-group">
         <label
           style={{ display: "inline-flex", alignItems: "center", width: "100%" }}

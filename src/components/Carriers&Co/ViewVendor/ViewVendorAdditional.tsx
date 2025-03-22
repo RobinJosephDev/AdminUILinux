@@ -9,6 +9,7 @@ const ViewVendorAdditional: FC<ViewVendorAdditionalProps> = ({ formVendor }) => 
   return (
     <fieldset className="form-section">
       <legend>Additional Details</legend>
+      <hr />
       <div className="form-row" style={{ display: "flex", gap: "1rem" }}>
         <div className="form-group" style={{ flex: 1 }}>
           <label>US Tax ID</label>

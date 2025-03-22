@@ -35,8 +35,16 @@ const orderSchema = z.object({
     .max(20, 'Customer PO Number cannot exceed 20 characters')
     .regex(/^[a-zA-Z0-9-_\/]*$/, 'Only letters, numbers, dashes, underscores, and slashes allowed')
     .optional(),
-  customer: z.string().min(1, 'Customer is required'),
-  customer_ref_no: z.string().min(1, 'Customer Ref. No is required'),
+  customer: z
+    .string()
+    .min(1, 'Customer is required')
+    .max(200, 'Customer name cannot exceed 200 characters')
+    .regex(/^[a-zA-Z0-9\s.,'"-]+$/, 'Only letters, numbers, spaces, apostrophes, periods, commas, and hyphens allowed'),
+  customer_ref_no: z
+    .string()
+    .min(1, 'Customer Ref. No is required')
+    .max(100, 'Customer Ref. No cannot exceed 100 characters')
+    .regex(/^[a-zA-Z0-9\s.,'"-]+$/, 'Only letters, numbers, spaces, apostrophes, periods, commas, and hyphens allowed'),
 });
 
 const fields = [
@@ -111,9 +119,12 @@ const OrderGeneral: React.FC<OrderGeneralProps> = ({ order, setOrder }) => {
   return (
     <fieldset className="form-section">
       <legend>General</legend>
+      <hr />
       <div className="form-grid" style={{ display: 'grid', gap: '1rem', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))' }}>
         <div className="form-group" style={{ flex: '1 1 45%' }}>
-          <label htmlFor="customer">Customer</label>
+          <label htmlFor="customer">
+            Customer <span style={{ color: 'red' }}>*</span>
+          </label>
           <select
             id="quote_customer"
             value={order.customer || ''}
@@ -142,7 +153,9 @@ const OrderGeneral: React.FC<OrderGeneralProps> = ({ order, setOrder }) => {
         </div>
 
         <div className="form-group" style={{ flex: 1 }}>
-          <label htmlFor="customerRefNo">Customer Ref. No</label>
+          <label htmlFor="customerRefNo">
+            Customer Ref. No <span style={{ color: 'red' }}>*</span>
+          </label>
           <select
             id="quote_customer_ref_no"
             value={order.customer_ref_no || ''}

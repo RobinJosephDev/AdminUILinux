@@ -1,55 +1,91 @@
-import { DeleteOutlined } from '@ant-design/icons';
-import { ChangeEvent } from 'react';
+import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
+import { FC, useCallback, useState } from 'react';
+import { z } from 'zod';
+import DOMPurify from 'dompurify';
 import { Contact } from '../../types/LeadTypes';
 
 interface LeadContactFormProps {
-  contact: Contact;
+  contacts: Contact[];
   index: number;
+  onAddContact: () => void;
   handleContactChange: (index: number, updatedContact: Contact) => void;
   handleRemoveContact: (index: number) => void;
 }
 
-const LeadContactForm: React.FC<LeadContactFormProps> = ({ contact, index, handleRemoveContact, handleContactChange }) => {
-  const sanitizeInput = (value: string) => value.replace(/[^a-zA-Z0-9 @._-]/g, ''); // Removes special characters
+const contactSchema = z.object({
+  name: z
+    .string()
+    .max(200, 'Name must be at most 200 characters')
+    .regex(/^[a-zA-Z\s.,'-]+$/, 'Only letters, spaces, apostrophes, periods,commas and hyphens allowed')
+    .optional(),
+  phone: z
+    .string()
+    .max(30, 'Phone cannot exceed 30 characters')
+    .regex(/^[0-9-+()\s]*$/, 'Invalid phone format')
+    .optional(),
+  email: z.string().max(255, 'Email must be at most 255 characters').email('Invalid email format').optional(),
+});
 
-  // Handle Input Change
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    let sanitizedValue = sanitizeInput(value);
+const LeadContactForm: FC<LeadContactFormProps> = ({ contacts, index, handleContactChange, handleRemoveContact, onAddContact }) => {
+  const contact = contacts[index] ?? {};
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
-    if (name === 'phone') {
-      sanitizedValue = sanitizedValue.replace(/[^0-9+]/g, ''); // Allow only numbers and "+"
-    }
+  const validateAndSetContact = useCallback(
+    (field: keyof Contact, value: string) => {
+      const sanitizedValue = DOMPurify.sanitize(value);
+      let error = '';
 
-    if (name === 'email') {
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(sanitizedValue)) {
-        sanitizedValue = ''; 
+      const updatedContact = { ...contact, [field]: sanitizedValue };
+      const result = contactSchema.safeParse(updatedContact);
+
+      if (!result.success) {
+        const fieldError = result.error.errors.find((err) => err.path[0] === field);
+        error = fieldError ? fieldError.message : '';
       }
-    }
 
-    handleContactChange(index, { ...contact, [name]: sanitizedValue });
-  };
+      setErrors((prevErrors) => ({ ...prevErrors, [field]: error }));
+      handleContactChange(index, updatedContact);
+    },
+    [contact, handleContactChange, index]
+  );
+
+  const fields = [
+    { label: 'Name', key: 'name', type: 'text', placeholder: 'Enter name' },
+    { label: 'Phone', key: 'phone', type: 'tel', placeholder: 'Enter phone' },
+    { label: 'Email', key: 'email', type: 'email', placeholder: 'Enter email' },
+  ];
 
   return (
-    <div className="contact-form">
-      <div className="form-group">
-        <label>Name</label>
-        <input type="text" name="name" value={contact.name} onChange={handleChange} placeholder="Name" />
-      </div>
-      <div className="form-group">
-        <label>Phone</label>
-        <input type="tel" name="phone" value={contact.phone} onChange={handleChange} placeholder="Phone" />
-      </div>
-      <div className="form-group">
-        <label>Email</label>
-        <input type="email" name="email" value={contact.email} onChange={handleChange} placeholder="Email" />
-      </div>
+    <fieldset className="form-section" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+        {fields.map(({ label, key, type, placeholder }) => (
+          <div className="form-group" key={key} style={{ display: 'flex', flexDirection: 'column' }}>
+            <label htmlFor={`${key}-${index}`}>{label}</label>
+            <input
+              id={`${key}-${index}`}
+              type={type}
+              name={key}
+              value={(contact[key as keyof Contact] as string) || ''}
+              onChange={(e) => validateAndSetContact(key as keyof Contact, e.target.value)}
+              placeholder={placeholder}
+            />
+            {errors[key] && (
+              <span className="error" style={{ color: 'red' }}>
+                {errors[key]}
+              </span>
+            )}
+          </div>
+        ))}
+  
 
-      <button type="button" onClick={() => handleRemoveContact(index)} className="remove">
-        <DeleteOutlined />
-      </button>
-    </div>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0px' }}>
+        <button type="button" onClick={onAddContact} className="add-button">
+          <PlusOutlined />
+        </button>
+        <button type="button" onClick={() => handleRemoveContact(index)} className="delete-button">
+          <DeleteOutlined />
+        </button>
+      </div>
+    </fieldset>
   );
 };
 

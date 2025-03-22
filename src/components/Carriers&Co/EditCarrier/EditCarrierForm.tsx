@@ -58,6 +58,7 @@ const EditCarrierForm: React.FC<EditCarrierFormProps> = ({ carrier, onClose, onU
             {/* Contacts Section */}
             <fieldset className="form-section">
               <legend>Contacts</legend>
+              <hr />
               <div className="form-row">
                 {formCarrier.contacts.map((contact, index) => (
                   <CarrierContact
@@ -78,6 +79,7 @@ const EditCarrierForm: React.FC<EditCarrierFormProps> = ({ carrier, onClose, onU
             {/* Equipments Section */}
             <fieldset className="form-section">
               <legend>Equipments</legend>
+              <hr />
               <div className="form-row">
                 {formCarrier.equipments.map((equipment, index) => (
                   <CarrierEquipment
@@ -98,6 +100,7 @@ const EditCarrierForm: React.FC<EditCarrierFormProps> = ({ carrier, onClose, onU
             {/* Lanes Section */}
             <fieldset className="form-section">
               <legend>Lanes</legend>
+              <hr />
               <div className="form-row">
                 {formCarrier.lanes.map((lane, index) => (
                   <CarrierLane

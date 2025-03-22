@@ -37,6 +37,7 @@ const EditVendorAdditional: React.FC<EditVendorAdditionalProps> = ({ formVendor,
   return (
     <fieldset className="form-section">
       <legend>Additional Details</legend>
+      <hr />
       <div className="form-row" style={{ display: 'flex', gap: '1rem' }}>
         {fields.map(({ label, name }) => (
           <div className="form-group" style={{ flex: 1 }} key={name}>

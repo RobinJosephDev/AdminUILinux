@@ -149,6 +149,7 @@ const VendorMailingAddress: FC<VendorMailingAddressProps> = ({ vendor, setVendor
   return (
     <fieldset className="form-section">
       <legend>Mailing Address</legend>
+      <hr />
       <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}>
         <input
           type="checkbox"

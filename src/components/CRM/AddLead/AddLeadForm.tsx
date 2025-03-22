@@ -1,19 +1,19 @@
+import React from 'react';
 import LeadContactForm from '../LeadContactForm';
 import '../../../styles/Form.css';
 import LeadDetails from './LeadDetails';
 import AddressDetails from './AddressDetails';
 import AdditionalInfo from './AdditionalInfo';
 import { PlusOutlined } from '@ant-design/icons';
-import { Lead } from '../../../types/LeadTypes';
 import { useAddLead } from '../../../hooks/add/useAddLead';
 
 interface AddLeadFormProps {
   onClose: () => void;
-  onAddLead: (lead: Lead) => void;
+  onSuccess: () => void;
 }
 
-const AddLeadForm: React.FC<AddLeadFormProps> = ({ onClose, onAddLead }) => {
-  const { lead, setLead, handleAddContact, handleRemoveContact, handleContactChange, handleSubmit } = useAddLead(onClose, onAddLead);
+const AddLeadForm: React.FC<AddLeadFormProps> = ({ onClose, onSuccess }) => {
+  const { lead, setLead, handleAddContact, handleRemoveContact, handleContactChange, handleSubmit } = useAddLead(onClose, onSuccess);
 
   return (
     <div className="form-container">
@@ -28,16 +28,19 @@ const AddLeadForm: React.FC<AddLeadFormProps> = ({ onClose, onAddLead }) => {
             {lead.contacts.map((contact, index) => (
               <LeadContactForm
                 key={index}
-                contact={contact}
+                contacts={lead.contacts}
                 index={index}
+                onAddContact={handleAddContact}
                 handleContactChange={handleContactChange}
                 handleRemoveContact={handleRemoveContact}
               />
             ))}
+          </div>
+          {lead.contacts.length === 0 && (
             <button type="button" onClick={handleAddContact} className="add-button">
               <PlusOutlined />
             </button>
-          </div>
+          )}
         </fieldset>
         <div className="form-actions">
           <button type="submit" className="btn-submit">

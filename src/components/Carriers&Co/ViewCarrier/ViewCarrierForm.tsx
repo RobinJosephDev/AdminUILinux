@@ -99,18 +99,33 @@ const ViewCarrierForm: React.FC<ViewCarrierFormProps> = ({ carrier, onClose }) =
         <ViewCargoInsurance formCarrier={formCarrier} />
         <ViewPrimaryAddress formCarrier={formCarrier} />
         <ViewMailingAddress formCarrier={formCarrier} />
-        {formCarrier.contacts.map((contact, index) => (
-          <ViewCarrierContact key={index} contact={contact} index={index} />
-        ))}
-
-        {formCarrier.equipments.map((equipment, index) => (
-          <ViewCarrierEquipment key={index} equipment={equipment} index={index} />
-        ))}
-
-        {formCarrier.lanes.map((lane, index) => (
-          <ViewCarrierLane key={index} lane={lane} index={index} />
-        ))}
-
+        <fieldset className="form-section">
+          <legend>Contacts</legend>
+          <hr />
+          <div className="form-row">
+            {formCarrier.contacts.map((contact, index) => (
+              <ViewCarrierContact key={index} contact={contact} index={index} />
+            ))}
+          </div>
+        </fieldset>
+        <fieldset className="form-section">
+          <legend>Equipments</legend>
+          <hr />
+          <div className="form-row">
+            {formCarrier.equipments.map((equipment, index) => (
+              <ViewCarrierEquipment key={index} equipment={equipment} index={index} />
+            ))}
+          </div>
+        </fieldset>
+        <fieldset className="form-section">
+          <legend>Lanes</legend>
+          <hr />
+          <div className="form-row">
+            {formCarrier.lanes.map((lane, index) => (
+              <ViewCarrierLane key={index} lane={lane} index={index} />
+            ))}
+          </div>
+        </fieldset>
         <div className="form-actions">
           <button type="button" className="btn-cancel" onClick={onClose} style={{ padding: '9px 15px' }}>
             Cancel

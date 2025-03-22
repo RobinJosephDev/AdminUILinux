@@ -39,6 +39,7 @@ const AddVendorForm: React.FC<AddVendorFormProps> = ({ onClose, onSuccess }) => 
         {/* Contacts Section */}
         <fieldset className="form-section">
           <legend>Contacts</legend>
+          <hr />
           <div className="form-row">
             {vendor.contacts.map((contact, index) => (
               <VendorContact

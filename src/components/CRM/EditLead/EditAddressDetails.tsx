@@ -1,134 +1,120 @@
-import { useEffect, useRef } from 'react';
+import { useState } from 'react';
 import { Lead } from '../../../types/LeadTypes';
+import { z } from 'zod';
+import DOMPurify from 'dompurify';
+import { useGoogleAutocomplete } from '../../../hooks/useGoogleAutocomplete';
 
-type EditAddressDetailsProps = {
+declare global {
+  interface Window {
+    google?: any;
+  }
+}
+
+interface EditAddressDetailsProps {
   formLead: Lead;
-  setFormLead: (formLead: Lead) => void;
-};
+  setFormLead: React.Dispatch<React.SetStateAction<Lead>>;
+}
 
-function EditAddressDetails({ formLead, setFormLead }: EditAddressDetailsProps) {
-  const addressRef = useRef<HTMLInputElement>(null);
+const addressSchema = z.object({
+  address: z
+    .string()
+    .max(255, 'Address is too long')
+    .regex(/^[a-zA-Z0-9\s,.'-]*$/, 'Invalid street format')
+    .optional(),
+  city: z
+    .string()
+    .max(200, 'City name is too long')
+    .regex(/^[a-zA-Z\s.'-]*$/, 'Invalid city format')
+    .optional(),
+  state: z
+    .string()
+    .max(200, 'Invalid state')
+    .regex(/^[a-zA-Z\s.'-]*$/, 'Invalid state format')
+    .optional(),
+  country: z
+    .string()
+    .max(100, 'Invalid country')
+    .regex(/^[a-zA-Z\s.'-]*$/, 'Invalid country format')
+    .optional(),
+  postal_code: z
+    .string()
+    .max(20, 'Postal code cannot exceed 20 characters')
+    .regex(/^[a-zA-Z0-9-\s ]*$/, 'Invalid postal code')
+    .optional(),
+  unit_no: z
+    .string()
+    .max(30, 'Phone cannot exceed 30 characters')
+    .regex(/^[0-9-+()\s]*$/, 'Invalid phone format')
+    .optional(),
+});
 
-  useEffect(() => {
-    const loadGoogleMapsApi = () => {
-      if (window.google && window.google.maps) {
-        initializeAutocomplete();
-        return;
-      }
-
-      if (document.querySelector('#google-maps-script')) {
-        return; // Prevent duplicate script injection
-      }
-
-      const script = document.createElement('script');
-      script.id = 'google-maps-script';
-      script.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent('YOUR_API_KEY')}&libraries=places`;
-      script.async = true;
-      script.defer = true;
-
-      script.onload = () => {
-        if (window.google && window.google.maps) {
-          initializeAutocomplete();
-        } else {
-          console.error('Google Maps API failed to load.');
-        }
-      };
-
-      script.onerror = () => {
-        console.error('Failed to load Google Maps API.');
-      };
-
-      document.head.appendChild(script);
-    };
-
-    loadGoogleMapsApi();
-  }, []);
-
-  const initializeAutocomplete = () => {
-    if (!addressRef.current) return;
-
-    const autocomplete = new window.google.maps.places.Autocomplete(addressRef.current, {
-      types: ['address'],
-    });
-
-    autocomplete.addListener('place_changed', () => {
-      const place = autocomplete.getPlace();
-      if (!place || !place.address_components) {
-        console.error('No valid address selected');
-        return;
-      }
-      updateAddressFields(place);
-    });
-  };
+const EditAddressDetails: React.FC<EditAddressDetailsProps> = ({ formLead, setFormLead }) => {
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   const updateAddressFields = (place: google.maps.places.PlaceResult) => {
-    const addressComponents = (place.address_components || []) as google.maps.GeocoderAddressComponent[];
+    const getComponent = (type: string) => place.address_components?.find((c) => c.types.includes(type))?.long_name || '';
+    setFormLead((prev) => ({
+      ...prev,
+      address: `${getComponent('street_number')} ${getComponent('route')}`.trim(),
+      city: getComponent('locality'),
+      state: getComponent('administrative_area_level_1'),
+      country: getComponent('country'),
+      postal_code: getComponent('postal_code'),
+    }));
+  };
+  const addressRef = useGoogleAutocomplete(updateAddressFields);
 
-    const streetNumber = getComponent('street_number', '', addressComponents);
-    const route = getComponent('route', '', addressComponents);
-    const mainAddress = `${streetNumber} ${route}`.trim();
+  const validateAndSetField = (field: keyof Lead, value: string) => {
+    const sanitizedValue = DOMPurify.sanitize(value);
+    let error = '';
 
-    setFormLead({
-      ...formLead,
-      address: mainAddress,
-      city: getComponent('locality', '', addressComponents),
-      state: getComponent('administrative_area_level_1', '', addressComponents),
-      country: getComponent('country', '', addressComponents),
-      postal_code: getComponent('postal_code', '', addressComponents),
-    });
+    const tempLead = { ...formLead, [field]: sanitizedValue };
+    const result = addressSchema.safeParse(tempLead);
+
+    if (!result.success) {
+      const fieldError = result.error.errors.find((err) => err.path[0] === field);
+      error = fieldError ? fieldError.message : '';
+    }
+
+    setErrors((prevErrors) => ({ ...prevErrors, [field]: error }));
+    setFormLead(tempLead);
   };
 
-  const getComponent = (type: string, fallback: string, components: google.maps.GeocoderAddressComponent[]) => {
-    const component = components.find((c) => c.types.includes(type));
-    return (component?.long_name ?? fallback).trim();
-  };
+  const fields = [
+    { label: 'Address', key: 'address', placeholder: 'Enter street address' },
+    { label: 'City', key: 'city', placeholder: 'Enter city name' },
+    { label: 'State', key: 'state', placeholder: 'Enter state' },
+    { label: 'Country', key: 'country', placeholder: 'Enter country' },
+    { label: 'Postal Code', key: 'postal_code', placeholder: 'Enter postal code' },
+    { label: 'Unit No.', key: 'unit_no', placeholder: 'Enter unit number' },
+  ];
 
   return (
     <fieldset className="form-section">
       <legend>Address Details</legend>
       <hr />
-      <div className="form-row" style={{ display: 'flex', gap: '1rem' }}>
-        <div className="form-group" style={{ flex: 1 }}>
-          <label htmlFor="address">Address</label>
-          <input
-            type="text"
-            value={formLead.address}
-            onChange={(e) => setFormLead({ ...formLead, address: e.target.value.trim() })}
-            id="address"
-            ref={addressRef}
-            placeholder="Enter your address"
-          />
-        </div>
-        <div className="form-group" style={{ flex: 1 }}>
-          <label htmlFor="unitNo">Unit No</label>
-          <input type="text" value={formLead.unit_no} onChange={(e) => setFormLead({ ...formLead, unit_no: e.target.value.trim() })} id="unitNo" />
-        </div>
-        <div className="form-group" style={{ flex: 1 }}>
-          <label htmlFor="city">City</label>
-          <input type="text" value={formLead.city} onChange={(e) => setFormLead({ ...formLead, city: e.target.value.trim() })} id="city" />
-        </div>
-      </div>
-      <div className="form-row" style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
-        <div className="form-group" style={{ flex: 1 }}>
-          <label htmlFor="state">State</label>
-          <input type="text" value={formLead.state} onChange={(e) => setFormLead({ ...formLead, state: e.target.value.trim() })} id="state" />
-        </div>
-        <div className="form-group" style={{ flex: 1 }}>
-          <label htmlFor="country">Country</label>
-          <input type="text" value={formLead.country} onChange={(e) => setFormLead({ ...formLead, country: e.target.value.trim() })} id="country" />
-        </div>
-        <div className="form-group" style={{ flex: 1 }}>
-          <label htmlFor="postalCode">Postal Code</label>
-          <input
-            type="text"
-            value={formLead.postal_code}
-            onChange={(e) => setFormLead({ ...formLead, postal_code: e.target.value.trim() })}
-            id="postalCode"
-          />
-        </div>
+      <div className="form-grid" style={{ display: 'grid', gap: '1rem', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))' }}>
+        {fields.map(({ label, key, placeholder }) => (
+          <div className="form-group" key={key}>
+            <label htmlFor={key}>{label}</label>
+            <input
+              type="text"
+              id={key}
+              placeholder={placeholder}
+              value={(formLead[key as keyof Lead] as string | number) || ''}
+              onChange={(e) => validateAndSetField(key as keyof Lead, e.target.value)}
+              ref={key === 'address' ? addressRef : undefined}
+            />
+            {errors[key] && (
+              <span className="error" style={{ color: 'red' }}>
+                {errors[key]}
+              </span>
+            )}
+          </div>
+        ))}
       </div>
     </fieldset>
   );
-}
+};
 
 export default EditAddressDetails;

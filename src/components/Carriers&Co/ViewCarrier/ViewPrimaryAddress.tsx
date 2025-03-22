@@ -9,6 +9,7 @@ const ViewPrimaryAddress: FC<ViewPrimaryAddressProps> = ({ formCarrier }) => {
   return (
     <fieldset>
       <legend>Primary Address</legend>
+      <hr />
       <div className="form-row" style={{ display: 'flex', gap: '1rem' }}>
         <div className="form-group" style={{ flex: 1 }}>
           <label htmlFor="primaryAddressStreet">Street</label>

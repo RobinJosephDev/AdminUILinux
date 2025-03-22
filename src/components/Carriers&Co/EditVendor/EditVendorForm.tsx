@@ -53,6 +53,7 @@ const EditVendorForm: React.FC<EditVendorFormProps> = ({ vendor, onClose, onUpda
             {/* Contacts Section */}
             <fieldset className="form-section">
               <legend>Contacts</legend>
+              <hr />
               <div className="form-row">
                 {formVendor.contacts?.map((contact, index) => (
                   <VendorContact

@@ -155,6 +155,7 @@ const EditVendorMailingAddress: FC<EditVendorMailingAddressProps> = ({ formVendo
   return (
     <fieldset>
       <legend>Mailing Address</legend>
+      <hr />
       <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}>
         <input
           type="checkbox"

@@ -99,6 +99,7 @@ const VendorPrimaryAddress: FC<VendorPrimaryAddressProps> = ({ vendor, setVendor
   return (
     <fieldset>
       <legend>Primary Address</legend>
+      <hr />
       <div className="form-grid" style={{ display: 'grid', gap: '1rem', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))' }}>
         {fields.map(({ label, key, placeholder }) => (
           <div className="form-group" key={key}>

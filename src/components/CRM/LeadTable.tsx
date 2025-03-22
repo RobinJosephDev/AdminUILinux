@@ -12,6 +12,7 @@ import Pagination from '../common/Pagination';
 
 const LeadTable: React.FC = () => {
   const {
+    fetchLeads,
     leads,
     loading,
     searchQuery,
@@ -19,19 +20,15 @@ const LeadTable: React.FC = () => {
     sortBy,
     sortDesc,
     selectedIds,
-    setSelectedIds,
     paginatedData,
     totalPages,
     currentPage,
-    setCurrentPage,
     isEditModalOpen,
     isAddModalOpen,
     isViewModalOpen,
     selectedLead,
     openEditModal,
-    closeEditModal,
     openViewModal,
-    closeViewModal,
     setEditModalOpen,
     setAddModalOpen,
     setViewModalOpen,
@@ -170,7 +167,7 @@ const LeadTable: React.FC = () => {
         {selectedLead && <EditLeadForm lead={selectedLead} onClose={() => setEditModalOpen(false)} onUpdate={updateLead} />}
       </Modal>
       <Modal isOpen={isAddModalOpen} onClose={() => setAddModalOpen(false)} title="Add Lead">
-        <AddLeadForm onClose={() => setAddModalOpen(false)} onAddLead={(newLead) => updateLead(newLead)} />
+        <AddLeadForm onClose={() => setAddModalOpen(false)} onSuccess={fetchLeads} />
       </Modal>
       <Modal isOpen={isViewModalOpen} onClose={() => setViewModalOpen(false)} title="Lead Details">
         {selectedLead && <ViewLeadForm lead={selectedLead} onClose={() => setViewModalOpen(false)} />}

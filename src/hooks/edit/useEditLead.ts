@@ -1,7 +1,15 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
-import { Lead } from '../../types/LeadTypes';
+import { Lead, Contact } from '../../types/LeadTypes';
+
+// Helper function to format date strings
+const formatDateForInput = (date: string | Date) => {
+  if (!date) return '';
+  const d = typeof date === 'string' ? new Date(date) : date;
+  if (isNaN(d.getTime())) return '';
+  return d.toISOString().split('T')[0];
+};
 
 const API_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api';
 
@@ -35,7 +43,13 @@ const useEditLead = (lead: Lead | null, onClose: () => void, onUpdate: (lead: Le
   useEffect(() => {
     if (lead) {
       const parsedContacts = Array.isArray(lead.contacts) ? lead.contacts : JSON.parse(lead.contacts || '[]');
-      setFormLead({ ...lead, contacts: parsedContacts.length > 0 ? parsedContacts : [] });
+      const updatedLead = {
+        ...lead,
+        contacts: parsedContacts.length > 0 ? parsedContacts : [],
+        lead_date: formatDateForInput(lead.lead_date),
+        follow_up_date: formatDateForInput(lead.follow_up_date),
+      };
+      setFormLead(updatedLead);
     }
   }, [lead]);
 
@@ -77,20 +91,17 @@ const useEditLead = (lead: Lead | null, onClose: () => void, onUpdate: (lead: Le
   };
 
   const handleAddContact = () => {
-    setFormLead((prev) => ({
-      ...prev,
-      contacts: [...prev.contacts, { name: '', phone: '', email: '' }],
-    }));
-  };
-  const handleContactChange = (index: number, updatedContact: any) => {
-    const updatedContacts = [...formLead.contacts];
-    updatedContacts[index] = updatedContact;
-    setFormLead({ ...formLead, contacts: updatedContacts });
+    setFormLead((prevLead) => (prevLead ? { ...prevLead, contacts: [...prevLead.contacts, { name: '', phone: '', email: '' }] } : prevLead));
   };
 
   const handleRemoveContact = (index: number) => {
-    const updatedContacts = formLead.contacts.filter((_, i) => i !== index);
-    setFormLead({ ...formLead, contacts: updatedContacts });
+    setFormLead((prevLead) => (prevLead ? { ...prevLead, contacts: prevLead.contacts.filter((_, i) => i !== index) } : prevLead));
+  };
+
+  const handleContactChange = (index: number, updatedContact: Contact) => {
+    setFormLead((prevLead) =>
+      prevLead ? { ...prevLead, contacts: prevLead.contacts.map((contact, i) => (i === index ? updatedContact : contact)) } : prevLead
+    );
   };
 
   return {
