@@ -4,8 +4,9 @@ export interface User {
   username: string;
   email: string;
   password: string;
-  role: string;
+  password_confirmation:string;
   emp_code: string;
-  created_at?: string; 
-  updated_at?: string; 
+  role: string;
+  created_at: string;
+  updated_at: string;
 }

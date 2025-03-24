@@ -1,99 +1,81 @@
-import { useState, useEffect } from 'react';
-import axios from 'axios';
-import Swal from 'sweetalert2';
-import Table from '../common/Table';
+import { Table, TableHeader } from '../common/Table';
 import Modal from '../common/Modal';
 import EditUserForm from './EditUserForm';
 import { EditOutlined, DeleteOutlined, PlusOutlined, SearchOutlined, EyeOutlined } from '@ant-design/icons';
 import AddUserForm from './AddUserForm';
 import ViewUserForm from './ViewUserForm';
-import { User } from './UserTypes'; 
+import Pagination from '../common/Pagination';
+import useUserTable from '../../hooks/table/useUserTable';
 
 const UserTable: React.FC = () => {
-  const [users, setUsers] = useState<User[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [searchQuery, setSearchQuery] = useState<string>('');
-  const [sortBy, setSortBy] = useState<keyof User>('created_at');
-  const [sortDesc, setSortDesc] = useState<boolean>(true);
-  const [currentPage, setCurrentPage] = useState<number>(1);
-  const [selectedUser, setSelectedUser] = useState<User | null>(null);
-  const [isEditModalOpen, setEditModalOpen] = useState<boolean>(false);
-  const [isAddModalOpen, setAddModalOpen] = useState<boolean>(false);
-  const [isViewModalOpen, setViewModalOpen] = useState<boolean>(false);
-  const [selectedIds, setSelectedIds] = useState<number[]>([]);
-  const [rowsPerPage, setRowsPerPage] = useState<number>(100);
-  const API_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api';
+  const {
+    fetchUsers,
+    users,
+    setSelectedUser,
+    loading,
+    searchQuery,
+    setSearchQuery,
+    sortBy,
+    sortDesc,
+    paginatedData,
+    totalPages,
+    currentPage,
+    handlePageChange,
+    handleSort,
+    selectedIds,
+    toggleSelectAll,
+    toggleSelect,
+    deleteSelected,
+    isEditModalOpen,
+    isAddModalOpen,
+    isViewModalOpen,
+    setEditModalOpen,
+    setAddModalOpen,
+    setViewModalOpen,
+    selectedUser,
+    openEditModal,
+    openViewModal,
+    updateUser,
+  } = useUserTable();
 
-  const fetchUsers = async () => {
-    try {
-      const token = localStorage.getItem('token');
-      if (!token) throw new Error('No token found');
-      setLoading(true);
-      const { data } = await axios.get<User[]>(`${API_URL}/users`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setUsers(data);
-    } catch (error: unknown) {
-      console.error('Error loading users:', error);
-      handleFetchError(error);
-    } finally {
-      setLoading(false);
-    }
+  const renderSortableHeader = (header: TableHeader) => {
+    if (header.key === 'checkbox' || header.key === 'actions') return header.label;
+    return (
+      <div className="sortable-header" onClick={() => handleSort(header.key)}>
+        {header.label}
+        <span className="sort-icon">{sortBy === header.key ? (sortDesc ? '▼' : '▲') : '▼'}</span>
+      </div>
+    );
   };
 
-  useEffect(() => {
-    fetchUsers();
-  }, []);
-
-  const handleFetchError = (error: any) => {
-    if (axios.isAxiosError(error) && error.response?.status === 401) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Unauthorized',
-        text: 'You need to log in to access this resource.',
-      });
-    }
-  };
-
-  const handleSort = (column: keyof User) => {
-    if (sortBy === column) {
-      setSortDesc(!sortDesc);
-    } else {
-      setSortBy(column);
-      setSortDesc(true);
-    }
-  };
-
-  const openEditModal = (user: User) => {
-    setSelectedUser(user);
-    setEditModalOpen(true);
-  };
-  const closeEditModal = () => setEditModalOpen(false);
-  const openAddModal = () => setAddModalOpen(true);
-  const closeAddModal = () => setAddModalOpen(false);
-  const openViewModal = (user: User) => {
-    setSelectedUser(user);
-    setViewModalOpen(true);
-  };
-  const closeViewModal = () => setViewModalOpen(false);
-
-  const filteredUsers = users.filter((user) => Object.values(user).some((val) => val?.toString().toLowerCase().includes(searchQuery.toLowerCase())));
-
-  const sortedUsers = filteredUsers.sort((a, b) => {
-    let valA = a[sortBy] ?? '';
-    let valB = b[sortBy] ?? '';
-    if (sortBy === 'created_at' || sortBy === 'updated_at') {
-      valA = new Date(valA).getTime();
-      valB = new Date(valB).getTime();
-    }
-    if (typeof valA === 'string' && typeof valB === 'string') {
-      return sortDesc ? valB.localeCompare(valA) : valA.localeCompare(valB);
-    }
-    return 0;
-  });
-
-  const paginatedData = sortedUsers.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage);
-  const totalPages = Math.ceil(filteredUsers.length / rowsPerPage);
+  const headers: TableHeader[] = [
+    {
+      key: 'checkbox',
+      label: (
+        <input type="checkbox" onChange={toggleSelectAll} checked={selectedIds.length === paginatedData.length && paginatedData.length > 0} />
+      ) as JSX.Element,
+      render: (item) => <input type="checkbox" checked={selectedIds.includes(item.id!)} onChange={() => toggleSelect(item.id)} />,
+    },
+    { key: 'name', label: 'Name', render: (item) => item.name || <span>-</span> },
+    { key: 'username', label: 'Username', render: (item) => item.username || <span>-</span> },
+    { key: 'email', label: 'Email', render: (item) => item.email || <span>-</span> },
+    { key: 'emp_code', label: 'Employee Code', render: (item) => item.emp_code || <span>-</span> },
+    { key: 'role', label: 'Role', render: (item) => item.role || <span>-</span> },
+    {
+      key: 'actions',
+      label: 'Actions',
+      render: (item) => (
+        <>
+          <button onClick={() => openViewModal(item)} className="btn-view">
+            <EyeOutlined />
+          </button>
+          <button onClick={() => openEditModal(item)} className="btn-edit">
+            <EditOutlined />
+          </button>
+        </>
+      ),
+    },
+  ];
 
   return (
     <div>
@@ -102,13 +84,19 @@ const UserTable: React.FC = () => {
           <h1 className="page-heading">Users</h1>
         </div>
         <div className="search-container">
-          <SearchOutlined className="search-icon" />
-          <input className="search-bar" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
-          <button onClick={openAddModal} className="add-button">
+          <div className="search-input-wrapper">
+            <SearchOutlined className="search-icon" />
+            <input className="search-bar" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
+          </div>
+          <button onClick={() => setAddModalOpen(true)} className="add-button">
             <PlusOutlined />
+          </button>
+          <button onClick={deleteSelected} className="delete-button">
+            <DeleteOutlined />
           </button>
         </div>
       </div>
+
       {loading ? (
         <div>Loading...</div>
       ) : users.length === 0 ? (
@@ -116,43 +104,28 @@ const UserTable: React.FC = () => {
       ) : (
         <Table
           data={paginatedData}
-          headers={[
-            { key: 'name', label: 'Name' },
-            { key: 'username', label: 'Username' },
-            { key: 'email', label: 'Email' },
-            { key: 'role', label: 'Role' },
-            { key: 'created_at', label: 'Created At' },
-            { key: 'updated_at', label: 'Updated At' },
-            {
-              key: 'actions',
-              label: 'Actions',
-              render: (user) => (
-                <>
-                  <button onClick={() => openViewModal(user)}>
-                    <EyeOutlined />
-                  </button>
-                  <button onClick={() => openEditModal(user)}>
-                    <EditOutlined />
-                  </button>
-                </>
-              ),
-            },
-          ]}
-          handleSort={(key: string) => handleSort(key as keyof User)}
+          headers={headers.map((header) => ({
+            ...header,
+            label: renderSortableHeader(header),
+          }))}
+          handleSort={handleSort}
           sortBy={sortBy}
           sortDesc={sortDesc}
         />
       )}
-      <Modal isOpen={isEditModalOpen} onClose={closeEditModal} title="Edit User">
-        {selectedUser && <EditUserForm selectedUser={selectedUser} onClose={closeEditModal} onUpdate={fetchUsers} />}
+
+      <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
+
+      <Modal isOpen={isEditModalOpen} title="Edit Broker" onClose={() => setEditModalOpen(false)}>
+        {selectedUser && <EditUserForm user={selectedUser} onUpdate={updateUser} onClose={() => setEditModalOpen(false)} />}
       </Modal>
 
-      <Modal isOpen={isAddModalOpen} onClose={closeAddModal} title="Add User">
-        <AddUserForm onClose={closeAddModal} onAddUser={fetchUsers} />
+      <Modal isOpen={isAddModalOpen} onClose={() => setAddModalOpen(false)} title="Add User">
+        <AddUserForm onClose={() => setAddModalOpen(false)} onSuccess={fetchUsers} />{' '}
       </Modal>
 
-      <Modal isOpen={isViewModalOpen} onClose={closeViewModal} title="User Details">
-        {selectedUser && <ViewUserForm user={selectedUser} onClose={closeViewModal} />}
+      <Modal isOpen={isViewModalOpen} onClose={() => setViewModalOpen(false)} title="User Details">
+        {selectedUser && <ViewUserForm user={selectedUser} onClose={() => setViewModalOpen(false)} />}
       </Modal>
     </div>
   );
