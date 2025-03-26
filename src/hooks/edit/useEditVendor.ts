@@ -92,32 +92,36 @@ const useEditVendor = (vendor: Vendor | null, onClose: () => void, onUpdate: (ve
     }
   }, [vendor]);
 
-  const validateVendor = () => formVendor?.type;
+  const validateVendor = (): boolean => {
+    return !!formVendor.type && !!formVendor.legal_name && !!formVendor.remit_name && !!formVendor.vendor_type && !!formVendor.service;
+  };
 
   const updateVendor = async () => {
-    if (validateVendor() && formVendor) {
-      try {
-        const token = localStorage.getItem('token');
-        if (!token) {
-          Swal.fire({ icon: 'error', title: 'Unauthorized', text: 'You are not logged in. Please log in again.' });
-          return;
-        }
-
-        const response = await axios.put(`${API_URL}/vendor/${formVendor.id}`, formVendor, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-
-        Swal.fire({ icon: 'success', title: 'Updated!', text: 'Vendor data has been updated successfully.' });
-        onUpdate(response.data);
-        onClose();
-      } catch (error: any) {
-        console.error('Error updating vendor:', error);
-        Swal.fire({
-          icon: 'error',
-          title: 'Oops...',
-          text: error.response?.status === 401 ? 'Unauthorized. Please log in again.' : 'Failed to update vendor.',
-        });
+    if (!validateVendor()) {
+      Swal.fire('Validation Error', 'Please fill in all required fields.', 'error');
+      return;
+    }
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        Swal.fire({ icon: 'error', title: 'Unauthorized', text: 'You are not logged in. Please log in again.' });
+        return;
       }
+
+      const response = await axios.put(`${API_URL}/vendor/${formVendor.id}`, formVendor, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      Swal.fire({ icon: 'success', title: 'Updated!', text: 'Vendor data has been updated successfully.' });
+      onUpdate(response.data);
+      onClose();
+    } catch (error: any) {
+      console.error('Error updating vendor:', error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: error.response?.status === 401 ? 'Unauthorized. Please log in again.' : 'Failed to update vendor.',
+      });
     }
   };
 

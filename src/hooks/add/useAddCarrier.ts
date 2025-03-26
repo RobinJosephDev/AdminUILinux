@@ -66,69 +66,16 @@ export const useAddCarrier = (onClose: () => void, onSuccess: () => void) => {
   };
   const [carrier, setCarrier] = useState<Carrier>(defaultCarrier);
 
-  const handleAddContact = () => {
-    setCarrier((prev) => ({
-      ...prev,
-      contacts: [...prev.contacts, { name: '', phone: '', email: '', fax: '', designation: '' }],
-    }));
-  };
-
-  const handleRemoveContact = (index: number) => {
-    setCarrier((prev) => ({
-      ...prev,
-      contacts: prev.contacts.filter((_, i) => i !== index),
-    }));
-  };
-
-  const handleContactChange = (index: number, updatedContact: Contact) => {
-    const updatedContacts = carrier.contacts.map((contact, i) => (i === index ? updatedContact : contact));
-    setCarrier((prevCarrier) => ({
-      ...prevCarrier,
-      contacts: updatedContacts,
-    }));
-  };
-
-  const handleAddEquipment = () => {
-    setCarrier((prev) => ({ ...prev, equipments: [...prev.equipments, { equipment: '' }] }));
-  };
-
-  const handleRemoveEquipment = (index: number) => {
-    setCarrier((prev) => ({
-      ...prev,
-      equipments: prev.equipments.filter((_, i) => i !== index),
-    }));
-  };
-
-  const handleEquipmentChange = (index: number, updatedEquipment: Equipment) => {
-    const updatedEquipments = carrier.equipments.map((equipment, i) => (i === index ? updatedEquipment : equipment));
-    setCarrier((prevCarrier) => ({
-      ...prevCarrier,
-      equipments: updatedEquipments,
-    }));
-  };
-
-  const handleAddLane = () => {
-    setCarrier((prev) => ({ ...prev, lanes: [...prev.lanes, { from: '', to: '' }] }));
-  };
-
-  const handleRemoveLane = (index: number) => {
-    setCarrier((prev) => ({
-      ...prev,
-      lanes: prev.lanes.filter((_, i) => i !== index),
-    }));
-  };
-
-  const handleLaneChange = (index: number, updatedLane: Lane) => {
-    const updatedLanes = carrier.lanes.map((lane, i) => (i === index ? updatedLane : lane));
-    setCarrier((prevCarrier) => ({
-      ...prevCarrier,
-      lanes: updatedLanes,
-    }));
+  const validateCarrier = (): boolean => {
+    return !!carrier.dba && !!carrier.legal_name;
   };
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-
+    if (!validateCarrier()) {
+      Swal.fire('Validation Error', 'Please fill in all required fields.', 'error');
+      return;
+    }
     try {
       const token = localStorage.getItem('token');
       if (!token) {
@@ -150,12 +97,12 @@ export const useAddCarrier = (onClose: () => void, onSuccess: () => void) => {
       });
 
       if (carrier.brok_carr_aggmt && carrier.brok_carr_aggmt instanceof File) {
-        formData.append("brok_carr_aggmt", carrier.brok_carr_aggmt);
+        formData.append('brok_carr_aggmt', carrier.brok_carr_aggmt);
       }
-      
+
       if (carrier.coi_cert && carrier.coi_cert instanceof File) {
-        formData.append("coi_cert", carrier.coi_cert);
-      }      
+        formData.append('coi_cert', carrier.coi_cert);
+      }
 
       const response = carrier.id
         ? await axios.put(`${API_URL}/carrier/${carrier.id}`, carrier, { headers })
@@ -230,6 +177,67 @@ export const useAddCarrier = (onClose: () => void, onSuccess: () => void) => {
       updated_at: '',
     });
   };
+
+  const handleAddContact = () => {
+    setCarrier((prev) => ({
+      ...prev,
+      contacts: [...prev.contacts, { name: '', phone: '', email: '', fax: '', designation: '' }],
+    }));
+  };
+
+  const handleRemoveContact = (index: number) => {
+    setCarrier((prev) => ({
+      ...prev,
+      contacts: prev.contacts.filter((_, i) => i !== index),
+    }));
+  };
+
+  const handleContactChange = (index: number, updatedContact: Contact) => {
+    const updatedContacts = carrier.contacts.map((contact, i) => (i === index ? updatedContact : contact));
+    setCarrier((prevCarrier) => ({
+      ...prevCarrier,
+      contacts: updatedContacts,
+    }));
+  };
+
+  const handleAddEquipment = () => {
+    setCarrier((prev) => ({ ...prev, equipments: [...prev.equipments, { equipment: '' }] }));
+  };
+
+  const handleRemoveEquipment = (index: number) => {
+    setCarrier((prev) => ({
+      ...prev,
+      equipments: prev.equipments.filter((_, i) => i !== index),
+    }));
+  };
+
+  const handleEquipmentChange = (index: number, updatedEquipment: Equipment) => {
+    const updatedEquipments = carrier.equipments.map((equipment, i) => (i === index ? updatedEquipment : equipment));
+    setCarrier((prevCarrier) => ({
+      ...prevCarrier,
+      equipments: updatedEquipments,
+    }));
+  };
+
+  const handleAddLane = () => {
+    setCarrier((prev) => ({ ...prev, lanes: [...prev.lanes, { from: '', to: '' }] }));
+  };
+
+  const handleRemoveLane = (index: number) => {
+    setCarrier((prev) => ({
+      ...prev,
+      lanes: prev.lanes.filter((_, i) => i !== index),
+    }));
+  };
+
+  const handleLaneChange = (index: number, updatedLane: Lane) => {
+    const updatedLanes = carrier.lanes.map((lane, i) => (i === index ? updatedLane : lane));
+    setCarrier((prevCarrier) => ({
+      ...prevCarrier,
+      lanes: updatedLanes,
+    }));
+  };
+
   return {
     carrier,
     setCarrier,

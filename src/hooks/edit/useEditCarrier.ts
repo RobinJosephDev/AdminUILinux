@@ -94,20 +94,25 @@ const useEditCarrier = (carrier: Carrier | null, onClose: () => void, onUpdate: 
     }
   }, [carrier]);
 
-  const validateCarrier = () => formCarrier?.dba;
+  const validateCarrier = (): boolean => {
+    return !!formCarrier.dba && !!formCarrier.legal_name;
+  };
 
   const updateCarrier = async () => {
-    if (validateCarrier() && formCarrier) {
-      try {
-        const token = localStorage.getItem('token');
-        if (!token) {
-          Swal.fire({
-            icon: 'error',
-            title: 'Unauthorized',
-            text: 'You are not logged in. Please log in again.',
-          });
-          return;
-        }
+    if (!validateCarrier()) {
+      Swal.fire('Validation Error', 'Please fill in all required fields.', 'error');
+      return;
+    }
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Unauthorized',
+          text: 'You are not logged in. Please log in again.',
+        });
+        return;
+      }
 
       const headers = { Authorization: `Bearer ${token}` };
       const formData = new FormData();
@@ -123,12 +128,12 @@ const useEditCarrier = (carrier: Carrier | null, onClose: () => void, onUpdate: 
       });
 
       if (formCarrier.brok_carr_aggmt && formCarrier.brok_carr_aggmt instanceof File) {
-        formData.append("brok_carr_aggmt", formCarrier.brok_carr_aggmt);
+        formData.append('brok_carr_aggmt', formCarrier.brok_carr_aggmt);
       }
-      
+
       if (formCarrier.coi_cert && formCarrier.coi_cert instanceof File) {
-        formData.append("coi_cert", formCarrier.coi_cert);
-      }      
+        formData.append('coi_cert', formCarrier.coi_cert);
+      }
 
       const response = formCarrier.id
         ? await axios.put(`${API_URL}/carrier/${formCarrier.id}`, formCarrier, { headers })
@@ -142,7 +147,6 @@ const useEditCarrier = (carrier: Carrier | null, onClose: () => void, onUpdate: 
       Swal.fire('Error', 'An error occurred while processing the carrier.', 'error');
     }
   };
-  }
   //Contacts
   const handleAddContact = () => {
     setFormCarrier((prevCarrier) =>

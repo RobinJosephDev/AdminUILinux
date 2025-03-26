@@ -32,30 +32,18 @@ export const useAddLead = (onClose: () => void, onSuccess: () => void) => {
     updated_at: '',
   });
 
-  const handleAddContact = () => {
-    setLead((prev) => ({
-      ...prev,
-      contacts: [...prev.contacts, { name: '', phone: '', email: '', fax: '', designation: '' }],
-    }));
-  };
-
-  const handleRemoveContact = (index: number) => {
-    setLead((prevVendor) => ({
-      ...prevVendor,
-      contacts: prevVendor.contacts.filter((_, i) => i !== index),
-    }));
-  };
-
-  const handleContactChange = (index: number, updatedContact: Contact) => {
-    const updatedContacts = lead.contacts.map((contact, i) => (i === index ? updatedContact : contact));
-    setLead((prevVendor) => ({
-      ...prevVendor,
-      contacts: updatedContacts,
-    }));
+  const validateLead = (): boolean => {
+    return !!lead.lead_no && !!lead.lead_date && !!lead.lead_type && !!lead.lead_status;
   };
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
+
+    if (!validateLead()) {
+      Swal.fire('Validation Error', 'Please fill in all required fields.', 'error');
+      return;
+    }
+
     try {
       const token = localStorage.getItem('token');
       if (!token) {
@@ -103,6 +91,28 @@ export const useAddLead = (onClose: () => void, onSuccess: () => void) => {
       created_at: '',
       updated_at: '',
     });
+  };
+
+  const handleAddContact = () => {
+    setLead((prev) => ({
+      ...prev,
+      contacts: [...prev.contacts, { name: '', phone: '', email: '', fax: '', designation: '' }],
+    }));
+  };
+
+  const handleRemoveContact = (index: number) => {
+    setLead((prevVendor) => ({
+      ...prevVendor,
+      contacts: prevVendor.contacts.filter((_, i) => i !== index),
+    }));
+  };
+
+  const handleContactChange = (index: number, updatedContact: Contact) => {
+    const updatedContacts = lead.contacts.map((contact, i) => (i === index ? updatedContact : contact));
+    setLead((prevVendor) => ({
+      ...prevVendor,
+      contacts: updatedContacts,
+    }));
   };
 
   return {

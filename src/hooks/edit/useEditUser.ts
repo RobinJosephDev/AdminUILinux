@@ -42,7 +42,15 @@ const useEditUser = ({ user, onUpdate, onClose }: UseEditUserProps) => {
     }
   }, [user]);
 
+  const validateUser = (): boolean => {
+    return !!(formUser.name && formUser.username && formUser.password && formUser.emp_code && formUser.email && formUser.role);
+  };
+
   const updateUser = async () => {
+    if (!validateUser()) {
+      Swal.fire('Validation Error', 'Please fill in all required fields.', 'error');
+      return;
+    }
     try {
       const token = localStorage.getItem('token');
       if (!token) {

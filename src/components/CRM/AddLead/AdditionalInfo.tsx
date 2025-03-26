@@ -4,7 +4,7 @@ import { z } from 'zod';
 import { Lead } from '../../../types/LeadTypes';
 import axios from 'axios';
 import Swal from 'sweetalert2';
-import { User } from '../../Account/UserTypes';
+import { User } from '../../../types/UserTypes';
 
 interface AdditionalInfoProps {
   lead: Lead;
@@ -45,7 +45,7 @@ const AdditionalInfo: React.FC<AdditionalInfoProps> = ({ lead, setLead }) => {
         if (!token) {
           throw new Error('No token found. Please log in.');
         }
-        const response = await axios.get<User[]>(`${API_URL}/users`, {
+        const response = await axios.get<User[]>(`${API_URL}/user`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         const employees = response.data.filter((user) => user.role === 'employee');

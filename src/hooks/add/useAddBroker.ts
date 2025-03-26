@@ -29,35 +29,34 @@ export const useAddBroker = (onClose: () => void, onSuccess: () => void) => {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
-    if (validateBroker()) {
-      try {
-        let response;
-        const token = localStorage.getItem('token');
-
-        if (!token) {
-          Swal.fire('Error', 'No token found', 'error');
-          return;
-        }
-
-        const headers = { Authorization: `Bearer ${token}` };
-
-        if (broker.id) {
-          response = await axios.put<Broker>(`${API_URL}/broker/${broker.id}`, broker, { headers });
-          Swal.fire('Success!', 'Broker details updated.', 'success');
-        } else {
-          response = await axios.post<Broker>(`${API_URL}/broker`, broker, { headers });
-          Swal.fire('Success!', 'Broker added successfully.', 'success');
-        }
-
-        clearBrokerForm();
-        onSuccess();
-      } catch (error: any) {
-        console.error('Error saving/updating broker:', error.response ? error.response.data : error.message);
-        Swal.fire('Error', 'An error occurred while saving/updating the broker.', 'error');
-      }
-    } else {
+    if (!validateBroker()) {
       Swal.fire('Validation Error', 'Please fill in all required fields.', 'error');
+      return;
+    }
+    try {
+      let response;
+      const token = localStorage.getItem('token');
+
+      if (!token) {
+        Swal.fire('Error', 'No token found', 'error');
+        return;
+      }
+
+      const headers = { Authorization: `Bearer ${token}` };
+
+      if (broker.id) {
+        response = await axios.put<Broker>(`${API_URL}/broker/${broker.id}`, broker, { headers });
+        Swal.fire('Success!', 'Broker details updated.', 'success');
+      } else {
+        response = await axios.post<Broker>(`${API_URL}/broker`, broker, { headers });
+        Swal.fire('Success!', 'Broker added successfully.', 'success');
+      }
+
+      clearBrokerForm();
+      onSuccess();
+    } catch (error: any) {
+      console.error('Error saving/updating broker:', error.response ? error.response.data : error.message);
+      Swal.fire('Error', 'An error occurred while saving/updating the broker.', 'error');
     }
   };
 

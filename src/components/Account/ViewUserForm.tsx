@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { User } from './UserTypes';
+import { User } from '../../types/UserTypes';
 
 interface ViewUserFormProps {
   onClose: () => void;
@@ -13,13 +13,16 @@ const ViewUserForm: React.FC<ViewUserFormProps> = ({ onClose, user }) => {
     username: '',
     email: '',
     password: '',
+    password_confirmation: '',
     role: '',
     emp_code: '',
+    created_at: '',
+    updated_at: '',
   });
 
   // Update form when user changes
   useEffect(() => {
-    if (user) { 
+    if (user) {
       console.log('Selected User:', user);
 
       setFormUser({
@@ -28,8 +31,11 @@ const ViewUserForm: React.FC<ViewUserFormProps> = ({ onClose, user }) => {
         username: user.username || '',
         email: user.email || '',
         password: '',
+        password_confirmation: '',
         role: user.role || '',
         emp_code: user.emp_code || '',
+        created_at: '',
+        updated_at: '',
       });
     }
   }, [user]);

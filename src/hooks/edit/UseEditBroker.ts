@@ -48,7 +48,15 @@ const useEditBroker = ({ broker, onUpdate, onClose }: UseEditBrokerProps) => {
     }
   }, [broker]);
 
+  const validateBroker = (): boolean => {
+    return !!formBroker.broker_name;
+  };
+
   const updateBroker = async () => {
+    if (!validateBroker()) {
+      Swal.fire('Validation Error', 'Please fill in all required fields.', 'error');
+      return;
+    }
     try {
       const token = localStorage.getItem('token');
       if (!token) {

@@ -61,35 +61,36 @@ const useEditOrder = (order: Order | null, onClose: () => void, onUpdate: (order
     }
   }, [order]);
 
-  const validateOrder = () => ({
-    customer: formOrder?.customer,
-    customer_ref_no: formOrder?.customer_ref_no,
-  });
+  const validateOrder = (): boolean => {
+    return !!formOrder.customer && !!formOrder.customer_ref_no && !!formOrder.equipment && !!formOrder.load_type;
+  };
 
   const updateOrder = async () => {
-    if (validateOrder() && formOrder) {
-      try {
-        const token = localStorage.getItem('token');
-        if (!token || typeof token !== 'string') {
-          Swal.fire({ icon: 'error', title: 'Unauthorized', text: 'Please log in again.' });
-          return;
-        }
-
-        const response = await axios.put(`${API_URL}/order/${formOrder.id}`, formOrder, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-
-        Swal.fire({ icon: 'success', title: 'Updated!', text: 'Order updated successfully.' });
-        onUpdate(response.data);
-        onClose();
-      } catch (error: any) {
-        console.error('Error updating order:', error.response?.data || error.message);
-        Swal.fire({
-          icon: 'error',
-          title: 'Oops...',
-          text: error.response?.status === 401 ? 'Unauthorized. Please log in again.' : 'Failed to update order.',
-        });
+    if (!validateOrder()) {
+      Swal.fire('Validation Error', 'Please fill in all required fields.', 'error');
+      return;
+    }
+    try {
+      const token = localStorage.getItem('token');
+      if (!token || typeof token !== 'string') {
+        Swal.fire({ icon: 'error', title: 'Unauthorized', text: 'Please log in again.' });
+        return;
       }
+
+      const response = await axios.put(`${API_URL}/order/${formOrder.id}`, formOrder, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      Swal.fire({ icon: 'success', title: 'Updated!', text: 'Order updated successfully.' });
+      onUpdate(response.data);
+      onClose();
+    } catch (error: any) {
+      console.error('Error updating order:', error.response?.data || error.message);
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: error.response?.status === 401 ? 'Unauthorized. Please log in again.' : 'Failed to update order.',
+      });
     }
   };
 

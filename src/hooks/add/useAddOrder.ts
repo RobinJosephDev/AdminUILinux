@@ -42,6 +42,76 @@ export const useAddOrder = (onClose: () => void, onSuccess: () => void) => {
 
   const [order, setOrder] = useState<Order>(initialOrderState);
 
+  const validateOrder = (): boolean => {
+    return !!order.customer && !!order.customer_ref_no && !!order.equipment && !!order.load_type;
+  };
+
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+
+    if (!validateOrder()) {
+      Swal.fire('Validation Error', 'Please fill in all required fields.', 'error');
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        Swal.fire('Error', 'No token found', 'error');
+        return;
+      }
+
+      const headers = { Authorization: `Bearer ${token}` };
+
+      const response = order.id
+        ? await axios.put(`${API_URL}/order/${order.id}`, order, { headers })
+        : await axios.post(`${API_URL}/order`, order, { headers });
+
+      Swal.fire(order.id ? 'Success!' : 'Saved!', 'Order created successfully.', 'success');
+      clearOrderForm();
+      onSuccess();
+    } catch (error: any) {
+      console.error('Error saving/updating order:', error.response ? error.response.data : error.message);
+      Swal.fire('Error', 'An error occurred while processing the order.', 'error');
+    }
+  };
+
+  const clearOrderForm = (): void => {
+    setOrder({
+      id: 0,
+      customer: '',
+      customer_ref_no: '',
+      branch: '',
+      booked_by: '',
+      account_rep: '',
+      sales_rep: '',
+      customer_po_no: '',
+      commodity: '',
+      equipment: '',
+      load_type: '',
+      temperature: '',
+      origin_location: [],
+      destination_location: [],
+      hot: false,
+      team: false,
+      air_ride: false,
+      tarp: false,
+      hazmat: false,
+      currency: '',
+      base_price: '',
+      charges: [],
+      discounts: [],
+      gst: '',
+      pst: '',
+      hst: '',
+      qst: '',
+      final_price: '',
+      notes: '',
+      created_at: '',
+      updated_at: '',
+    });
+  };
+
   const handleAddOrigin = () => {
     setOrder((prev) => ({
       ...prev,
@@ -180,67 +250,6 @@ export const useAddOrder = (onClose: () => void, onSuccess: () => void) => {
       ...prevOrder,
       discounts: updatedDiscounts,
     }));
-  };
-
-  const handleSubmit = async (event: React.FormEvent) => {
-    event.preventDefault();
-
-    try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        Swal.fire('Error', 'No token found', 'error');
-        return;
-      }
-
-      const headers = { Authorization: `Bearer ${token}` };
-
-      const response = order.id
-        ? await axios.put(`${API_URL}/order/${order.id}`, order, { headers })
-        : await axios.post(`${API_URL}/order`, order, { headers });
-
-      Swal.fire(order.id ? 'Success!' : 'Saved!', 'Order created successfully.', 'success');
-      clearOrderForm();
-      onSuccess();
-    } catch (error: any) {
-      console.error('Error saving/updating order:', error.response ? error.response.data : error.message);
-      Swal.fire('Error', 'An error occurred while processing the order.', 'error');
-    }
-  };
-
-  const clearOrderForm = (): void => {
-    setOrder({
-      id: 0,
-      customer: '',
-      customer_ref_no: '',
-      branch: '',
-      booked_by: '',
-      account_rep: '',
-      sales_rep: '',
-      customer_po_no: '',
-      commodity: '',
-      equipment: '',
-      load_type: '',
-      temperature: '',
-      origin_location: [],
-      destination_location: [],
-      hot: false,
-      team: false,
-      air_ride: false,
-      tarp: false,
-      hazmat: false,
-      currency: '',
-      base_price: '',
-      charges: [],
-      discounts: [],
-      gst: '',
-      pst: '',
-      hst: '',
-      qst: '',
-      final_price: '',
-      notes: '',
-      created_at: '',
-      updated_at: '',
-    });
   };
 
   return {

@@ -67,30 +67,8 @@ export const useAddVendor = (onClose: () => void, onSuccess: () => void) => {
     updated_at: '',
   });
 
-  const handleAddContact = () => {
-    setVendor((prev) => ({
-      ...prev,
-      contacts: [...prev.contacts, { name: '', phone: '', email: '', fax: '', designation: '' }],
-    }));
-  };
-
-  const handleRemoveContact = (index: number) => {
-    setVendor((prevVendor) => ({
-      ...prevVendor,
-      contacts: prevVendor.contacts.filter((_, i) => i !== index),
-    }));
-  };
-
-  const handleContactChange = (index: number, updatedContact: Contact) => {
-    const updatedContacts = vendor.contacts.map((contact, i) => (i === index ? updatedContact : contact));
-    setVendor((prevVendor) => ({
-      ...prevVendor,
-      contacts: updatedContacts,
-    }));
-  };
-
   const validateVendor = (): boolean => {
-    return vendor.type.trim() !== '';
+    return !!vendor.type && !!vendor.legal_name && !!vendor.remit_name && !!vendor.vendor_type && !!vendor.service;
   };
 
   const handleSubmit = async (event: React.FormEvent) => {
@@ -183,6 +161,28 @@ export const useAddVendor = (onClose: () => void, onSuccess: () => void) => {
       created_at: '',
       updated_at: '',
     });
+  };
+
+  const handleAddContact = () => {
+    setVendor((prev) => ({
+      ...prev,
+      contacts: [...prev.contacts, { name: '', phone: '', email: '', fax: '', designation: '' }],
+    }));
+  };
+
+  const handleRemoveContact = (index: number) => {
+    setVendor((prevVendor) => ({
+      ...prevVendor,
+      contacts: prevVendor.contacts.filter((_, i) => i !== index),
+    }));
+  };
+
+  const handleContactChange = (index: number, updatedContact: Contact) => {
+    const updatedContacts = vendor.contacts.map((contact, i) => (i === index ? updatedContact : contact));
+    setVendor((prevVendor) => ({
+      ...prevVendor,
+      contacts: updatedContacts,
+    }));
   };
 
   return {

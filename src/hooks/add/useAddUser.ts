@@ -26,34 +26,35 @@ export const useAddUser = (onClose: () => void, onSuccess: () => void) => {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    if (validateUser()) {
-      try {
-        let response;
-        const token = localStorage.getItem('token');
-
-        if (!token) {
-          Swal.fire('Error', 'No token found', 'error');
-          return;
-        }
-
-        const headers = { Authorization: `Bearer ${token}` };
-
-        if (user.id) {
-          response = await axios.put<User>(`${API_URL}/user/${user.id}`, user, { headers });
-          Swal.fire('Success!', 'User details updated.', 'success');
-        } else {
-          response = await axios.post<User>(`${API_URL}/user`, user, { headers });
-          Swal.fire('Success!', 'User added successfully.', 'success');
-        }
-
-        clearUserForm();
-        onSuccess();
-      } catch (error: any) {
-        console.error('Error saving/updating user:', error.response ? error.response.data : error.message);
-        Swal.fire('Error', 'An error occurred while saving/updating the user.', 'error');
-      }
-    } else {
+    if (!validateUser()) {
       Swal.fire('Validation Error', 'Please fill in all required fields.', 'error');
+      return;
+    }
+
+    try {
+      let response;
+      const token = localStorage.getItem('token');
+
+      if (!token) {
+        Swal.fire('Error', 'No token found', 'error');
+        return;
+      }
+
+      const headers = { Authorization: `Bearer ${token}` };
+
+      if (user.id) {
+        response = await axios.put<User>(`${API_URL}/user/${user.id}`, user, { headers });
+        Swal.fire('Success!', 'User details updated.', 'success');
+      } else {
+        response = await axios.post<User>(`${API_URL}/user`, user, { headers });
+        Swal.fire('Success!', 'User added successfully.', 'success');
+      }
+
+      clearUserForm();
+      onSuccess();
+    } catch (error: any) {
+      console.error('Error saving/updating user:', error.response ? error.response.data : error.message);
+      Swal.fire('Error', 'An error occurred while saving/updating the user.', 'error');
     }
   };
 

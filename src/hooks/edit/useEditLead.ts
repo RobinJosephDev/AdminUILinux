@@ -53,7 +53,15 @@ const useEditLead = (lead: Lead | null, onClose: () => void, onUpdate: (lead: Le
     }
   }, [lead]);
 
+  const validateLead = (): boolean => {
+    return !!formLead.lead_no && !!formLead.lead_date && !!formLead.lead_type && !!formLead.lead_status;
+  };
+
   const updateLead = async () => {
+    if (!validateLead()) {
+      Swal.fire('Validation Error', 'Please fill in all required fields.', 'error');
+      return;
+    }
     try {
       const token = localStorage.getItem('token');
 

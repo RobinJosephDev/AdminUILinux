@@ -130,7 +130,7 @@ const OrderGeneral: React.FC<OrderGeneralProps> = ({ order, setOrder }) => {
             value={order.customer || ''}
             onChange={(e) => validateAndSetOrder('customer', e.target.value)}
             onBlur={() => validateAndSetOrder('customer', order.customer || '')}
-            required
+            
           >
             <option value="" disabled>
               Select a customer
@@ -160,8 +160,8 @@ const OrderGeneral: React.FC<OrderGeneralProps> = ({ order, setOrder }) => {
             id="quote_customer_ref_no"
             value={order.customer_ref_no || ''}
             onChange={(e) => validateAndSetOrder('customer_ref_no', e.target.value)}
-            onBlur={() => validateAndSetOrder('customer_ref_no', order.customer_ref_no || '')} // 🚀 Validate on blur
-            required
+            onBlur={() => validateAndSetOrder('customer_ref_no', order.customer_ref_no || '')} 
+            
           >
             <option value="" disabled>
               Select a reference number
