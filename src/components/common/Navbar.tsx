@@ -29,8 +29,8 @@ const CustomNavbar: React.FC = () => {
       console.error('Logout failed', error);
     }
 
-    localStorage.removeItem('token');
-    localStorage.removeItem('userRole');
+    // Clear stored credentials
+    localStorage.clear();
     setUserRole(null);
 
     Swal.fire({
@@ -40,6 +40,7 @@ const CustomNavbar: React.FC = () => {
       confirmButtonText: 'OK',
     }).then(() => {
       navigate('/login', { replace: true });
+      window.location.reload(); // Ensure a full state reset
     });
   };
 

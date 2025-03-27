@@ -1,42 +1,49 @@
 import { useState } from 'react';
 import { Form, Input, Button, message } from 'antd';
-import { useNavigate } from 'react-router-dom';
 import '../../styles/Auth.css';
 import axios from 'axios';
 import { useUser } from '../../UserProvider';
 
 const LoginPage = () => {
-  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [redirect, setRedirect] = useState(false);
   const API_URL = import.meta.env.VITE_API_BASE_URL;
   const { setUserRole } = useUser();
 
   const sanitizeInput = (input: string): string => input.replace(/[<>"/=]/g, '');
 
-  interface LoginValues {
-    username: string;
-    password: string;
-  }
-
-  const onFinish = async (values: LoginValues) => {
+  const onFinish = async (values: { username: string; password: string }) => {
     setLoading(true);
     try {
-      const sanitizedUsername = sanitizeInput(values.username);
-      const sanitizedPassword = sanitizeInput(values.password);
+      const response = await axios.post(
+        `${API_URL}/login`,
+        {
+          username: sanitizeInput(values.username),
+          password: sanitizeInput(values.password),
+        },
+        {
+          headers: { 'Cache-Control': 'no-cache, no-store, must-revalidate' },
+        }
+      );
 
-      const response = await axios.post(`${API_URL}/login`, {
-        username: sanitizedUsername,
-        password: sanitizedPassword,
-      });
+      console.log('Login Response:', response);
 
       if (response.data.token) {
         handleLoginSuccess(response.data);
+      } else {
+        message.error('Invalid credentials');
       }
-    } catch (error: unknown) {
-      console.error('Login error:', error);
+    } catch (error) {
+      console.error('Login Error:', error);
 
       if (axios.isAxiosError(error)) {
-        message.error(error.response?.data?.message || 'Login failed.');
+        console.error('Error Response Data:', error.response?.data);
+
+        if (error.response?.status === 429) {
+          message.error('Too many failed login attempts. Please wait before trying again.');
+        } else {
+          message.error(error.response?.data?.error || 'Login failed.');
+        }
       } else {
         message.error('An unexpected error occurred.');
       }
@@ -45,15 +52,7 @@ const LoginPage = () => {
     }
   };
 
-  interface LoginResponse {
-    token: string;
-    user: {
-      id: number;
-      role: string;
-    };
-  }
-
-  const handleLoginSuccess = (data: LoginResponse) => {
+  const handleLoginSuccess = (data: { token: string; user: { id: number; role: string } }) => {
     const expiryTime = Date.now() + 1 * 60 * 60 * 1000;
 
     localStorage.setItem('token', data.token);
@@ -61,15 +60,19 @@ const LoginPage = () => {
     localStorage.setItem('userRole', data.user.role);
     localStorage.setItem('tokenExpiry', expiryTime.toString());
 
-    setUserRole(data.user.role);
     axios.defaults.headers.common['Authorization'] = `Bearer ${data.token}`;
+  
+    setUserRole(data.user.role);
+  
+    setTimeout(() => {
+      window.location.href = '/';
+    }, 100);
+  };  
 
-    if (data.user.role === 'admin') {
-      navigate('/lead');
-    } else {
-      message.error('Access denied: Invalid role.');
-    }
-  };
+  if (redirect) {
+    window.location.href = '/';
+  }
+  
 
   return (
     <div className="auth-container">
