@@ -1,49 +1,73 @@
-# 🚀 AdminUILinux - React + Vite Admin Panel  
+# AdminUI
 
-AdminUILinux is a **React + Vite**-powered admin panel designed for seamless performance, featuring **hot module replacement (HMR)**, optimized builds, and strict **ESLint rules** for better code quality.  
+AdminUI is a React + TypeScript web application built with Vite. It serves as the admin panel for managing leads, employees, customers, shipments, orders, and more. The backend is powered by Laravel, with PostgreSQL as the database.
 
-## 🛠️ Features  
+## Features
+- **Lead Management**: Admin can add and assign leads to employees.
+- **Lead Follow-Up Tracking**: Admin can view lead follow-ups created by employees.
+- **Lead Conversion**: Convert leads with quotes into customers.
+- **Customer Management**: Admin can view and manage customers.
+- **Shipment Monitoring**: Admin can view shipments created by carriers.
+- **User Management**: Create, update, and delete users.
+- **Order Management**: Create, update, and delete orders.
+- **Carrier & Vendor Management**: Manage carriers, vendors, and brokers.
 
-- **Fast & Lightweight** ⚡ - Powered by **Vite** for instant hot reloads and fast builds.  
-- **React + TypeScript** 🏗️ - Ensuring type safety and better maintainability.  
-- **ESLint + Prettier** 🧹 - Enforcing clean and consistent code.  
-- **Optimized Performance** 🚀 - Using **SWC or Babel** for faster compilation.  
+## Tech Stack
+- **Frontend**: React (with TypeScript) + Vite
+- **Backend**: Laravel
+- **Database**: PostgreSQL
 
-## 📦 Tech Stack  
+## Installation
 
-### **Frontend**  
-- **Framework:** React + TypeScript  
-- **Bundler:** Vite  
-- **Linting & Formatting:** ESLint, Prettier  
+### Prerequisites
+Ensure you have the following installed:
+- [Node.js](https://nodejs.org/) (LTS recommended)
+- [Yarn](https://yarnpkg.com/) or npm
 
-### **Backend** (Hosted Separately)  
-The frontend is powered by a **Laravel backend**, which handles authentication, data processing, and API endpoints.  
+### Setup
+1. Clone the repository:
+   ```sh
+   git clone https://github.com/your-repo/AdminUI.git
+   cd AdminUI
+   ```
+2. Install dependencies:
+   ```sh
+   yarn install
+   # or
+   npm install
+   ```
+3. Start the development server:
+   ```sh
+   yarn dev
+   # or
+   npm run dev
+   ```
 
-🔗 **Backend Repository:** [AdminUILinux Backend](https://github.com/RobinJosephDev/LinkLoadsAPI.git)  
+## Environment Variables
+Create a `.env` file in the root directory and configure the API base URL:
+```
+VITE_API_BASE_URL=http://127.0.0.1:8000/api
+```
 
----
+## Build for Production
+To create an optimized production build:
+```sh
+yarn build
+# or
+npm run build
+```
 
-## 📌 Getting Started  
+## Linting and Formatting
+Run ESLint to check for issues:
+```sh
+yarn lint
+# or
+npm run lint
+```
 
-### 1️⃣ Clone the Repository  
-git clone https://github.com/RobinJosephDev/AdminUILinux.git
-cd AdminUILinux
+## Contributing
+If you want to contribute, feel free to open an issue or submit a pull request.
 
-2️⃣ Install Dependencies
-npm install
+## License
+This project is licensed under the MIT License.
 
-3️⃣ Run the Dev Server
-npm run dev
-
-🔗 The app will be available at http://localhost:5173/
-
-🔌 Plugins Used
-Currently, two official plugins are available:
-
-@vitejs/plugin-react - Uses Babel for Fast Refresh.
-@vitejs/plugin-react-swc - Uses SWC for Fast Refresh.
-📜 License
-This project is open-source and available under the MIT License.
-
-💡 Looking for Contributors! Feel free to fork and submit PRs.
-✉️ Connect with me on LinkedIn
