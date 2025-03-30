@@ -55,8 +55,8 @@ const useOrderTable = () => {
     setCurrentPage(page);
   };
 
-  const openEditModal = (lead: Order) => {
-    setSelectedOrder(lead);
+  const openEditModal = (order: Order) => {
+    setSelectedOrder(order);
     setEditModalOpen(true);
   };
 
@@ -65,8 +65,8 @@ const useOrderTable = () => {
     setSelectedOrder(null);
   };
 
-  const openViewModal = (lead: Order) => {
-    setSelectedOrder(lead);
+  const openViewModal = (order: Order) => {
+    setSelectedOrder(order);
     setViewModalOpen(true);
   };
 
@@ -83,7 +83,7 @@ const useOrderTable = () => {
     if (selectedIds.length === paginatedData.length) {
       setSelectedIds([]);
     } else {
-      setSelectedIds(paginatedData.map((lead) => lead.id));
+      setSelectedIds(paginatedData.map((order) => order.id));
     }
   };
 

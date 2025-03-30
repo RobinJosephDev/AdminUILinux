@@ -5,7 +5,6 @@ import UserProvider from './UserProvider';
 
 const RegisterPage = lazy(() => import('./pages/Auth/RegisterPage'));
 const LoginPage = lazy(() => import('./pages/Auth/LoginPage'));
-const Logout = lazy(() => import('./pages/Auth/Logout'));
 const Dashboard = lazy(() => import('./pages/Dashboard'));
 const LeadsPage = lazy(() => import('./pages/CRM/LeadsPage'));
 const LeadFollowupPage = lazy(() => import('./pages/CRM/LeadFollowupPage'));
@@ -25,7 +24,6 @@ const AppRoutes: React.FC = () => (
         {/* Auth */}
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/login" element={<LoginPage />} />
-        <Route path="/logout" element={<Logout />} />
 
         {/* Dashboard */}
         <Route
