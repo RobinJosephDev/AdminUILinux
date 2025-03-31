@@ -14,7 +14,11 @@ const leadDetailSchema = z.object({
     .min(1, 'Lead No is required')
     .max(100, 'Lead No must be at most 100 characters long')
     .regex(/^[a-zA-Z0-9\s.,'-]+$/, 'Only letters, numbers,spaces, apostrophes, periods, commas, and hyphens allowed'),
-  lead_date: z.string().min(1, 'Lead Date is required'),
+  lead_date: z
+    .string()
+    .min(1, 'Lead Date is required')
+    .regex(/^\d{2}-\d{2}-\d{4}$/, { message: 'Date must be in DD-MM-YYYY format' })
+    .optional(),
   customer_name: z
     .string()
     .max(200, 'Customer Name must be at most 200 characters long')

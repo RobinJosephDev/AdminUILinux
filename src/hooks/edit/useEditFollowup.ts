@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import { Followup, Contact, Product } from '../../types/FollowupTypes';
-import { v4 as uuidv4 } from 'uuid';
 
 const API_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api';
 
@@ -38,79 +37,34 @@ const useEditFollowup = (followup: Followup | null, onClose: () => void, onUpdat
     if (followup) {
       setFollowupEdit({
         ...followup,
-        contacts: Array.isArray(followup.contacts) && followup.contacts.length > 0
-          ? followup.contacts.map((contact) => ({
-              ...contact,
-              id: contact.id || uuidv4(), // Ensure id is defined
-            }))
-          : [], // Default to empty array if contacts is NULL or invalid
-        products: Array.isArray(followup.products) && followup.products.length > 0
-          ? followup.products.map((product) => ({
-              ...product,
-              id: product.id || uuidv4(), // Ensure id is defined
-            }))
-          : [],
+        contacts:
+          Array.isArray(followup.contacts) && followup.contacts.length > 0
+            ? followup.contacts.map((contact) => ({
+                ...contact,
+                id: contact.id,
+              }))
+            : [], // Default to empty array if contacts is NULL or invalid
+        products:
+          Array.isArray(followup.products) && followup.products.length > 0
+            ? followup.products.map((product) => ({
+                ...product,
+                id: product.id,
+              }))
+            : [],
       });
     }
   }, [followup]);
-  
 
-  // ✅ Add new contact with a unique UUID
-  const handleAddContact = () => {
-    setFollowupEdit((prevFollowup) => ({
-      ...prevFollowup,
-      contacts: [
-        ...prevFollowup.contacts,
-        { id: uuidv4(), name: '', phone: '', email: '' }, // Unique UUID
-      ],
-    }));
+  const validateFollowup = (): boolean => {
+    return !!followupEdit.lead_no && !!followupEdit.lead_date && !!followupEdit.lead_type && !!followupEdit.lead_status;
   };
 
-  // ✅ Add new product with a unique UUID
-  const handleAddProduct = () => {
-    setFollowupEdit((prevFollowup) => ({
-      ...prevFollowup,
-      products: [
-        ...prevFollowup.products,
-        { id: uuidv4(), name: '', quantity: 0 }, // Unique UUID
-      ],
-    }));
-  };
-
-  // ✅ Update a contact by ID
-  const handleContactChange = (id: string | number, updatedContact: Contact) => {
-    setFollowupEdit((prevFollowup) => ({
-      ...prevFollowup,
-      contacts: prevFollowup.contacts.map((contact) => (contact.id === id ? updatedContact : contact)),
-    }));
-  };
-
-  const handleRemoveContact = (id: string | number) => {
-    setFollowupEdit((prevFollowup) => ({
-      ...prevFollowup,
-      contacts: prevFollowup.contacts.filter((contact) => contact.id !== id), // Ensure ID is unique
-    }));
-  };
-  
-
-  // ✅ Update a product by ID
-  const handleProductChange = (id: string | number, updatedProduct: Product) => {
-    setFollowupEdit((prevFollowup) => ({
-      ...prevFollowup,
-      products: prevFollowup.products.map((product) => (product.id === id ? updatedProduct : product)),
-    }));
-  };
-
-  // ✅ Remove a product by ID
-  const handleRemoveProduct = (id: string | number) => {
-    setFollowupEdit((prevFollowup) => ({
-      ...prevFollowup,
-      products: prevFollowup.products.filter((product) => product.id !== id),
-    }));
-  };
-
-  // ✅ Update follow-up data
   const updateFollowup = async () => {
+    if (!validateFollowup()) {
+      Swal.fire('Validation Error', 'Please fill in all required fields.', 'error');
+      return;
+    }
+
     try {
       const token = localStorage.getItem('token');
       if (!token) {
@@ -144,6 +98,59 @@ const useEditFollowup = (followup: Followup | null, onClose: () => void, onUpdat
         text: 'Failed to update follow-up.',
       });
     }
+  };
+
+  // ✅ Add new contact with a unique UUID
+  const handleAddContact = () => {
+    setFollowupEdit((prevFollowup) => ({
+      ...prevFollowup,
+      contacts: [
+        ...prevFollowup.contacts,
+        { id: '', name: '', phone: '', email: '' }, // Unique UUID
+      ],
+    }));
+  };
+
+  // ✅ Add new product with a unique UUID
+  const handleAddProduct = () => {
+    setFollowupEdit((prevFollowup) => ({
+      ...prevFollowup,
+      products: [
+        ...prevFollowup.products,
+        { id: '', name: '', quantity: 0 },
+      ],
+    }));
+  };
+
+  // ✅ Update a contact by ID
+  const handleContactChange = (id: string | number, updatedContact: Contact) => {
+    setFollowupEdit((prevFollowup) => ({
+      ...prevFollowup,
+      contacts: prevFollowup.contacts.map((contact) => (contact.id === id ? updatedContact : contact)),
+    }));
+  };
+
+  const handleRemoveContact = (id: string | number) => {
+    setFollowupEdit((prevFollowup) => ({
+      ...prevFollowup,
+      contacts: prevFollowup.contacts.filter((contact) => contact.id !== id), // Ensure ID is unique
+    }));
+  };
+
+  // ✅ Update a product by ID
+  const handleProductChange = (id: string | number, updatedProduct: Product) => {
+    setFollowupEdit((prevFollowup) => ({
+      ...prevFollowup,
+      products: prevFollowup.products.map((product) => (product.id === id ? updatedProduct : product)),
+    }));
+  };
+
+  // ✅ Remove a product by ID
+  const handleRemoveProduct = (id: string | number) => {
+    setFollowupEdit((prevFollowup) => ({
+      ...prevFollowup,
+      products: prevFollowup.products.filter((product) => product.id !== id),
+    }));
   };
 
   return {

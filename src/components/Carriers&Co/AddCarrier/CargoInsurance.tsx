@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Carrier } from '../../../types/CarrierTypes';
 import * as z from 'zod';
 import DOMPurify from 'dompurify';
+import { ZAxis } from 'recharts';
 
 interface CargoInsuranceProps {
   carrier: Carrier;
@@ -21,14 +22,20 @@ const carrierSchema = z
       .regex(/^[a-zA-Z0-9\s.-]*$/, 'Only letters, numbers, spaces, periods, and hyphens allowed')
       .optional(),
     ci_coverage: z.number().optional(),
-    ci_start_date: z.string().optional(),
-    ci_end_date: z.string().optional(),
+    ci_start_date: z
+      .string()
+      .regex(/^\d{2}-\d{2}-\d{4}$/, { message: 'Start date must be in DD-MM-YYYY format' })
+      .optional(),
+    ci_end_date: z
+      .string()
+      .regex(/^\d{2}-\d{2}-\d{4}$/, { message: 'End date must be in DD-MM-YYYY format' })
+      .optional(),
   })
   .refine((data) => !data.ci_start_date || !data.ci_end_date || new Date(data.ci_start_date) <= new Date(data.ci_end_date), {
     message: 'End date must be after or equal to start date',
     path: ['ci_end_date'],
   });
-  
+
 const CargoInsurance: React.FC<CargoInsuranceProps> = ({ carrier, setCarrier }) => {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [uploading, setUploading] = useState<boolean>(false);
@@ -56,30 +63,28 @@ const CargoInsurance: React.FC<CargoInsuranceProps> = ({ carrier, setCarrier }) 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-  
+
     const formData = new FormData();
     formData.append('coi_cert', file);
-  
+
     const token = localStorage.getItem('token');
-  
+
     try {
       const response = await fetch(`${API_URL}/upload`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` },
         body: formData,
       });
-  
+
       const data = await response.json();
       console.log('Upload response:', data); // Debugging log
-  
+
       // ✅ Fix the response handling
       if (data.files?.coi_cert?.fileUrl) {
         // Ensure fileUrl is absolute
         const baseURL = API_URL.replace('/api', ''); // Get base URL from API
-        const fullFileUrl = data.files.coi_cert.fileUrl.startsWith('http')
-          ? data.files.coi_cert.fileUrl
-          : `${baseURL}${data.files.coi_cert.fileUrl}`;
-  
+        const fullFileUrl = data.files.coi_cert.fileUrl.startsWith('http') ? data.files.coi_cert.fileUrl : `${baseURL}${data.files.coi_cert.fileUrl}`;
+
         setCarrier((prevCarrier) => ({
           ...prevCarrier,
           coi_cert: fullFileUrl, // Store full file URL

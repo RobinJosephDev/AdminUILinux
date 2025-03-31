@@ -1,4 +1,4 @@
-import { EditOutlined, DeleteOutlined, SearchOutlined, EyeOutlined } from '@ant-design/icons';
+import { EditOutlined, DeleteOutlined, EyeOutlined, SearchOutlined, CalendarOutlined } from '@ant-design/icons';
 import { Table, TableHeader } from '../common/Table';
 import Modal from '../common/Modal';
 import EditFuForm from './EditFollowup/EditFuForm';

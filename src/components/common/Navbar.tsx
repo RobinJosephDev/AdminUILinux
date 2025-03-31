@@ -96,7 +96,7 @@ const CustomNavbar: React.FC = () => {
 
           <NavDropdown title="More" id="more-dropdown" className="custom-dropdown">
             <NavDropdown.Item as={NavLink} to="/user" className="custom-dropdown-item">
-              <FiUsers className="dropdown-icon" /> Profile
+              <FiUsers className="dropdown-icon" /> Users
             </NavDropdown.Item>
             <NavDropdown.Item as={NavLink} to="/settings" className="custom-dropdown-item">
               <FiSettings className="dropdown-icon" /> Settings

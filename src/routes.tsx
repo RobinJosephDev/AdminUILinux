@@ -14,7 +14,7 @@ const OrderPage = lazy(() => import('./pages/Orders/OrderPage'));
 const CarrierPage = lazy(() => import('./pages/Carriers&Co/CarrierPage'));
 const VendorPage = lazy(() => import('./pages/Carriers&Co/VendorPage'));
 const BrokerPage = lazy(() => import('./pages/Carriers&Co/BrokerPage'));
-const UserPage = lazy(() => import('./pages/Account/UserPage'));
+const UserPage = lazy(() => import('./pages/Users/UserPage'));
 const QuotePage = lazy(() => import('./pages/Sales/QuotePage'));
 
 const AppRoutes: React.FC = () => (

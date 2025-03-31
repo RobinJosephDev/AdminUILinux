@@ -25,8 +25,14 @@ const LiabilityInsurance: React.FC<LiabilityInsuranceProps> = ({ carrier, setCar
         .regex(/^[a-zA-Z0-9\s.-]*$/, 'Only letters, numbers, spaces, periods, and hyphens allowed')
         .optional(),
       li_coverage: z.number().optional(),
-      li_start_date: z.string().optional(),
-      li_end_date: z.string().optional(),
+      li_start_date: z
+        .string()
+        .regex(/^\d{2}-\d{2}-\d{4}$/, { message: 'Start date must be in DD-MM-YYYY format' })
+        .optional(),
+      li_end_date: z
+        .string()
+        .regex(/^\d{2}-\d{2}-\d{4}$/, { message: 'End date must be in DD-MM-YYYY format' })
+        .optional(),
     })
     .refine((data) => !data.li_start_date || !data.li_end_date || new Date(data.li_start_date) <= new Date(data.li_end_date), {
       message: 'End date must be after or equal to start date',
@@ -73,7 +79,11 @@ const LiabilityInsurance: React.FC<LiabilityInsuranceProps> = ({ carrier, setCar
               onChange={(e) => handleChange(key as keyof Carrier, type === 'number' ? Number(e.target.value) : e.target.value)}
               placeholder={placeholder || ''}
             />
-            {errors[key] && <span className="error-text" style={{ color: 'red' }}>{errors[key]}</span>}
+            {errors[key] && (
+              <span className="error-text" style={{ color: 'red' }}>
+                {errors[key]}
+              </span>
+            )}
           </div>
         ))}
       </div>

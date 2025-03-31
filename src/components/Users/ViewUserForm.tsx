@@ -71,8 +71,8 @@ const ViewUserForm: React.FC<ViewUserFormProps> = ({ onClose, user }) => {
         </fieldset>
 
         <div className="form-actions">
-          <button type="button" className="btn-cancel" onClick={onClose}>
-            Close
+          <button type="button" className="btn-cancel" onClick={onClose} style={{ padding: '9px 15px' }}>
+            Cancel
           </button>
         </div>
       </form>

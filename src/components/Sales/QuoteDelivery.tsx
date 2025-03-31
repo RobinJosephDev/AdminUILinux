@@ -2,7 +2,7 @@ import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import { FC, useCallback, useState } from 'react';
 import { z } from 'zod';
 import DOMPurify from 'dompurify';
-import { Order, Location } from '../../types/OrderTypes';
+import { Quote, Location } from '../../types/QuoteTypes';
 import { useGoogleAutocomplete } from '../../hooks/useGoogleAutocomplete';
 
 declare global {
@@ -11,46 +11,46 @@ declare global {
   }
 }
 
-interface OrderDestinationProps {
-  order: Order;
-  setOrder: React.Dispatch<React.SetStateAction<Order>>;
-  destination_location: Location[];
+interface QuoteDeliveryProps {
+  quote: Quote;
+  setQuote: React.Dispatch<React.SetStateAction<Quote>>;
+  quote_delivery: Location[];
   index: number;
-  handleDestinationChange: (index: number, updatedDestination: Location) => void;
-  handleRemoveDestination: (index: number) => void;
-  onAddDestination: () => void;
+  handleDeliveryChange: (index: number, updatedDelivery: Location) => void;
+  handleRemoveDelivery: (index: number) => void;
+  onAddDelivery: () => void;
 }
 
-const destinationSchema = z.object({
+const deliverySchema = z.object({
   address: z
     .string()
     .max(255, 'Address is too long')
-    .regex(/^[a-zA-Z0-9\s,.'-]+$/, 'Invalid address format')
+    .regex(/^[a-zA-Z0-9\s,.'-]*$/, 'Invalid address format')
     .optional(),
   city: z
     .string()
     .max(100, 'City name is too long')
-    .regex(/^[a-zA-Z\s.'-]+$/, 'Invalid city format')
+    .regex(/^[a-zA-Z\s.'-]*$/, 'Invalid city format')
     .optional(),
   state: z
     .string()
     .max(100, 'State name is too long')
-    .regex(/^[a-zA-Z\s.'-]+$/, 'Invalid state format')
+    .regex(/^[a-zA-Z\s.'-]*$/, 'Invalid state format')
     .optional(),
   country: z
     .string()
     .max(100, 'Country name is too long')
-    .regex(/^[a-zA-Z\s.'-]+$/, 'Invalid country format')
+    .regex(/^[a-zA-Z\s.'-]*$/, 'Invalid country format')
     .optional(),
   postal: z
     .string()
     .max(20, 'Postal code cannot exceed 20 characters')
-    .regex(/^[a-zA-Z0-9\s-]+$/, 'Invalid postal code format')
+    .regex(/^[a-zA-Z0-9\s-]*$/, 'Invalid postal code format')
     .optional(),
   phone: z
     .string()
     .max(30, 'Phone number cannot exceed 30 characters')
-    .regex(/^[0-9+\-()\s]+$/, 'Invalid phone number format')
+    .regex(/^[0-9+\-()\s]*$/, 'Invalid phone number format')
     .optional(),
   date: z
     .string()
@@ -62,46 +62,43 @@ const destinationSchema = z.object({
     .optional(),
   currency: z
     .string()
-    .max(10, 'Currency code cannot exceed 10 characters')
+    .max(50, 'Currency code cannot exceed 50 characters')
     .regex(/^[A-Z]{3}$/, 'Invalid currency format (e.g., USD, EUR)')
     .optional(),
   equipment: z
     .string()
-    .max(50, 'Equipment description cannot exceed 50 characters')
-    .regex(/^[a-zA-Z0-9\s-]+$/, 'Invalid equipment format')
+    .max(100, 'Equipment description cannot exceed 100 characters')
+    .regex(/^[a-zA-Z0-9\s.,'-]*$/, 'Invalid equipment format')
     .optional(),
-  pickup_po: z
+  delivery_po: z
     .string()
-    .max(50, 'Pickup PO cannot exceed 50 characters')
-    .regex(/^[a-zA-Z0-9\s-]+$/, 'Invalid pickup PO format')
+    .max(100, 'Delivery PO cannot exceed 50 characters')
+    .regex(/^[a-zA-Z0-9\s.-]*$/, 'Invalid delivery PO format')
     .optional(),
   packages: z.number().int().min(1, 'Packages must be at least 1').max(99999, 'Packages cannot exceed 99,999').optional(),
   weight: z.number().min(0, 'Weight cannot be negative').max(1000000, 'Weight cannot exceed 1,000,000 kg').optional(),
   dimensions: z
     .string()
-    .max(50, 'Dimensions cannot exceed 50 characters')
-    .regex(/^\d+x\d+x\d+$/, 'Invalid dimensions format (e.g., 10x20x30)')
+    .max(100, 'Dimensions cannot exceed 100 characters')
+    .regex(/^\d+x\d+x\d*$/, 'Invalid dimensions format (e.g., 10x20x30)')
     .optional(),
-  notes: z.string().max(500, 'Notes cannot exceed 500 characters').optional(),
+  notes: z
+    .string()
+    .max(500, 'Notes cannot exceed 500 characters')
+    .regex(/^[a-zA-Z0-9\s,.'-]*$/, 'Invalid notes format')
+    .optional(),
 });
 
-const OrderDestination: FC<OrderDestinationProps> = ({
-  setOrder,
-  destination_location,
-  index,
-  handleDestinationChange,
-  handleRemoveDestination,
-  onAddDestination,
-}) => {
-  const destination = destination_location[index] ?? {};
+const QuoteDelivery: FC<QuoteDeliveryProps> = ({ setQuote, quote_delivery, index, handleDeliveryChange, handleRemoveDelivery, onAddDelivery }) => {
+  const delivery = quote_delivery[index] ?? {};
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const updateAddressFields = (place: google.maps.places.PlaceResult) => {
     const getComponent = (type: string) => place.address_components?.find((c) => c.types.includes(type))?.long_name || '';
 
-    setOrder((prev) => ({
+    setQuote((prev) => ({
       ...prev,
-      destination_location: prev.destination_location.map((loc, i) =>
+      quote_delivery: prev.quote_delivery.map((loc, i) =>
         i === index
           ? {
               ...loc,
@@ -118,7 +115,7 @@ const OrderDestination: FC<OrderDestinationProps> = ({
 
   const addressRef = useGoogleAutocomplete(updateAddressFields);
 
-  const validateAndSetDestination = useCallback(
+  const validateAndSetDelivery = useCallback(
     (field: keyof Location, value: string) => {
       const sanitizedValue = DOMPurify.sanitize(value);
       let parsedValue: string | number = sanitizedValue;
@@ -129,8 +126,8 @@ const OrderDestination: FC<OrderDestinationProps> = ({
       }
 
       let error = '';
-      const updatedDestination = { ...destination, [field]: parsedValue };
-      const result = destinationSchema.safeParse(updatedDestination);
+      const updatedDelivery = { ...delivery, [field]: parsedValue };
+      const result = deliverySchema.safeParse(updatedDelivery);
 
       if (!result.success) {
         const fieldError = result.error.errors.find((err) => err.path[0] === field);
@@ -138,13 +135,13 @@ const OrderDestination: FC<OrderDestinationProps> = ({
       }
 
       setErrors((prevErrors) => ({ ...prevErrors, [field]: error }));
-      handleDestinationChange(index, updatedDestination);
+      handleDeliveryChange(index, updatedDelivery);
     },
-    [destination, handleDestinationChange, index]
+    [delivery, handleDeliveryChange, index]
   );
 
   const fields = [
-    { label: 'Address', type: 'text', key: 'address', placeholder: 'Enter street address' },
+    { label: 'Address', key: 'address', type: 'text', placeholder: 'Enter street address' },
     { label: 'City', key: 'city', type: 'text', placeholder: 'Enter city name' },
     { label: 'State', key: 'state', type: 'text', placeholder: 'Enter state' },
     { label: 'Country', key: 'country', type: 'text', placeholder: 'Enter country' },
@@ -158,7 +155,7 @@ const OrderDestination: FC<OrderDestinationProps> = ({
     { label: 'Packages', key: 'packages', type: 'text', placeholder: 'Enter number of packages' },
     { label: 'Weight', key: 'weight', type: 'text', placeholder: 'Enter weight (kg/lbs)' },
     { label: 'Dimensions', key: 'dimensions', type: 'text', placeholder: 'Enter dimensions (LxWxH cm/inches)' },
-    { label: 'Notes', key: 'notes', type: 'textarea', placeholder: 'Enter additional notes' },
+    { label: 'Notes', key: 'notes', type:'textarea', placeholder: 'Enter additional notes' },
   ];
 
   return (
@@ -171,8 +168,8 @@ const OrderDestination: FC<OrderDestinationProps> = ({
               <textarea
                 id={`${key}-${index}`}
                 name={key}
-                value={(destination[key as keyof Location] as string) || ''}
-                onChange={(e) => validateAndSetDestination(key as keyof Location, e.target.value)}
+                value={(delivery[key as keyof Location] as string) || ''}
+                onChange={(e) => validateAndSetDelivery(key as keyof Location, e.target.value)}
                 placeholder={placeholder}
                 rows={4}
               />
@@ -181,13 +178,12 @@ const OrderDestination: FC<OrderDestinationProps> = ({
                 id={`${key}-${index}`}
                 name={key}
                 type={type}
-                value={(destination[key as keyof Location] as string | number) || ''}
-                onChange={(e) => validateAndSetDestination(key as keyof Location, e.target.value)}
+                value={(delivery[key as keyof Location] as string | number) || ''}
+                onChange={(e) => validateAndSetDelivery(key as keyof Location, e.target.value)}
                 placeholder={placeholder}
                 ref={key === 'address' ? addressRef : undefined}
               />
             )}
-
             {errors[key] && (
               <span className="error" style={{ color: 'red' }}>
                 {errors[key]}
@@ -198,10 +194,10 @@ const OrderDestination: FC<OrderDestinationProps> = ({
       </div>
 
       <div style={{ display: 'flex', alignItems: 'center', gap: '0px' }}>
-        <button type="button" onClick={onAddDestination} className="add-button">
+        <button type="button" onClick={onAddDelivery} className="add-button">
           <PlusOutlined />
         </button>
-        <button type="button" onClick={() => handleRemoveDestination(index)} className="delete-button">
+        <button type="button" onClick={() => handleRemoveDelivery(index)} className="delete-button">
           <DeleteOutlined />
         </button>
       </div>
@@ -209,4 +205,4 @@ const OrderDestination: FC<OrderDestinationProps> = ({
   );
 };
 
-export default OrderDestination;
+export default QuoteDelivery;

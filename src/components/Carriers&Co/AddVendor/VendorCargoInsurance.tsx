@@ -15,8 +15,14 @@ const vendorCargoSchema = z
       .max(150, 'Cargo company must be at most 150 characters')
       .regex(/^[a-zA-Z0-9\s.,'-]*$/, 'Only letters, numbers,spaces, apostrophes, periods, commas, and hyphens allowed')
       .optional(),
-    cargo_policy_start: z.string().optional(),
-    cargo_policy_end: z.string().optional(),
+    cargo_policy_start: z
+      .string()
+      .regex(/^\d{2}-\d{2}-\d{4}$/, { message: 'Start date must be in DD-MM-YYYY format' })
+      .optional(),
+    cargo_policy_end: z
+      .string()
+      .regex(/^\d{2}-\d{2}-\d{4}$/, { message: 'End date must be in DD-MM-YYYY format' })
+      .optional(),
     cargo_ins_amt: z
       .string()
       .regex(/^\d+(\.\d{1,2})?$/, 'Coverage amount must be a valid number')

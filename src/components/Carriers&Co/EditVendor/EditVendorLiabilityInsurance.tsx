@@ -23,8 +23,14 @@ const liabilitySchema = z
       .max(150, 'Liability Insurance Provider must be at most 150 characters')
       .regex(/^[a-zA-Z0-9\s.,'-]*$/, 'Only letters, numbers,spaces, apostrophes, periods, commas, and hyphens allowed')
       .optional(),
-    liab_policy_start: z.string().optional(),
-    liab_policy_end: z.string().optional(),
+    liab_policy_start: z
+      .string()
+      .regex(/^\d{2}-\d{2}-\d{4}$/, { message: 'Start date must be in DD-MM-YYYY format' })
+      .optional(),
+    liab_policy_end: z
+      .string()
+      .regex(/^\d{2}-\d{2}-\d{4}$/, { message: 'End date must be in DD-MM-YYYY format' })
+      .optional(),
     liab_ins_amt: z.string().regex(/^\d*$/, 'Coverage amount must be a positive number').optional(),
   })
   .refine(

@@ -4,7 +4,7 @@ import { z } from 'zod';
 import { Lead } from '../../../types/LeadTypes';
 import axios from 'axios';
 import Swal from 'sweetalert2';
-import { User } from '../../Account/UserTypes';
+import { User } from '../../../types/UserTypes';
 
 interface EditAdditionalInfoProps {
   formLead: Lead;
@@ -12,7 +12,10 @@ interface EditAdditionalInfoProps {
 }
 
 const addInfoSchema = z.object({
-  follow_up_date: z.string().optional(),
+  follow_up_date: z
+    .string()
+    .regex(/^\d{2}-\d{2}-\d{4}$/, { message: 'Date must be in DD-MM-YYYY format' })
+    .optional(),
   contact_person: z
     .string()
     .max(200, 'Contact name must be at most 200 characters long')
@@ -48,7 +51,7 @@ const EditAdditionalInfo: React.FC<EditAdditionalInfoProps> = ({ formLead, setFo
         if (!token) {
           throw new Error('No token found. Please log in.');
         }
-        const response = await axios.get<User[]>(`${API_URL}/users`, {
+        const response = await axios.get<User[]>(`${API_URL}/user`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         const employees = response.data.filter((user) => user.role === 'employee');

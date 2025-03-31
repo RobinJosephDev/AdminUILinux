@@ -1,43 +1,82 @@
-import React from 'react';
+import { FC } from 'react';
+import { Location } from '../../../types/QuoteTypes';
 
-type Pickup = {
-  address: string;
-  city: string;
-  state: string;
-  postal: string;
-  country: string;
-};
-
-type ViewQuotePickupProps = {
-  pickup: Pickup;
+interface ViewQuotePickupProps {
+  pickup: Location;
   index: number;
-};
+}
 
-const ViewQuotePickup: React.FC<ViewQuotePickupProps> = ({ pickup, index }) => {
+const ViewQuoteOrigin: FC<ViewQuotePickupProps> = ({ pickup }) => {
   return (
-    <div className="contact-form">
-      <div className="form-group">
-        <label>Address</label>
-        <p>{pickup.address || 'N/A'}</p>
+    <fieldset className="form-section">
+      <div className="form-row" style={{ display: 'flex', gap: '1rem' }}>
+        <div className="form-group" style={{ flex: 1 }}>
+          <label>Address</label>
+          <div>{pickup.address || ''}</div>
+        </div>
+        <div className="form-group" style={{ flex: 1 }}>
+          <label>City</label>
+          <div>{pickup.city || ''}</div>
+        </div>
+        <div className="form-group" style={{ flex: 1 }}>
+          <label>State</label>
+          <div>{pickup.state || ''}</div>
+        </div>
+        <div className="form-group" style={{ flex: 1 }}>
+          <label>Postal Code</label>
+          <div>{pickup.postal || ''}</div>
+        </div>
+        <div className="form-group" style={{ flex: 1 }}>
+          <label>Country</label>
+          <div>{pickup.country || ''}</div>
+        </div>
       </div>
-      <div className="form-group">
-        <label>City</label>
-        <p>{pickup.city || 'N/A'}</p>
+      <div className="form-row" style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
+        <div className="form-group" style={{ flex: 1 }}>
+          <label>Date</label>
+          <div>{pickup.date || ''}</div>
+        </div>
+        <div className="form-group" style={{ flex: 1 }}>
+          <label>Time</label>
+          <div>{pickup.time || ''}</div>
+        </div>
+        <div className="form-group" style={{ flex: 1 }}>
+          <label>Currency</label>
+          <div>{pickup.currency || ''}</div>
+        </div>
+        <div className="form-group" style={{ flex: 1 }}>
+          <label>Equipment</label>
+          <div>{pickup.equipment || ''}</div>
+        </div>
+        <div className="form-group" style={{ flex: 1 }}>
+          <label>Pickup PO</label>
+          <div>{pickup.pickup_po || ''}</div>
+        </div>
       </div>
-      <div className="form-group">
-        <label>State</label>
-        <p>{pickup.state || 'N/A'}</p>
+      <div className="form-row" style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
+        <div className="form-group" style={{ flex: 1 }}>
+          <label>Phone</label>
+          <div>{pickup.phone || ''}</div>
+        </div>
+        <div className="form-group" style={{ flex: 1 }}>
+          <label>Packages</label>
+          <div>{pickup.packages || ''}</div>
+        </div>
+        <div className="form-group" style={{ flex: 1 }}>
+          <label>Weight</label>
+          <div>{pickup.weight || ''}</div>
+        </div>
+        <div className="form-group" style={{ flex: 1 }}>
+          <label>Dimensions</label>
+          <div>{pickup.dimensions || ''}</div>
+        </div>
       </div>
-      <div className="form-group">
-        <label>Postal Code</label>
-        <p>{pickup.postal || 'N/A'}</p>
+      <div className="form-group" style={{ flex: 1 }}>
+        <label>Notes</label>
+        <div>{pickup.notes || ''}</div>
       </div>
-      <div className="form-group">
-        <label>Country</label>
-        <p>{pickup.country || 'N/A'}</p>
-      </div>
-    </div>
+    </fieldset>
   );
 };
 
-export default ViewQuotePickup;
+export default ViewQuoteOrigin;

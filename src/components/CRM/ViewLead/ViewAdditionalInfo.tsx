@@ -25,7 +25,7 @@ const ViewAdditionalInfo: React.FC<ViewAdditionalInfoProps> = ({ formLead }) => 
           throw new Error('No token found. Please log in.');
         }
 
-        const response = await axios.get<Employee[]>(`${API_URL}/users`, {
+        const response = await axios.get<Employee[]>(`${API_URL}/user`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },

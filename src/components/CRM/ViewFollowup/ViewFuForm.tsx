@@ -37,6 +37,8 @@ const ViewFuForm: React.FC<ViewFuFormProps> = ({ followUp, onClose }) => {
     remarks: '',
     equipment: '',
     contacts: [],
+    created_at: '',
+    updated_at: '',
   });
 
   useEffect(() => {
@@ -79,7 +81,7 @@ const ViewFuForm: React.FC<ViewFuFormProps> = ({ followUp, onClose }) => {
         </fieldset>
 
         <div className="form-actions">
-          <button type="button" className="btn-cancel" onClick={onClose}>
+          <button type="button" className="btn-cancel" onClick={onClose} style={{ padding: '9px 15px' }}>
             Cancel
           </button>
         </div>

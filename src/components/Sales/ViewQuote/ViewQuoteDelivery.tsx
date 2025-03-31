@@ -1,77 +1,79 @@
-import { DeleteOutlined } from '@ant-design/icons';
+import { FC } from 'react';
+import { Location } from '../../../types/QuoteTypes';
 
-type Delivery = {
-  address?: string;
-  city?: string;
-  state?: string;
-  postal?: string;
-  country?: string;
-  rate?: string;
-  currency?: string;
-  equipment?: string;
-  packages?: string;
-  dimensions?: string;
-  notes?: string;
-};
-
-type ViewQuoteDeliveryProps = {
-  delivery: Delivery;
+interface ViewQuoteDeliveryProps {
+  delivery: Location;
   index: number;
-  onRemove?: (index: number) => void;
-};
+}
 
-const ViewQuoteDelivery: React.FC<ViewQuoteDeliveryProps> = ({ delivery, index, onRemove }) => {
+const ViewQuoteDelivery: FC<ViewQuoteDeliveryProps> = ({ delivery }) => {
   return (
     <fieldset className="form-section">
       <div className="form-row" style={{ display: 'flex', gap: '1rem' }}>
         <div className="form-group" style={{ flex: 1 }}>
           <label>Address</label>
-          <p>{delivery.address || 'N/A'}</p>
+          <div>{delivery.address || ''}</div>
         </div>
         <div className="form-group" style={{ flex: 1 }}>
           <label>City</label>
-          <p>{delivery.city || 'N/A'}</p>
+          <div>{delivery.city || ''}</div>
         </div>
         <div className="form-group" style={{ flex: 1 }}>
           <label>State</label>
-          <p>{delivery.state || 'N/A'}</p>
+          <div>{delivery.state || ''}</div>
         </div>
         <div className="form-group" style={{ flex: 1 }}>
           <label>Postal Code</label>
-          <p>{delivery.postal || 'N/A'}</p>
+          <div>{delivery.postal || ''}</div>
         </div>
         <div className="form-group" style={{ flex: 1 }}>
           <label>Country</label>
-          <p>{delivery.country || 'N/A'}</p>
+          <div>{delivery.country || ''}</div>
         </div>
       </div>
-
       <div className="form-row" style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
         <div className="form-group" style={{ flex: 1 }}>
-          <label>Rate</label>
-          <p>{delivery.rate || 'N/A'}</p>
+          <label>Date</label>
+          <div>{delivery.date || ''}</div>
+        </div>
+        <div className="form-group" style={{ flex: 1 }}>
+          <label>Time</label>
+          <div>{delivery.time || ''}</div>
         </div>
         <div className="form-group" style={{ flex: 1 }}>
           <label>Currency</label>
-          <p>{delivery.currency || 'N/A'}</p>
+          <div>{delivery.currency || ''}</div>
         </div>
         <div className="form-group" style={{ flex: 1 }}>
           <label>Equipment</label>
-          <p>{delivery.equipment || 'N/A'}</p>
+          <div>{delivery.equipment || ''}</div>
+        </div>
+        <div className="form-group" style={{ flex: 1 }}>
+          <label>Pickup PO</label>
+          <div>{delivery.pickup_po || ''}</div>
+        </div>
+      </div>
+      <div className="form-row" style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
+        <div className="form-group" style={{ flex: 1 }}>
+          <label>Phone</label>
+          <div>{delivery.phone || ''}</div>
         </div>
         <div className="form-group" style={{ flex: 1 }}>
           <label>Packages</label>
-          <p>{delivery.packages || 'N/A'}</p>
+          <div>{delivery.packages || ''}</div>
+        </div>
+        <div className="form-group" style={{ flex: 1 }}>
+          <label>Weight</label>
+          <div>{delivery.weight || ''}</div>
         </div>
         <div className="form-group" style={{ flex: 1 }}>
           <label>Dimensions</label>
-          <p>{delivery.dimensions || 'N/A'}</p>
+          <div>{delivery.dimensions || ''}</div>
         </div>
       </div>
-
       <div className="form-group" style={{ flex: 1 }}>
         <label>Notes</label>
-        <p>{delivery.notes || 'N/A'}</p>
+        <div>{delivery.notes || ''}</div>
       </div>
     </fieldset>
   );
