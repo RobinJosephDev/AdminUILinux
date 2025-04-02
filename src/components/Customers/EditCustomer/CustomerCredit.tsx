@@ -18,11 +18,11 @@ const creditSchema = z.object({
     .optional(),
   cust_credit_appd: z
     .string()
-    .regex(/^\d{2}-\d{2}-\d{4}$/, { message: 'Approval date must be in DD-MM-YYYY format' })
+    // .regex(/^\d{2}-\d{2}-\d{4}$/, { message: 'Approval date must be in DD-MM-YYYY format' })
     .optional(),
   cust_credit_expd: z
     .string()
-    .regex(/^\d{2}-\d{2}-\d{4}$/, { message: 'Expiry date must be in DD-MM-YYYY format' })
+    // .regex(/^\d{2}-\d{2}-\d{4}$/, { message: 'Expiry date must be in DD-MM-YYYY format' })
     .optional(),
   cust_credit_mop: z
     .string()

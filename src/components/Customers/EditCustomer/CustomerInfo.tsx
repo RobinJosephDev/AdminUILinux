@@ -44,7 +44,7 @@ const formCustomerSchema = z.object({
   cust_tax_id: z
     .string()
     .max(20, 'Tax ID cannot exceed 20 characters')
-    .regex(/^[a-zA-Z0-9-_\/. ]*$/, 'Only letters, numbers, dashes, underscores, slashes, and spaces allowed')
+    .regex(/^[a-zA-Z0-9_/.-]*$/, 'Only letters, numbers, dashes, underscores, slashes, and spaces allowed')
     .optional(),
 });
 
@@ -85,14 +85,7 @@ const CustomerInfo: React.FC<CustomerInfoProps> = ({ formCustomer, setFormCustom
         }));
 
         setCustomers(formattedCustomers);
-
-        if (formattedCustomers.length > 0) {
-          setFormCustomer((prev) => ({
-            ...prev,
-            cust_name: formattedCustomers[0].value,
-            cust_ref_no: formattedCustomers[0].refNo,
-          }));
-        }
+ 
       } catch (error) {
         console.error('Error fetching customers:', error);
       }
@@ -146,18 +139,18 @@ const CustomerInfo: React.FC<CustomerInfoProps> = ({ formCustomer, setFormCustom
               Select a customer
             </option>
             {customers.length > 0 ? (
-              customers.map((customer, index) => (
-                <option key={`${customer.refNo}-${index}`} value={customer.value}>
-                  {customer.label}
+              customers.map((cust_name, index) => (
+                <option key={`${cust_name.refNo}-${index}`} value={cust_name.value}>
+                  {cust_name.label}
                 </option>
               ))
             ) : (
               <option disabled>No customers found</option>
             )}
           </select>
-          {errors.customer && (
+          {errors.cust_name && (
             <span className="error" style={{ color: 'red' }}>
-              {errors.customer}
+              {errors.cust_name}
             </span>
           )}
         </div>
@@ -176,15 +169,15 @@ const CustomerInfo: React.FC<CustomerInfoProps> = ({ formCustomer, setFormCustom
             <option value="" disabled>
               Select a reference number
             </option>
-            {customerRefNos.map((customer_ref_no) => (
-              <option key={customer_ref_no.value} value={customer_ref_no.value}>
-                {customer_ref_no.label}
+            {customerRefNos.map((cust_ref_no) => (
+              <option key={cust_ref_no.value} value={cust_ref_no.value}>
+                {cust_ref_no.label}
               </option>
             ))}
           </select>
-          {errors.customer_ref_no && (
+          {errors.cust_ref_no && (
             <span className="error" style={{ color: 'red' }}>
-              {errors.customer_ref_no}
+              {errors.cust_ref_no}
             </span>
           )}
         </div>

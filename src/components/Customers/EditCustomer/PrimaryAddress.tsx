@@ -39,12 +39,12 @@ const primarySchema = z.object({
   cust_primary_postal: z
     .string()
     .max(20, 'Postal code cannot exceed 20 characters')
-    .regex(/^[a-zA-Z0-9-\s ]*$/, 'Invalid postal code')
+    .regex(/^[a-zA-Z0-9\s-]*$/, 'Invalid postal code')
     .optional(),
   cust_primary_unit_no: z
     .string()
     .max(30, 'Unit No cannot exceed 30 characters')
-    .regex(/^[a-zA-Z0-9#\-/\s]*$/, 'Only letters, numbers, #, hyphens, slashes, and spaces allowed')
+    .regex(/^[a-zA-Z0-9#/\s-]*$/, 'Only letters, numbers, #, hyphens, slashes, and spaces allowed')
     .optional(),
 });
 
