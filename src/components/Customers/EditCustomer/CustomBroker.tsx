@@ -10,6 +10,11 @@ interface CustomerInfoProps {
 }
 
 const brokerSchema = z.object({
+  cust_broker_name: z
+    .string()
+    .max(200, 'Broker name cannot exceed 200 characters')
+    .regex(/^[a-zA-Z0-9\s.,'"-]+$/, 'Only letters, numbers, spaces, apostrophes, periods, commas, and hyphens allowed')
+    .optional(),
   cust_bkp_notes: z
     .string()
     .max(500, 'Notes cannot exceed 500 characters')
@@ -20,11 +25,6 @@ const brokerSchema = z.object({
     .max(500, 'Special notes By cannot exceed 100 characters')
     .regex(/^[a-zA-Z0-9\s.,'"-]*$/, 'Only letters, numbers, spaces, apostrophes, periods, commas, and hyphens allowed')
     .optional(),
-  cust_broker_name: z
-    .string()
-    .min(1, 'Broker is required')
-    .max(200, 'Broker name cannot exceed 200 characters')
-    .regex(/^[a-zA-Z0-9\s.,'"-]+$/, 'Only letters, numbers, spaces, apostrophes, periods, commas, and hyphens allowed'),
 });
 
 const fields = [

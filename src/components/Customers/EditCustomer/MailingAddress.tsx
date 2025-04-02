@@ -44,7 +44,7 @@ const mailingSchema = z.object({
   cust_mailing_unit_no: z
     .string()
     .max(30, 'Unit No cannot exceed 30 characters')
-    .regex(/^[0-9-+()\s]*$/, 'Invalid phone format')
+    .regex(/^[a-zA-Z0-9#\-/\s]*$/, 'Only letters, numbers, #, hyphens, slashes, and spaces allowed')
     .optional(),
 });
 

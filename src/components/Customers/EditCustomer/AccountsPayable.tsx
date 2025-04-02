@@ -59,8 +59,8 @@ const APSchema = z.object({
     .optional(),
   cust_ap_phone_ext: z
     .string()
-    .max(100, 'Phone Ext cannot exceed 100 characters')
-    .regex(/^[a-zA-Z0-9\s.,'"-]*$/, 'Only letters, numbers, spaces, apostrophes, periods, commas, and hyphens allowed')
+    .max(10, 'Phone Ext cannot exceed 10 characters')
+    .regex(/^[a-zA-Z0-9-]*$/, 'Only letters, numbers, and hyphens allowed')
     .optional(),
   cust_ap_fax: z
     .string()

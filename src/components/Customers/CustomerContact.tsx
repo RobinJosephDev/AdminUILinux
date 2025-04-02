@@ -25,8 +25,8 @@ const contactSchema = z.object({
     .optional(),
   ext: z
     .string()
-    .max(100, 'Extension cannot exceed 100 characters')
-    .regex(/^[a-zA-Z0-9\s.,'"-]*$/, 'Only letters, numbers, spaces, apostrophes, periods, commas, and hyphens allowed')
+    .max(10, 'Extension cannot exceed 10 characters')
+    .regex(/^[[a-zA-Z0-9-]*$/, 'Only letters, numbers and hyphens allowed')
     .optional(),
   email: z.string().max(255, 'Email must be at most 255 characters').email('Invalid email format').optional(),
   fax: z

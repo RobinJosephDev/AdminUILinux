@@ -7,8 +7,24 @@ interface CustomerInfoProps {
   formCustomer: Customer;
   setFormCustomer: React.Dispatch<React.SetStateAction<Customer>>;
 }
+const customerTypeOptions = ['Manufacturer', 'Trader', 'Distributor', 'Retailer', 'Freight Forwarder'];
 
 const formCustomerSchema = z.object({
+  cust_name: z
+    .string()
+    .min(1, 'Customer is required')
+    .max(200, 'Customer name cannot exceed 200 characters')
+    .regex(/^[a-zA-Z0-9\s.,'"-]+$/, 'Only letters, numbers, spaces, apostrophes, periods, commas, and hyphens allowed'),
+  cust_ref_no: z
+    .string()
+    .min(1, 'Customer Ref. No is required')
+    .max(100, 'Customer Ref. No cannot exceed 100 characters')
+    .regex(/^[a-zA-Z0-9\s.,'"-]+$/, 'Only letters, numbers, spaces, apostrophes, periods, commas, and hyphens allowed'),
+  cust_type: z
+    .enum(customerTypeOptions as [string, ...string[]], {
+      errorMap: () => ({ message: 'Invalid customer type' }),
+    })
+    .optional(),
   cust_website: z
     .string()
     .max(150, 'Branch cannot exceed 150 characters')
@@ -22,24 +38,14 @@ const formCustomerSchema = z.object({
     .optional(),
   cust_contact_no_ext: z
     .string()
-    .max(100, 'Phone Ext cannot exceed 100 characters')
-    .regex(/^[a-zA-Z0-9\s.,'"-]*$/, 'Only letters, numbers, spaces, apostrophes, periods, commas, and hyphens allowed')
+    .max(10, 'Phone Ext cannot exceed 10 characters')
+    .regex(/^[a-zA-Z0-9-]*$/, 'Only letters, numbers, and hyphens allowed')
     .optional(),
   cust_tax_id: z
     .string()
     .max(20, 'Tax ID cannot exceed 20 characters')
-    .regex(/^[a-zA-Z0-9-_\/ ]*$/, 'Only letters, numbers, dashes, underscores, slashes, and spaces allowed')
+    .regex(/^[a-zA-Z0-9-_\/. ]*$/, 'Only letters, numbers, dashes, underscores, slashes, and spaces allowed')
     .optional(),
-  customer: z
-    .string()
-    .min(1, 'Customer is required')
-    .max(200, 'Customer name cannot exceed 200 characters')
-    .regex(/^[a-zA-Z0-9\s.,'"-]+$/, 'Only letters, numbers, spaces, apostrophes, periods, commas, and hyphens allowed'),
-  customer_ref_no: z
-    .string()
-    .min(1, 'Customer Ref. No is required')
-    .max(100, 'Customer Ref. No cannot exceed 100 characters')
-    .regex(/^[a-zA-Z0-9\s.,'"-]+$/, 'Only letters, numbers, spaces, apostrophes, periods, commas, and hyphens allowed'),
 });
 
 const fields = [
@@ -54,7 +60,6 @@ const CustomerInfo: React.FC<CustomerInfoProps> = ({ formCustomer, setFormCustom
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [customers, setCustomers] = useState<{ value: string; label: string; refNo: string }[]>([]);
   const [customerRefNos, setCustomerRefNos] = useState<{ value: string; label: string }[]>([]);
-  const customerTypeOptions = ['Manufacturer', 'Trader', 'Distributor', 'Retailer', 'Freight Forwarder'];
 
   const API_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api';
 
