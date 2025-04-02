@@ -8,8 +8,6 @@ interface CustomerCreditProps {
 
 const CustomerCredit: React.FC<CustomerCreditProps> = ({ formCustomer, setFormCustomer }) => {
   const creditStatusOptions = ['Approved', 'Not Approved'];
-  const modeOfPaymentOptions = ['Direct Deposit', 'Wire Transfer', 'Visa'];
-  const currencyOptions = ['USD', 'CAD'];
   const [uploading, setUploading] = useState(false);
   const API_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -57,8 +55,9 @@ const CustomerCredit: React.FC<CustomerCreditProps> = ({ formCustomer, setFormCu
   return (
     <fieldset>
       <legend>Customer Credit</legend>
-      <div className="form-row" style={{ display: 'flex', gap: '1rem' }}>
-        <div className="form-group" style={{ flex: 1 }}>
+      <hr />
+      <div className="form-grid" style={{ display: 'grid', gap: '1rem', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))' }}>
+        <div className="form-group" style={{ flex: '1 1 45%' }}>
           <label htmlFor="creditStatus">Credit Status</label>
           <select
             name="creditStatus"
@@ -73,12 +72,13 @@ const CustomerCredit: React.FC<CustomerCreditProps> = ({ formCustomer, setFormCu
             ))}
           </select>
         </div>
-      </div>
-      <div className="form-group" style={{ flex: 1 }}>
-        <label htmlFor="creditAgreement">Credit Agreement</label>
-        <input type="file" name="creditAgreement" onChange={(e) => handleFileChange(e, 'cust_credit_agreement')} />
-        {renderDownloadLink(formCustomer?.cust_credit_agreement, 'Credit Agreement')}
-        {uploading && <p>Uploading...</p>}
+
+        <div className="form-group" style={{ flex: '1 1 45%' }}>
+          <label htmlFor="creditAgreement">Credit Agreement</label>
+          <input type="file" name="creditAgreement" onChange={(e) => handleFileChange(e, 'cust_credit_agreement')} />
+          {renderDownloadLink(formCustomer?.cust_credit_agreement, 'Credit Agreement')}
+          {uploading && <p>Uploading...</p>}
+        </div>
       </div>
     </fieldset>
   );

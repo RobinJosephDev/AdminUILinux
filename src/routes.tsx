@@ -62,10 +62,8 @@ const AppRoutes: React.FC = () => (
             </ProtectedRoute>
           }
         />
-
-        {/* Shipment */}
         <Route
-          path="/shipment"
+          path="/quote"
           element={
             <ProtectedRoute>
               <QuotePage />

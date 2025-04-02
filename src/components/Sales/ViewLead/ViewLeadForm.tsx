@@ -1,46 +1,19 @@
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
+import '../../../styles/Form.css';
 import ViewLeadDetails from './ViewLeadDetails';
 import ViewAddressDetails from './ViewAddressDetails';
 import ViewAdditionalInfo from './ViewAdditionalInfo';
 import ViewLeadContactForm from './ViewLeadContactForm';
-import ViewLqEquip from './ViewLqEquip';
+import { Lead, Contact } from '../../../types/LeadTypes';
 
-type Contact = {
-  name: string;
-  phone: string;
-  email: string;
-};
-
-type Lead = {
-  id?: string;
-  lead_no?: string;
-  lead_date?: string;
-  customer_name?: string;
-  phone?: string;
-  email?: string;
-  website?: string;
-  address?: string;
-  unit_no?: string;
-  city?: string;
-  state?: string;
-  country?: string;
-  postal_code?: string;
-  equipment_type?: string;
-  lead_type?: string;
-  lead_status?: string;
-  follow_up_date?: string;
-  assigned_to?: string;
-  contacts: Contact[];
-};
-
-type ViewLeadQuotesFormProps = {
-  lead: Lead;
+interface ViewLeadFormProps {
+  lead: Lead | null;
   onClose: () => void;
-};
+}
 
-const ViewLeadQuotesForm = ({ lead, onClose }: ViewLeadQuotesFormProps) => {
+const ViewLeadForm: React.FC<ViewLeadFormProps> = ({ lead, onClose }) => {
   const [formLead, setFormLead] = useState<Lead>({
-    id: '',
+    id: 0,
     lead_no: '',
     lead_date: '',
     customer_name: '',
@@ -56,14 +29,27 @@ const ViewLeadQuotesForm = ({ lead, onClose }: ViewLeadQuotesFormProps) => {
     equipment_type: '',
     lead_type: '',
     lead_status: '',
+    contact_person: '',
+    notes: '',
     follow_up_date: '',
     assigned_to: '',
-    contacts: [{ name: '', phone: '', email: '' }],
+    contacts: [],
   });
 
   useEffect(() => {
     if (lead) {
-      const parsedContacts = Array.isArray(lead.contacts) ? lead.contacts : JSON.parse((lead.contacts as unknown as string) || '[]');
+      let parsedContacts: Contact[] = [];
+
+      if (Array.isArray(lead.contacts)) {
+        parsedContacts = lead.contacts;
+      } else if (typeof lead.contacts === 'string') {
+        try {
+          parsedContacts = JSON.parse(lead.contacts) || [];
+        } catch (error) {
+          parsedContacts = [];
+        }
+      }
+
       setFormLead({
         ...lead,
         contacts: parsedContacts.length > 0 ? parsedContacts : [],
@@ -77,17 +63,15 @@ const ViewLeadQuotesForm = ({ lead, onClose }: ViewLeadQuotesFormProps) => {
         <ViewLeadDetails formLead={formLead} />
         <ViewAddressDetails formLead={formLead} />
         <ViewAdditionalInfo formLead={formLead} />
-        <ViewLqEquip formLead={formLead} />
         <fieldset className="form-section">
           <legend>Contacts</legend>
+          <hr />
           <div className="form-row">
-            {formLead.contacts.map((contact, index) => (
-              <ViewLeadContactForm key={index} contact={contact} />
-            ))}
+            {formLead.contacts && formLead.contacts.map((contact, index) => <ViewLeadContactForm key={index} contact={contact} index={index} />)}
           </div>
         </fieldset>
         <div className="form-actions">
-          <button type="button" className="btn-cancel" onClick={onClose}>
+          <button type="button" className="btn-cancel" onClick={onClose} style={{ padding: '9px 15px' }}>
             Cancel
           </button>
         </div>
@@ -96,4 +80,4 @@ const ViewLeadQuotesForm = ({ lead, onClose }: ViewLeadQuotesFormProps) => {
   );
 };
 
-export default ViewLeadQuotesForm;
+export default ViewLeadForm;

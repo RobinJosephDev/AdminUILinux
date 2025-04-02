@@ -1,5 +1,6 @@
 import { Table, TableHeader } from '../common/Table';
 import Modal from '../common/Modal';
+import '../../styles/Form.css';
 import EditCustomerForm from './EditCustomer/EditCustomerForm';
 import { EditOutlined, DeleteOutlined, MailOutlined, SearchOutlined, EyeOutlined } from '@ant-design/icons';
 import ViewCustomerForm from './ViewCustomer/ViewCustomerForm';

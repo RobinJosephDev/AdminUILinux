@@ -14,7 +14,6 @@ const useQuoteTable = () => {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [selectedQuote, setSelectedQuote] = useState<Quote | null>(null);
   const [isEditModalOpen, setEditModalOpen] = useState<boolean>(false);
-  const [isAddModalOpen, setAddModalOpen] = useState<boolean>(false);
   const [isViewModalOpen, setViewModalOpen] = useState<boolean>(false);
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const [rowsPerPage, setRowsPerPage] = useState<number>(10);
@@ -204,7 +203,6 @@ const useQuoteTable = () => {
     currentPage,
     setCurrentPage,
     isEditModalOpen,
-    isAddModalOpen,
     isViewModalOpen,
     isEmailModalOpen,
     selectedQuote,
@@ -213,7 +211,6 @@ const useQuoteTable = () => {
     openViewModal,
     closeViewModal,
     setEditModalOpen,
-    setAddModalOpen,
     setViewModalOpen,
     setEmailModalOpen,
     toggleSelectAll,

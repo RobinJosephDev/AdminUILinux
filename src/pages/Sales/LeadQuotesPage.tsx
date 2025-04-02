@@ -1,9 +1,9 @@
-import LeadQuotesTable from '../../components/Sales/LeadQuotesTable'; 
+import LeadQuoteTable from '../../components/Sales/LeadQuoteTable'; 
 
 const LeadQuotesPage = () => {
   return (
     <div>
-      <LeadQuotesTable /> 
+      <LeadQuoteTable /> 
     </div>
   );
 };

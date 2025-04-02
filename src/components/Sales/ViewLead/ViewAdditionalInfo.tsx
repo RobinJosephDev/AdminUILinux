@@ -1,28 +1,21 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
+import { Lead, User } from "../../../types/LeadTypes";
 
-interface FormLead {
-  contact_person?: string;
-  follow_up_date?: string;
-  equipment_type?: string;
-  assigned_to?: string;
-  notes?: string;
-}
-
-interface User {
-  id: number;
+interface Employee {
+  id: string;
   name: string;
   role: string;
 }
 
 interface ViewAdditionalInfoProps {
-  formLead: FormLead;
+  formLead: Lead;
 }
 
-function ViewAdditionalInfo({ formLead }: ViewAdditionalInfoProps) {
-  const API_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000/api";
-  const [employees, setEmployees] = useState<User[]>([]);
+const ViewAdditionalInfo: React.FC<ViewAdditionalInfoProps> = ({ formLead }) => {
+  const API_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api';
+  const [employees, setEmployees] = useState<Employee[]>([]);
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -32,7 +25,7 @@ function ViewAdditionalInfo({ formLead }: ViewAdditionalInfoProps) {
           throw new Error('No token found. Please log in.');
         }
 
-        const response = await axios.get<User[]>(`${API_URL}/users`, {
+        const response = await axios.get<Employee[]>(`${API_URL}/user`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -44,7 +37,7 @@ function ViewAdditionalInfo({ formLead }: ViewAdditionalInfoProps) {
       } catch (error: any) {
         console.error('Error fetching users:', error);
 
-        if (error.response && error.response.status === 401) {
+        if (error.response?.status === 401) {
           Swal.fire({
             icon: 'error',
             title: 'Unauthorized',
@@ -61,39 +54,38 @@ function ViewAdditionalInfo({ formLead }: ViewAdditionalInfoProps) {
     };
 
     fetchUsers();
-  }, [API_URL]);
+  }, []);
 
   return (
     <fieldset className="form-section">
       <legend>Additional Information</legend>
+      <hr />
       <div className="form-row" style={{ display: 'flex', gap: '1rem' }}>
         <div className="form-group" style={{ flex: 1 }}>
-          <label>Contact Person</label>
-          <p>{formLead.contact_person || 'N/A'}</p>
+          <label htmlFor="follow_up_date">Next Follow-Up Date</label>
+          <div>{formLead.follow_up_date || 'N/A'}</div>
         </div>
-
         <div className="form-group" style={{ flex: 1 }}>
-          <label>Next Follow-Up Date</label>
-          <p>{formLead.follow_up_date || 'N/A'}</p>
+          <label htmlFor="equipmentType">Equipment Type</label>
+          <div>{formLead.equipment_type || 'N/A'}</div>
         </div>
-
         <div className="form-group" style={{ flex: 1 }}>
-          <label>Equipment Type</label>
-          <p>{formLead.equipment_type || 'N/A'}</p>
+          <label htmlFor="assignedTo">Assigned To</label>
+          <div>{formLead.assigned_to || 'N/A'}</div>
         </div>
-
         <div className="form-group" style={{ flex: 1 }}>
-          <label>Assigned To</label>
-          <p>{formLead.assigned_to || 'N/A'}</p>
+          <label htmlFor="contactPerson">Contact Person</label>
+          <div>{formLead.contact_person || 'N/A'}</div>
         </div>
       </div>
-
-      <div className="form-group" style={{ flex: 1 }}>
-        <label>Notes</label>
-        <p>{formLead.notes || 'N/A'}</p>
+      <div className="form-row" style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
+        <div className="form-group" style={{ flex: 1 }}>
+          <label htmlFor="notes">Notes</label>
+          <div>{formLead.notes || 'N/A'}</div>
+        </div>
       </div>
     </fieldset>
   );
-}
+};
 
 export default ViewAdditionalInfo;

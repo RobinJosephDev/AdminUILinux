@@ -69,6 +69,7 @@ const EditVendorMailingAddress: FC<EditVendorMailingAddressProps> = ({ formVendo
       });
     }
   }, [sameAsPrimary]);
+  
   const updateAddressFields = (place: google.maps.places.PlaceResult) => {
     if (!place.address_components) return;
 

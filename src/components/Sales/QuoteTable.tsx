@@ -1,10 +1,13 @@
+import React from 'react';
 import { Table, TableHeader } from '../common/Table';
 import Modal from '../common/Modal';
-import { EditOutlined, DeleteOutlined, SearchOutlined, PlusOutlined, EyeOutlined, MailOutlined } from '@ant-design/icons';
+import '../../styles/Form.css';
+import { EditOutlined, DeleteOutlined, SearchOutlined, EyeOutlined, MailOutlined } from '@ant-design/icons';
 import EditQuoteForm from './EditQuote/EditQuoteForm';
 import ViewQuoteForm from './ViewQuote/ViewQuoteForm';
 import useQuoteTable from '../../hooks/table/useQuoteTable';
 import Pagination from '../common/Pagination';
+import { Quote } from '../../types/QuoteTypes';
 
 const QuoteTable: React.FC = () => {
   const {
@@ -19,18 +22,13 @@ const QuoteTable: React.FC = () => {
     paginatedData,
     totalPages,
     currentPage,
-    setCurrentPage,
     isEditModalOpen,
-    isAddModalOpen,
     isViewModalOpen,
     isEmailModalOpen,
     selectedQuote,
     openEditModal,
-    closeEditModal,
     openViewModal,
-    closeViewModal,
     setEditModalOpen,
-    setAddModalOpen,
     setViewModalOpen,
     setEmailModalOpen,
     toggleSelectAll,
@@ -57,8 +55,10 @@ const QuoteTable: React.FC = () => {
   const headers: TableHeader[] = [
     {
       key: 'checkbox',
-      label: <input type="checkbox" checked={selectedIds.length === paginatedData.length && paginatedData.length > 0} onChange={toggleSelectAll} />,
-      render: (quote) => <input type="checkbox" checked={selectedIds.includes(quote.id)} onChange={() => toggleSelect(quote.id)} />,
+      label: (
+        <input type="checkbox" onChange={toggleSelectAll} checked={selectedIds.length === paginatedData.length && paginatedData.length > 0} />
+      ) as JSX.Element,
+      render: (item: Quote) => <input type="checkbox" checked={selectedIds.includes(item.id)} onChange={() => toggleSelect(item.id)} />,
     },
     { key: 'quote_customer', label: 'Customer', render: (quote) => quote.quote_customer || <span>-</span> },
     { key: 'quote_cust_ref_no', label: 'Customer Ref#', render: (quote) => quote.quote_cust_ref_no || <span>-</span> },
@@ -120,20 +120,16 @@ const QuoteTable: React.FC = () => {
       )}
       <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
 
-      <Modal isOpen={isEditModalOpen} onClose={closeEditModal} title="Edit Quote">
-        {selectedQuote ? (
-          <EditQuoteForm quote={selectedQuote} onClose={closeEditModal} onUpdate={updateQuote} />
-        ) : (
-          <p>No quote selected for editing.</p>
-        )}
+      <Modal isOpen={isEditModalOpen} onClose={() => setEditModalOpen(false)} title="Edit Quote">
+        {selectedQuote && <EditQuoteForm quote={selectedQuote} onClose={() => setEditModalOpen(false)} onUpdate={updateQuote} />}
       </Modal>
 
       <Modal isOpen={isEmailModalOpen} onClose={() => setEmailModalOpen(false)} title="Send Email">
         <button onClick={sendEmails}>Send</button>
       </Modal>
 
-      <Modal isOpen={isViewModalOpen} onClose={closeViewModal} title="Quote Details">
-        {selectedQuote && <ViewQuoteForm quote={selectedQuote} onClose={closeViewModal} />}
+      <Modal isOpen={isViewModalOpen} onClose={() => setViewModalOpen(false)} title="Quote Details">
+        {selectedQuote && <ViewQuoteForm quote={selectedQuote} onClose={() => setViewModalOpen(false)} />}
       </Modal>
     </div>
   );

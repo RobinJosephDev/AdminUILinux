@@ -70,9 +70,11 @@ const EditCarrierForm: React.FC<EditCarrierFormProps> = ({ carrier, onClose, onU
                     handleContactChange={handleContactChange}
                   />
                 ))}
-                <button type="button" onClick={handleAddContact} className="add-button">
-                  <PlusOutlined />
-                </button>
+                {formCarrier.contacts.length === 0 && (
+                  <button type="button" onClick={handleAddContact} className="add-button">
+                    <PlusOutlined />
+                  </button>
+                )}
               </div>
             </fieldset>
 
@@ -91,9 +93,11 @@ const EditCarrierForm: React.FC<EditCarrierFormProps> = ({ carrier, onClose, onU
                     handleEquipmentChange={handleEquipmentChange}
                   />
                 ))}
-                <button type="button" onClick={handleAddEquipment} className="add-button">
-                  <PlusOutlined />
-                </button>
+                {formCarrier.equipments.length === 0 && (
+                  <button type="button" onClick={handleAddEquipment} className="add-button">
+                    <PlusOutlined />
+                  </button>
+                )}
               </div>
             </fieldset>
 
@@ -112,9 +116,11 @@ const EditCarrierForm: React.FC<EditCarrierFormProps> = ({ carrier, onClose, onU
                     handleLaneChange={handleLaneChange}
                   />
                 ))}
-                <button type="button" onClick={handleAddLane} className="add-button">
-                  <PlusOutlined />
-                </button>
+                {formCarrier.lanes.length === 0 && (
+                  <button type="button" onClick={handleAddLane} className="add-button">
+                    <PlusOutlined />
+                  </button>
+                )}
               </div>
             </fieldset>
           </>

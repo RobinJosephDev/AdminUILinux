@@ -4,25 +4,32 @@ import MailingAddress from './MailingAddress';
 import AccountsPayable from './AccountsPayable';
 import CustomBroker from './CustomBroker';
 import CustomerCredit from './CustomerCredit';
-import CustomerContact from './CustomerContact';
-import CustomerEquipment from './CustomerEquipment';
+import CustomerContact from '../CustomerContact';
+import CustomerEquipment from '../CustomerEquipment';
 import { PlusOutlined } from '@ant-design/icons';
 import useEditCustomer from '../../../hooks/edit/useEditCustomer';
-import { Customer, Contact, Equipment } from '../../../types/CustomerTypes';
+import { Customer } from '../../../types/CustomerTypes';
 
 interface EditCustomerFormProps {
-  customer: Customer;
+  customer: Customer | null;
   onClose: () => void;
-  onUpdate: () => void;
+  onUpdate: (customer: Customer) => void;
 }
 
-function EditCustomerForm({ customer, onClose, onUpdate }: EditCustomerFormProps) {
-  const { formCustomer, setFormCustomer, updateCustomer, handleContactChange, handleEquipmentChange, handleRemoveContact, handleRemoveEquipment } =
-    useEditCustomer({ customer, onUpdate, onClose });
+const EditCustomerForm: React.FC<EditCustomerFormProps> = ({ customer, onClose, onUpdate }) => {
+  const {
+    formCustomer,
+    setFormCustomer,
+    updateCustomer,
+    handleAddContact,
+    handleContactChange,
+    handleAddEquipment,
+    handleEquipmentChange,
+    handleRemoveContact,
+    handleRemoveEquipment,
+  } = useEditCustomer(customer, onClose, onUpdate);
 
-  // Initialize `contacts` and `equipment` to empty arrays if undefined
-  const contacts = formCustomer?.contact || [];
-  const equipment = Array.isArray(formCustomer?.cust_equipment) ? formCustomer.cust_equipment : [];
+  console.log('Form customer:', formCustomer);
 
   return (
     <div className="form-container">
@@ -42,49 +49,45 @@ function EditCustomerForm({ customer, onClose, onUpdate }: EditCustomerFormProps
 
         <fieldset className="form-section">
           <legend>Contacts</legend>
+          <hr />
           <div className="form-row">
-            {contacts.map((contact: Contact, index: number) => (
-              <CustomerContact key={index} contact={contact} index={index} onChange={handleContactChange} onRemove={handleRemoveContact} />
+            {formCustomer.cust_contact.map((contact, index) => (
+              <CustomerContact
+                key={index}
+                contacts={formCustomer.cust_contact}
+                index={index}
+                onAddContact={handleAddContact}
+                handleRemoveContact={handleRemoveContact}
+                handleContactChange={handleContactChange}
+              />
             ))}
-            <button
-              type="button"
-              onClick={() =>
-                setFormCustomer((prevCustomer) => ({
-                  ...prevCustomer,
-                  contact: [...prevCustomer.contact, { name: '', phone: '', ext: '', email: '', fax: '', designation: '' }],
-                }))
-              }
-              className="add-button"
-            >
-              <PlusOutlined />
-            </button>
+            {formCustomer.cust_contact.length === 0 && (
+              <button type="button" onClick={handleAddContact} className="add-button">
+                <PlusOutlined />
+              </button>
+            )}
           </div>
         </fieldset>
 
         <fieldset className="form-section">
           <legend>Equipments</legend>
+          <hr />
           <div className="form-row">
-            {equipment.map((equipmentItem: Equipment, index: number) => (
+            {formCustomer.cust_equipment.map((equipment, index) => (
               <CustomerEquipment
                 key={index}
-                equipment={equipmentItem}
+                equipments={formCustomer.cust_equipment}
                 index={index}
-                onChange={handleEquipmentChange}
-                onRemove={handleRemoveEquipment}
+                onAddEquipment={handleAddEquipment}
+                handleEquipmentChange={handleEquipmentChange}
+                handleRemoveEquipment={handleRemoveEquipment}
               />
             ))}
-            <button
-              type="button"
-              onClick={() =>
-                setFormCustomer((prevCustomer) => ({
-                  ...prevCustomer,
-                  cust_equipment: [...prevCustomer.cust_equipment, { equipment: '' }],
-                }))
-              }
-              className="add-button"
-            >
-              <PlusOutlined />
-            </button>
+            {formCustomer.cust_equipment.length === 0 && (
+              <button type="button" onClick={handleAddEquipment} className="add-button">
+                <PlusOutlined />
+              </button>
+            )}
           </div>
         </fieldset>
 
@@ -99,6 +102,6 @@ function EditCustomerForm({ customer, onClose, onUpdate }: EditCustomerFormProps
       </form>
     </div>
   );
-}
+};
 
 export default EditCustomerForm;

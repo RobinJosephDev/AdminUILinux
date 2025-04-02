@@ -70,7 +70,7 @@ const CustomNavbar: React.FC = () => {
           </NavDropdown>
 
           <NavDropdown title="Quotes" id="quotes-dropdown" className="custom-dropdown">
-            <NavDropdown.Item as={NavLink} to="/shipment" className="custom-dropdown-item">
+            <NavDropdown.Item as={NavLink} to="/quote" className="custom-dropdown-item">
               <FiFileText className="dropdown-icon" /> Quotes
             </NavDropdown.Item>
             <NavDropdown.Item as={NavLink} to="/quotes-lead" className="custom-dropdown-item">

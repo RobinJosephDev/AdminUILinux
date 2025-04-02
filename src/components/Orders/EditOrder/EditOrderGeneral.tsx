@@ -160,7 +160,7 @@ const OrderGeneral: React.FC<OrderGeneralProps> = ({ formOrder, setFormOrder }) 
             id="quote_customer_ref_no"
             value={formOrder.customer_ref_no || ''}
             onChange={(e) => validateAndSetOrder('customer_ref_no', e.target.value)}
-            onBlur={() => validateAndSetOrder('customer_ref_no', formOrder.customer_ref_no || '')} // 🚀 Validate on blur
+            onBlur={() => validateAndSetOrder('customer_ref_no', formOrder.customer_ref_no || '')}
             required
           >
             <option value="" disabled>

@@ -66,9 +66,11 @@ const EditOrderForm: React.FC<EditOrderFormProps> = ({ order, onClose, onUpdate 
                     handleRemoveOrigin={handleRemoveOrigin}
                   />
                 ))}
-                <button type="button" onClick={handleAddOrigin} className="add-button">
-                  <PlusOutlined />
-                </button>
+                {formOrder.origin_location.length === 0 && (
+                  <button type="button" onClick={handleAddOrigin} className="add-button">
+                    <PlusOutlined />
+                  </button>
+                )}
               </div>
             </fieldset>
 
@@ -88,9 +90,11 @@ const EditOrderForm: React.FC<EditOrderFormProps> = ({ order, onClose, onUpdate 
                     handleRemoveDestination={handleRemoveDestination}
                   />
                 ))}
-                <button type="button" onClick={handleAddDestination} className="add-button">
-                  <PlusOutlined />
-                </button>
+                {formOrder.destination_location.length === 0 && (
+                  <button type="button" onClick={handleAddDestination} className="add-button">
+                    <PlusOutlined />
+                  </button>
+                )}
               </div>
             </fieldset>
 
@@ -113,9 +117,11 @@ const EditOrderForm: React.FC<EditOrderFormProps> = ({ order, onClose, onUpdate 
                     handleRemoveCharge={handleRemoveCharge}
                   />
                 ))}
-                <button type="button" onClick={handleAddCharge} className="add-button">
-                  <PlusOutlined />
-                </button>
+                {formOrder.charges.length === 0 && (
+                  <button type="button" onClick={handleAddCharge} className="add-button">
+                    <PlusOutlined />
+                  </button>
+                )}
               </div>
             </fieldset>
 
@@ -135,9 +141,11 @@ const EditOrderForm: React.FC<EditOrderFormProps> = ({ order, onClose, onUpdate 
                     handleRemoveDiscount={handleRemoveDiscount}
                   />
                 ))}
-                <button type="button" onClick={handleAddDiscount} className="add-button">
-                  <PlusOutlined />
-                </button>
+                {formOrder.discounts.length === 0 && (
+                  <button type="button" onClick={handleAddDiscount} className="add-button">
+                    <PlusOutlined />
+                  </button>
+                )}
               </div>
             </fieldset>
             <EditOrderTax formOrder={formOrder} setFormOrder={setFormOrder} />

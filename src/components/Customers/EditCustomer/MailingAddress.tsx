@@ -1,158 +1,182 @@
-import { useEffect, useRef } from 'react';
+import { FC, useState, useEffect } from 'react';
 import { Customer } from '../../../types/CustomerTypes';
+import { z } from 'zod';
+import DOMPurify from 'dompurify';
+import { useGoogleAutocomplete } from '../../../hooks/useGoogleAutocomplete';
 
-type Props = {
+declare global {
+  interface Window {
+    google?: any;
+  }
+}
+
+interface MailingAddressProps {
   formCustomer: Customer;
   setFormCustomer: React.Dispatch<React.SetStateAction<Customer>>;
-};
+}
 
-function CustomerMailingAddressForm({ formCustomer, setFormCustomer }: Props) {
-  const addressRef = useRef<HTMLInputElement>(null);
+const mailingSchema = z.object({
+  cust_mailing_address: z
+    .string()
+    .max(255, 'Address is too long')
+    .regex(/^[a-zA-Z0-9\s,.'-]*$/, 'Invalid street format')
+    .optional(),
+  cust_mailing_city: z
+    .string()
+    .max(200, 'City name is too long')
+    .regex(/^[a-zA-Z\s.'-]*$/, 'Invalid city format')
+    .optional(),
+  cust_mailing_state: z
+    .string()
+    .max(200, 'Invalid state')
+    .regex(/^[a-zA-Z\s.'-]*$/, 'Invalid state format')
+    .optional(),
+  cust_mailing_country: z
+    .string()
+    .max(100, 'Invalid country')
+    .regex(/^[a-zA-Z\s.'-]*$/, 'Invalid country format')
+    .optional(),
+  cust_mailing_postal: z
+    .string()
+    .max(20, 'Postal code cannot exceed 20 characters')
+    .regex(/^[a-zA-Z0-9-\s]*$/, 'Invalid postal code')
+    .optional(),
+  cust_mailing_unit_no: z
+    .string()
+    .max(30, 'Unit No cannot exceed 30 characters')
+    .regex(/^[0-9-+()\s]*$/, 'Invalid phone format')
+    .optional(),
+});
 
+function MailingAddress({ formCustomer, setFormCustomer }: MailingAddressProps) {
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [sameAsPrimary, setSameAsPrimary] = useState(false);
   useEffect(() => {
-    const loadGoogleMapsApi = () => {
-      if (window.google && window.google.maps) {
-        initializeAutocomplete();
-        return;
-      }
-      const script = document.createElement('script');
-      script.src = 'https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places';
-      script.async = true;
-      script.defer = true;
-      script.onload = () => {
-        if (window.google && window.google.maps) {
-          initializeAutocomplete();
-        }
-      };
-      document.head.appendChild(script);
-    };
+    if (!sameAsPrimary && addressRef.current) {
+      const autocomplete = new window.google.maps.places.Autocomplete(addressRef.current, {
+        types: ['address'],
+      });
 
-    loadGoogleMapsApi();
-  }, []);
-
-  const initializeAutocomplete = () => {
-    if (!addressRef.current) return;
-    const autocomplete = new window.google.maps.places.Autocomplete(addressRef.current, {
-      types: ['address'],
-    });
-    autocomplete.addListener('place_changed', () => {
-      const place = autocomplete.getPlace();
-      if (!place || !place.address_components) {
-        console.error('No valid address selected');
-        return;
-      }
-      updateAddressFields(place);
-    });
-  };
+      autocomplete.addListener('place_changed', () => {
+        const place = autocomplete.getPlace();
+        updateAddressFields(place);
+      });
+    }
+  }, [sameAsPrimary]);
 
   const updateAddressFields = (place: google.maps.places.PlaceResult) => {
-    const addressComponents = place.address_components || [];
-    const getComponent = (type: string, fallback: string) => addressComponents.find((c) => c.types.includes(type))?.long_name || fallback;
-
-    const streetNumber = getComponent('street_number', '');
-    const route = getComponent('route', '');
-    const mainAddress = `${streetNumber} ${route}`.trim();
-
-    setFormCustomer((prevCustomer) => ({
-      ...prevCustomer,
-      cust_mailing_address: mainAddress,
-      cust_mailing_city: getComponent('locality', ''),
-      cust_mailing_state: getComponent('administrative_area_level_1', ''),
-      cust_mailing_country: getComponent('country', ''),
-      cust_mailing_postal: getComponent('postal_code', ''),
+    const getComponent = (type: string) => place.address_components?.find((c) => c.types.includes(type))?.long_name || '';
+    setFormCustomer((prev) => ({
+      ...prev,
+      cust_mailing_address: `${getComponent('street_number')} ${getComponent('route')}`.trim(),
+      cust_mailing_city: getComponent('locality'),
+      cust_mailing_state: getComponent('administrative_area_level_1'),
+      cust_mailing_country: getComponent('country'),
+      cust_mailing_postal: getComponent('postal_code'),
     }));
   };
+  const addressRef = useGoogleAutocomplete(updateAddressFields);
 
-  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { checked } = e.target;
-    setFormCustomer((prevCustomer) => ({
-      ...prevCustomer,
-      sameAsPrimary: checked,
-      ...(checked && {
-        cust_mailing_address: '',
-        cust_mailing_city: '',
-        cust_mailing_state: '',
-        cust_mailing_country: '',
-        cust_mailing_postal: '',
-        cust_mailing_unit_no: '',
-      }),
-    }));
+  const validateAndSetField = (field: keyof Customer, value: string) => {
+    const sanitizedValue = DOMPurify.sanitize(value);
+    let error = '';
+
+    const tempCustomer = { ...formCustomer, [field]: sanitizedValue };
+    const result = mailingSchema.safeParse(tempCustomer);
+
+    if (!result.success) {
+      const fieldError = result.error.errors.find((err) => err.path[0] === field);
+      error = fieldError ? fieldError.message : '';
+    }
+
+    setErrors((prevErrors) => ({ ...prevErrors, [field]: error }));
+    setFormCustomer(tempCustomer);
   };
+
+  const handleSameAsPrimaryChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const isChecked = e.target.checked;
+    setSameAsPrimary(isChecked);
+
+    setFormCustomer((prev) => ({
+      ...prev,
+      cust_mailing_address: isChecked ? prev.cust_primary_address : '',
+      cust_mailing_city: isChecked ? prev.cust_primary_city : '',
+      cust_mailing_state: isChecked ? prev.cust_primary_state : '',
+      cust_mailing_country: isChecked ? prev.cust_primary_country : '',
+      cust_mailing_postal: isChecked ? prev.cust_primary_postal : '',
+      cust_mailing_unit_no: isChecked ? prev.cust_primary_unit_no : '',
+    }));
+
+    try {
+      const response = await fetch('/api/update-vendor', {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ sameAsPrimary: isChecked }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update the database');
+      }
+
+      const data = await response.json();
+      console.log('Update successful:', data);
+    } catch (error) {
+      console.error('Error updating the database:', error);
+    }
+  };
+
+  const fields = [
+    { label: 'Street', key: 'cust_mailing_address', placeholder: 'Enter street address' },
+    { label: 'City', key: 'cust_mailing_city', placeholder: 'Enter city name' },
+    { label: 'State', key: 'cust_mailing_state', placeholder: 'Enter state' },
+    { label: 'Country', key: 'cust_mailing_country', placeholder: 'Enter country' },
+    { label: 'Postal Code', key: 'cust_mailing_postal', placeholder: 'Enter postal code' },
+    { label: 'Unit No.', key: 'cust_mailing_unit_no', placeholder: 'Enter Unit No.' },
+  ];
 
   return (
     <fieldset>
       <legend>Mailing Address</legend>
-      <div className="form-group">
-        <label htmlFor="mailingAddressSame">
+      <hr />
+      <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}>
+        <input
+          type="checkbox"
+          id="sameAsPrimary"
+          checked={sameAsPrimary}
+          onChange={handleSameAsPrimaryChange}
+          style={{ transform: 'scale(1.1)', cursor: 'pointer', margin: 0 }}
+        />
+        <label htmlFor="sameAsPrimary" style={{ margin: 0, whiteSpace: 'nowrap' }}>
           Same as Primary Address
-          <input type="checkbox" id="mailingAddressSame" checked={formCustomer.sameAsPrimary} onChange={handleCheckboxChange} />
         </label>
       </div>
-      {!formCustomer.sameAsPrimary && (
-        <>
-          <div className="form-row" style={{ display: 'flex', gap: '1rem' }}>
-            <div className="form-group" style={{ flex: 1 }}>
-              <label htmlFor="mailingAddressStreet">Street</label>
+
+      {!sameAsPrimary && (
+        <div className="form-grid" style={{ display: 'grid', gap: '1rem', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))' }}>
+          {fields.map(({ label, key, placeholder }) => (
+            <div className="form-group" key={key}>
+              <label htmlFor={key}>{label}</label>
               <input
-                id="mailingAddressStreet"
-                ref={addressRef}
-                value={formCustomer.cust_mailing_address}
-                onChange={(e) => setFormCustomer((prev) => ({ ...prev, cust_mailing_address: e.target.value }))}
-                placeholder="Enter your address"
+                type="text"
+                id={key}
+                placeholder={placeholder}
+                value={(formCustomer[key as keyof Customer] as string) || ''}
+                onChange={(e) => validateAndSetField(key as keyof Customer, e.target.value)}
+                ref={key === 'cust_mailing_address' ? addressRef : undefined}
               />
+              {errors[key] && (
+                <span className="error" style={{ color: 'red' }}>
+                  {errors[key]}
+                </span>
+              )}
             </div>
-            <div className="form-group" style={{ flex: 1 }}>
-              <label htmlFor="mailingAddressCity">City</label>
-              <input
-                id="mailingAddressCity"
-                value={formCustomer.cust_mailing_city}
-                onChange={(e) => setFormCustomer((prev) => ({ ...prev, cust_mailing_city: e.target.value }))}
-                placeholder="City"
-              />
-            </div>
-            <div className="form-group" style={{ flex: 1 }}>
-              <label htmlFor="mailingAddressState">State</label>
-              <input
-                id="mailingAddressState"
-                value={formCustomer.cust_mailing_state}
-                onChange={(e) => setFormCustomer((prev) => ({ ...prev, cust_mailing_state: e.target.value }))}
-                placeholder="State"
-              />
-            </div>
-          </div>
-          <div className="form-row" style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
-            <div className="form-group" style={{ flex: 1 }}>
-              <label htmlFor="mailingAddressCountry">Country</label>
-              <input
-                id="mailingAddressCountry"
-                value={formCustomer.cust_mailing_country}
-                onChange={(e) => setFormCustomer((prev) => ({ ...prev, cust_mailing_country: e.target.value }))}
-                placeholder="Country"
-              />
-            </div>
-            <div className="form-group" style={{ flex: 1 }}>
-              <label htmlFor="mailingAddressPostal">Postal Code</label>
-              <input
-                id="mailingAddressPostal"
-                value={formCustomer.cust_mailing_postal}
-                onChange={(e) => setFormCustomer((prev) => ({ ...prev, cust_mailing_postal: e.target.value }))}
-                placeholder="Postal Code"
-              />
-            </div>
-            <div className="form-group" style={{ flex: 1 }}>
-              <label htmlFor="mailingAddressUnitNo">Unit No</label>
-              <input
-                id="mailingAddressUnitNo"
-                value={formCustomer.cust_mailing_unit_no}
-                onChange={(e) => setFormCustomer((prev) => ({ ...prev, cust_mailing_unit_no: e.target.value }))}
-                placeholder="Unit No"
-              />
-            </div>
-          </div>
-        </>
+          ))}
+        </div>
       )}
     </fieldset>
   );
 }
 
-export default CustomerMailingAddressForm;
+export default MailingAddress;

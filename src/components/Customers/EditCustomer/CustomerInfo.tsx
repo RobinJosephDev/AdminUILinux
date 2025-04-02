@@ -1,106 +1,227 @@
+import { useState, useEffect } from 'react';
+import { z } from 'zod';
+import axios from 'axios';
 import { Customer } from '../../../types/CustomerTypes';
 
 interface CustomerInfoProps {
   formCustomer: Customer;
-  setFormCustomer: (customer: Customer) => void;
+  setFormCustomer: React.Dispatch<React.SetStateAction<Customer>>;
 }
 
+const formCustomerSchema = z.object({
+  cust_website: z
+    .string()
+    .max(150, 'Branch cannot exceed 150 characters')
+    .regex(/^[a-zA-Z0-9\s.,'"-]*$/, 'Only letters, numbers, spaces, apostrophes, periods, commas, and hyphens allowed')
+    .optional(),
+  cust_email: z.string().max(255, 'Email cannot exceed 255 characters').email('Invalid email format').optional(),
+  cust_contact_no: z
+    .string()
+    .max(30, 'Contact no cannot exceed 30 characters')
+    .regex(/^[0-9-+()\s]*$/, 'Invalid phone format')
+    .optional(),
+  cust_contact_no_ext: z
+    .string()
+    .max(100, 'Phone Ext cannot exceed 100 characters')
+    .regex(/^[a-zA-Z0-9\s.,'"-]*$/, 'Only letters, numbers, spaces, apostrophes, periods, commas, and hyphens allowed')
+    .optional(),
+  cust_tax_id: z
+    .string()
+    .max(20, 'Tax ID cannot exceed 20 characters')
+    .regex(/^[a-zA-Z0-9-_\/ ]*$/, 'Only letters, numbers, dashes, underscores, slashes, and spaces allowed')
+    .optional(),
+  customer: z
+    .string()
+    .min(1, 'Customer is required')
+    .max(200, 'Customer name cannot exceed 200 characters')
+    .regex(/^[a-zA-Z0-9\s.,'"-]+$/, 'Only letters, numbers, spaces, apostrophes, periods, commas, and hyphens allowed'),
+  customer_ref_no: z
+    .string()
+    .min(1, 'Customer Ref. No is required')
+    .max(100, 'Customer Ref. No cannot exceed 100 characters')
+    .regex(/^[a-zA-Z0-9\s.,'"-]+$/, 'Only letters, numbers, spaces, apostrophes, periods, commas, and hyphens allowed'),
+});
+
+const fields = [
+  { key: 'cust_website', label: 'Website', placeholder: 'Enter website', type: 'text' },
+  { key: 'cust_email', label: 'Email', placeholder: 'Enter email', type: 'text' },
+  { key: 'cust_contact_no', label: 'Contact no', placeholder: 'Enter contact no', type: 'text' },
+  { key: 'cust_contact_no_ext', label: 'Extension', placeholder: 'Enter contact extension', type: 'text' },
+  { key: 'cust_tax_id', label: 'Tax id', placeholder: 'Enter tax id', type: 'text' },
+];
+
 const CustomerInfo: React.FC<CustomerInfoProps> = ({ formCustomer, setFormCustomer }) => {
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [customers, setCustomers] = useState<{ value: string; label: string; refNo: string }[]>([]);
+  const [customerRefNos, setCustomerRefNos] = useState<{ value: string; label: string }[]>([]);
   const customerTypeOptions = ['Manufacturer', 'Trader', 'Distributor', 'Retailer', 'Freight Forwarder'];
 
+  const API_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api';
+
+  useEffect(() => {
+    const fetchCustomers = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await axios.get<Customer[]>(`${API_URL}/customer`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        if (!response || !response.data) {
+          console.error('API response is undefined or invalid:', response);
+          return;
+        }
+
+        console.log('Fetched customers:', response.data);
+
+        const formattedCustomers = response.data.map((customer) => ({
+          value: customer.cust_name,
+          label: customer.cust_name,
+          refNo: customer.cust_ref_no,
+        }));
+
+        setCustomers(formattedCustomers);
+
+        if (formattedCustomers.length > 0) {
+          setFormCustomer((prev) => ({
+            ...prev,
+            cust_name: formattedCustomers[0].value,
+            cust_ref_no: formattedCustomers[0].refNo,
+          }));
+        }
+      } catch (error) {
+        console.error('Error fetching customers:', error);
+      }
+    };
+
+    fetchCustomers();
+  }, []);
+
+  useEffect(() => {
+    if (formCustomer.cust_name) {
+      const selectedCustomer = customers.find((c) => c.value === formCustomer.cust_name);
+      setCustomerRefNos(selectedCustomer ? [{ value: selectedCustomer.refNo, label: selectedCustomer.refNo }] : []);
+    } else {
+      setCustomerRefNos([]);
+    }
+  }, [formCustomer.cust_name, customers]);
+
+  const validateAndSetCustomer = (field: keyof Customer, value: string | boolean) => {
+    let sanitizedValue = value;
+
+    let error = '';
+    const tempCustomer = { ...formCustomer, [field]: sanitizedValue };
+    const result = formCustomerSchema.safeParse(tempCustomer);
+
+    if (!result.success) {
+      const fieldError = result.error.errors.find((err) => err.path[0] === field);
+      error = fieldError ? fieldError.message : '';
+    }
+
+    setErrors((prevErrors) => ({ ...prevErrors, [field]: error }));
+    setFormCustomer(tempCustomer);
+  };
+
   return (
-    <fieldset>
+    <fieldset className="form-section">
       <legend>Customer Information</legend>
-      <div className="form-row" style={{ display: 'flex', gap: '1rem' }}>
+      <hr />
+      <div className="form-grid" style={{ display: 'grid', gap: '1rem', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))' }}>
+        <div className="form-group" style={{ flex: '1 1 45%' }}>
+          <label htmlFor="customer">
+            Customer <span style={{ color: 'red' }}>*</span>
+          </label>
+          <select
+            id="quote_customer"
+            value={formCustomer.cust_name || ''}
+            onChange={(e) => validateAndSetCustomer('cust_name', e.target.value)}
+            onBlur={() => validateAndSetCustomer('cust_name', formCustomer.cust_name || '')}
+            required
+          >
+            <option value="" disabled>
+              Select a customer
+            </option>
+            {customers.length > 0 ? (
+              customers.map((customer, index) => (
+                <option key={`${customer.refNo}-${index}`} value={customer.value}>
+                  {customer.label}
+                </option>
+              ))
+            ) : (
+              <option disabled>No customers found</option>
+            )}
+          </select>
+          {errors.customer && (
+            <span className="error" style={{ color: 'red' }}>
+              {errors.customer}
+            </span>
+          )}
+        </div>
+
         <div className="form-group" style={{ flex: 1 }}>
-          <label htmlFor="customerType">Customer Type</label>
-          <select id="customerType" value={formCustomer.cust_type} onChange={(e) => setFormCustomer({ ...formCustomer, cust_type: e.target.value })}>
-            {customerTypeOptions.map((type) => (
-              <option key={type} value={type}>
-                {type}
+          <label htmlFor="customerRefNo">
+            Customer Ref. No <span style={{ color: 'red' }}>*</span>
+          </label>
+          <select
+            id="quote_customer_ref_no"
+            value={formCustomer.cust_ref_no || ''}
+            onChange={(e) => validateAndSetCustomer('cust_ref_no', e.target.value)}
+            onBlur={() => validateAndSetCustomer('cust_ref_no', formCustomer.cust_ref_no || '')}
+            required
+          >
+            <option value="" disabled>
+              Select a reference number
+            </option>
+            {customerRefNos.map((customer_ref_no) => (
+              <option key={customer_ref_no.value} value={customer_ref_no.value}>
+                {customer_ref_no.label}
               </option>
             ))}
           </select>
+          {errors.customer_ref_no && (
+            <span className="error" style={{ color: 'red' }}>
+              {errors.customer_ref_no}
+            </span>
+          )}
         </div>
-
-        <div className="form-group" style={{ flex: 1 }}>
-          <label htmlFor="customerName">Customer Name*</label>
-          <input
-            type="text"
-            id="customerName"
-            value={formCustomer.cust_name}
-            onChange={(e) => setFormCustomer({ ...formCustomer, cust_name: e.target.value })}
-            required
-          />
+        <div className="form-group" style={{ flex: '1 1 45%' }}>
+          <label htmlFor="loadType">
+            Customer Type Type <span style={{ color: 'red' }}>*</span>
+          </label>
+          <select
+            id="loadType"
+            value={formCustomer.cust_type}
+            onChange={(e) => setFormCustomer((prevOrder) => ({ ...prevOrder, cust_type: e.target.value }))}
+          >
+            <option value="">Select...</option>
+            {customerTypeOptions.map((option) => (
+              <option key={option} value={option}>
+                {option}
+              </option>
+            ))}
+          </select>
+          {errors.load_type && (
+            <span className="error" style={{ color: 'red' }}>
+              {errors.load_type}
+            </span>
+          )}
         </div>
-
-        <div className="form-group" style={{ flex: 1 }}>
-          <label htmlFor="customerRefNo">Customer Ref No.</label>
-          <input
-            type="text"
-            id="customerRefNo"
-            value={formCustomer.cust_ref_no || ''}
-            onChange={(e) => setFormCustomer({ ...formCustomer, cust_ref_no: e.target.value })}
-          />
-        </div>
-      </div>
-
-      <div className="form-row" style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
-        <div className="form-group" style={{ flex: 1 }}>
-          <label htmlFor="website">Website</label>
-          <input
-            type="text"
-            id="website"
-            value={formCustomer.cust_website || ''}
-            onChange={(e) => setFormCustomer({ ...formCustomer, cust_website: e.target.value })}
-          />
-        </div>
-
-        <div className="form-group" style={{ flex: 1 }}>
-          <label htmlFor="email">Email</label>
-          <input
-            type="email"
-            id="email"
-            value={formCustomer.cust_email || ''}
-            onChange={(e) => setFormCustomer({ ...formCustomer, cust_email: e.target.value })}
-          />
-        </div>
-
-        <div className="form-group" style={{ flex: 1 }}>
-          <label htmlFor="contactNo">Contact No</label>
-          <input
-            type="text"
-            id="contactNo"
-            value={formCustomer.cust_contact_no || ''}
-            onChange={(e) => setFormCustomer({ ...formCustomer, cust_contact_no: e.target.value })}
-          />
-        </div>
-      </div>
-
-      <div className="form-row" style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
-        <div className="form-group" style={{ flex: 1 }}>
-          <label htmlFor="contactNoExt">Contact No Ext</label>
-          <input
-            type="text"
-            id="contactNoExt"
-            value={formCustomer.cust_contact_no_ext || ''}
-            onChange={(e) => setFormCustomer({ ...formCustomer, cust_contact_no_ext: e.target.value })}
-          />
-        </div>
-
-        <div className="form-group" style={{ flex: 1 }}>
-          <label htmlFor="taxId">Tax ID</label>
-          <input
-            type="text"
-            id="taxId"
-            value={formCustomer.cust_tax_id || ''}
-            onChange={(e) => setFormCustomer({ ...formCustomer, cust_tax_id: e.target.value })}
-          />
-        </div>
-
-        <div className="form-group" style={{ flex: 1 }}>
-          <input type="hidden" />
-        </div>
+        {fields.map(({ key, label, placeholder, type }) => (
+          <div className="form-group" key={key} style={{ flex: '1 1 45%' }}>
+            <label htmlFor={key}>{label}</label>
+            <input
+              type={type}
+              id={key}
+              placeholder={placeholder}
+              value={String(formCustomer[key as keyof Customer] || '')}
+              onChange={(e) => validateAndSetCustomer(key as keyof Customer, e.target.value)}
+            />
+            {errors[key] && (
+              <span className="error" style={{ color: 'red' }}>
+                {errors[key]}
+              </span>
+            )}
+          </div>
+        ))}
       </div>
     </fieldset>
   );
