@@ -74,12 +74,8 @@ const ViewCustomerForm: FC<ViewCustomerFormProps> = ({ customer, onClose }) => {
       setFormCustomer((prevState) => ({
         ...prevState,
         ...customer,
-        cust_contact: Array.isArray(customer.cust_contact)
-          ? customer.cust_contact
-          : JSON.parse(customer.cust_contact || '[]'),
-        cust_equipment: Array.isArray(customer.cust_equipment)
-          ? customer.cust_equipment
-          : JSON.parse(customer.cust_equipment || '[]'),
+        cust_contact: Array.isArray(customer.cust_contact) ? customer.cust_contact : JSON.parse(customer.cust_contact || '[]'),
+        cust_equipment: Array.isArray(customer.cust_equipment) ? customer.cust_equipment : JSON.parse(customer.cust_equipment || '[]'),
       }));
     }
   }, [customer]);
@@ -96,6 +92,7 @@ const ViewCustomerForm: FC<ViewCustomerFormProps> = ({ customer, onClose }) => {
 
         <fieldset className="form-section">
           <legend>Contacts</legend>
+          <hr />
           <div className="form-row">
             {formCustomer.cust_contact.map((contact: Contact, index: number) => (
               <ViewCustomerContact key={index} contact={contact} index={index} />
@@ -105,6 +102,7 @@ const ViewCustomerForm: FC<ViewCustomerFormProps> = ({ customer, onClose }) => {
 
         <fieldset className="form-section">
           <legend>Equipments</legend>
+          <hr />
           <div className="form-row">
             {formCustomer.cust_equipment.map((equipment: Equipment, index: number) => (
               <ViewCustomerEquipment key={index} equipment={equipment} index={index} />
@@ -113,7 +111,7 @@ const ViewCustomerForm: FC<ViewCustomerFormProps> = ({ customer, onClose }) => {
         </fieldset>
 
         <div className="form-actions">
-          <button type="button" className="btn-cancel" onClick={onClose}>
+          <button type="button" className="btn-cancel" onClick={onClose} style={{ padding: '9px 15px' }}>
             Cancel
           </button>
         </div>

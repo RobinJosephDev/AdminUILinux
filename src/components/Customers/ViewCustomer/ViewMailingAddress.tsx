@@ -8,7 +8,7 @@ const ViewMailingAddressForm: React.FC<ViewCustomerMailingAddressProps> = ({ for
   return (
     <fieldset>
       <legend>Mailing Address</legend>
-
+      <hr />
       {!formCustomer.sameAsPrimary && (
         <>
           <div className="form-row" style={{ display: 'flex', gap: '1rem' }}>

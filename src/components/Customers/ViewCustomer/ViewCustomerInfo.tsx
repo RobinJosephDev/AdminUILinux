@@ -8,7 +8,7 @@ const ViewCustomerInfo: React.FC<ViewCustomerInfoProps> = ({ formCustomer }) => 
   return (
     <fieldset>
       <legend>Customer Information</legend>
-
+      <hr />
       <div className="form-row" style={{ display: 'flex', gap: '1rem' }}>
         <div className="form-group" style={{ flex: 1 }}>
           <label>Customer Type</label>

@@ -86,24 +86,30 @@ function CustomerCredit({ formCustomer, setFormCustomer }: CustomerCreditProps) 
       });
 
       const data = await response.json();
-      console.log('Upload response:', data); // Debugging log
+      console.log('Full Upload Response:', data); // Log full response
 
-      // ✅ Fix the response handling
-      if (data.files?.[fileType]?.fileUrl) {
-        // Ensure fileUrl is absolute
-        const baseURL = API_URL.replace('/api', ''); // Get base URL from API
-        const fullFileUrl = data.files[fileType].fileUrl.startsWith('http')
-          ? data.files[fileType].fileUrl
-          : `${baseURL}${data.files[fileType].fileUrl}`;
+      // Ensure expected response structure
+      if (data && data.files && data.files[fileType]) {
+        console.log('File data:', data.files[fileType]); // Log file data
 
-        setFormCustomer((prevCustomer) => ({
-          ...prevCustomer,
-          [fileType]: fullFileUrl,
-          [`${fileType}_name`]: data.files[fileType].fileName,
-        }));
+        if (data.files[fileType].fileUrl) {
+          const baseURL = API_URL.replace('/api', '');
+          const fullFileUrl = data.files[fileType].fileUrl.startsWith('http')
+            ? data.files[fileType].fileUrl
+            : `${baseURL}${data.files[fileType].fileUrl}`;
+
+          setFormCustomer((prevCustomer) => ({
+            ...prevCustomer,
+            [fileType]: fullFileUrl,
+            [`${fileType}_name`]: data.files[fileType].fileName,
+          }));
+        } else {
+          console.error('File URL not found in response:', data);
+          alert('File upload failed: No file URL returned.');
+        }
       } else {
-        console.error('File URL not returned in response', data);
-        alert('File upload failed: No file URL returned.');
+        console.error('Unexpected response structure:', data);
+        alert('File upload failed: Unexpected response format.');
       }
     } catch (error) {
       console.error('Error uploading file:', error);

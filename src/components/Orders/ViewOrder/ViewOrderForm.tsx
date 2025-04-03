@@ -54,12 +54,21 @@ const ViewOrderForm: React.FC<ViewOrderFormProps> = ({ order, onClose }) => {
     if (order) {
       setFormOrder({
         ...order,
-        origin_location: Array.isArray(order.origin_location) ? order.origin_location : JSON.parse((order.origin_location as any) || '[]'),
+        origin_location: Array.isArray(order.origin_location)
+          ? order.origin_location
+          : typeof order.origin_location === 'string'
+          ? JSON.parse(order.origin_location)
+          : [],
+
         destination_location: Array.isArray(order.destination_location)
           ? order.destination_location
-          : JSON.parse((order.destination_location as any) || '[]'),
-        charges: Array.isArray(order.charges) ? order.charges : JSON.parse((order.charges as any) || '[]'),
-        discounts: Array.isArray(order.discounts) ? order.discounts : JSON.parse((order.discounts as any) || '[]'),
+          : typeof order.destination_location === 'string'
+          ? JSON.parse(order.destination_location)
+          : [],
+
+        charges: Array.isArray(order.charges) ? order.charges : typeof order.charges === 'string' ? JSON.parse(order.charges) : [],
+
+        discounts: Array.isArray(order.discounts) ? order.discounts : typeof order.discounts === 'string' ? JSON.parse(order.discounts) : [],
       });
     }
   }, [order]);

@@ -8,8 +8,25 @@ const ViewCustomerCredit: React.FC<ViewCustomerCreditProps> = ({ formCustomer })
   // Render download link if file URL exists
   const renderDownloadLink = (fileData?: FileData | string, fileLabel?: string) => {
     if (fileData) {
-      // Parse the JSON string if the data is stored as a string
-      const fileObject: FileData = typeof fileData === 'string' ? JSON.parse(fileData) : fileData;
+      let fileObject: FileData;
+
+      if (typeof fileData === 'string') {
+        try {
+          // Check if it's a valid JSON before parsing
+          fileObject = JSON.parse(fileData);
+        } catch (error) {
+          // If parsing fails, assume it's a direct URL
+          return (
+            <div>
+              <a href={fileData} target="_blank" rel="noopener noreferrer">
+                Download {fileLabel}
+              </a>
+            </div>
+          );
+        }
+      } else {
+        fileObject = fileData;
+      }
 
       if (fileObject?.url) {
         return (
@@ -27,6 +44,7 @@ const ViewCustomerCredit: React.FC<ViewCustomerCreditProps> = ({ formCustomer })
   return (
     <fieldset>
       <legend>Customer Credit</legend>
+      <hr />
 
       <div className="form-row" style={{ display: 'flex', gap: '1rem' }}>
         <div className="form-group" style={{ flex: 1 }}>
@@ -75,27 +93,13 @@ const ViewCustomerCredit: React.FC<ViewCustomerCreditProps> = ({ formCustomer })
 
         <div className="form-group" style={{ flex: 1 }}>
           <label>Credit Agreement</label>
-          {formCustomer.cust_credit_agreement && (
-            <p>
-              Stored File:{' '}
-              {typeof formCustomer.cust_credit_agreement === 'string'
-                ? JSON.parse(formCustomer.cust_credit_agreement).name
-                : formCustomer.cust_credit_agreement.name}
-            </p>
-          )}
+
           {renderDownloadLink(formCustomer.cust_credit_agreement, 'Credit Agreement')}
         </div>
 
         <div className="form-group" style={{ flex: 1 }}>
           <label>Shipper Broker Agreement</label>
-          {formCustomer.cust_sbk_agreement && (
-            <p>
-              Stored File:{' '}
-              {typeof formCustomer.cust_sbk_agreement === 'string'
-                ? JSON.parse(formCustomer.cust_sbk_agreement).name
-                : formCustomer.cust_sbk_agreement.name}
-            </p>
-          )}
+
           {renderDownloadLink(formCustomer.cust_sbk_agreement, 'Shipper Broker Agreement')}
         </div>
 

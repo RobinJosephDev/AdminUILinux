@@ -9,6 +9,7 @@ const ViewCustomBroker: React.FC<ViewCustomBrokerProps> = ({ formCustomer }) => 
   return (
     <fieldset>
       <legend>Custom Broker</legend>
+      <hr />
 
       <div className="form-row" style={{ display: 'flex', gap: '1rem' }}>
         <div className="form-group" style={{ flex: 1 }}>
