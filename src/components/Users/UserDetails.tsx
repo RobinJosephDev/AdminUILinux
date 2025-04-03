@@ -144,7 +144,7 @@ const UserDetails: React.FC<UserDetailsProps> = ({ user, setUser }) => {
             value={user.role || ''}
             onChange={(e) => validateAndSetField('role', e.target.value)}
           >
-            <option value="">Select Role</option>
+            <option value="" disabled>Select Role</option>
             {roles.map((role) => (
               <option key={role} value={role}>{role}</option>
             ))}

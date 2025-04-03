@@ -64,7 +64,7 @@ const OrderShipment: React.FC<OrderShipmentProps> = ({ order, setOrder }) => {
             Equipment <span style={{ color: 'red' }}>*</span>
           </label>
           <select id="equipment" value={order.equipment} onChange={(e) => setOrder((prevOrder) => ({ ...prevOrder, equipment: e.target.value }))}>
-            <option value="">Select...</option>
+            <option value="" disabled>Select...</option>
             {equipmentOptions.map((option) => (
               <option key={option} value={option}>
                 {option}
@@ -82,7 +82,7 @@ const OrderShipment: React.FC<OrderShipmentProps> = ({ order, setOrder }) => {
             Load Type <span style={{ color: 'red' }}>*</span>
           </label>
           <select id="loadType" value={order.load_type} onChange={(e) => setOrder((prevOrder) => ({ ...prevOrder, load_type: e.target.value }))}>
-            <option value="">Select...</option>
+            <option value="" disabled>Select...</option>
             {loadTypeOptions.map((option) => (
               <option key={option} value={option}>
                 {option}

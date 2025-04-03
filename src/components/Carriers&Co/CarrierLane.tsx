@@ -76,7 +76,7 @@ const laneOptions = [
 const laneSchema = z.object({
   type: z.enum(laneOptions as [string, ...string[]], {
     errorMap: () => ({ message: 'Invalid lane' }),
-  }),
+  }).optional(),
 });
 const CarrierLane: React.FC<CarrierLaneProps> = ({ lanes, index, handleLaneChange, handleRemoveLane, onAddLane }) => {
   const lane = lanes[index] ?? {};

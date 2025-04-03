@@ -20,7 +20,7 @@ const addInfoSchema = z.object({
     .optional(),
   equipment: z.enum(['Van', 'Reefer', 'Flatbed', 'Triaxle', 'Maxi', 'Btrain', 'Roll tite'], {
     errorMap: () => ({ message: 'Invalid equipment type' }),
-  }),
+  }).optional(),
   notes: z
     .string()
     .max(500, 'Notes must be at most 500 characters long')

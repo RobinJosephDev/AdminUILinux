@@ -112,7 +112,7 @@ const LeadDetails: React.FC<LeadDetailsProps> = ({ lead, setLead }) => {
             Lead Type <span style={{ color: 'red' }}>*</span>
           </label>
           <select id="lead_type" value={lead.lead_type || ''} onChange={(e) => setLead((prevLead) => ({ ...prevLead, lead_type: e.target.value }))}>
-            <option value="">Select Lead Type</option>
+            <option value="" disabled>Select Lead Type</option>
             <option value="AB">AB</option>
             <option value="BC">BC</option>
             <option value="BDS">BDS</option>
@@ -139,7 +139,7 @@ const LeadDetails: React.FC<LeadDetailsProps> = ({ lead, setLead }) => {
             value={lead.lead_status || ''}
             onChange={(e) => setLead((prevLead) => ({ ...prevLead, lead_status: e.target.value }))}
           >
-            <option value="">Select Lead Status</option>
+            <option value="" disabled>Select Lead Status</option>
             <option value="Prospect">Prospect</option>
             <option value="Lanes discussed">Lanes discussed</option>
             <option value="Prod/Equip noted">Prod/Equip noted</option>

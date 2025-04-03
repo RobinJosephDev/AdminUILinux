@@ -106,7 +106,7 @@ const CustomBroker: React.FC<CustomerInfoProps> = ({ formCustomer, setFormCustom
       <div className="form-grid" style={{ display: 'grid', gap: '1rem', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))' }}>
         <div className="form-group" style={{ flex: '1 1 45%' }}>
           <label htmlFor="customer">
-            Broker <span style={{ color: 'red' }}>*</span>
+            Broker
           </label>
           <select
             id="quote_customer"
@@ -115,7 +115,7 @@ const CustomBroker: React.FC<CustomerInfoProps> = ({ formCustomer, setFormCustom
             onBlur={() => validateAndSetCustomer('cust_broker_name', formCustomer.cust_broker_name || '')}
             required
           >
-            <option value="" disabled>
+            <option value="">
               Select a broker
             </option>
             {brokers.length > 0 ? (

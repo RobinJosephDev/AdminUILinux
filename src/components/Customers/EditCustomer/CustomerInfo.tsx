@@ -23,8 +23,7 @@ const formCustomerSchema = z.object({
   cust_type: z
     .enum(customerTypeOptions as [string, ...string[]], {
       errorMap: () => ({ message: 'Invalid customer type' }),
-    })
-    .optional(),
+    }),
   cust_website: z
     .string()
     .max(150, 'Branch cannot exceed 150 characters')
@@ -183,14 +182,14 @@ const CustomerInfo: React.FC<CustomerInfoProps> = ({ formCustomer, setFormCustom
         </div>
         <div className="form-group" style={{ flex: '1 1 45%' }}>
           <label htmlFor="loadType">
-            Customer Type Type <span style={{ color: 'red' }}>*</span>
+            Customer Type <span style={{ color: 'red' }}>*</span>
           </label>
           <select
             id="loadType"
             value={formCustomer.cust_type}
             onChange={(e) => setFormCustomer((prevOrder) => ({ ...prevOrder, cust_type: e.target.value }))}
           >
-            <option value="">Select...</option>
+            <option value="" disabled>Select...</option>
             {customerTypeOptions.map((option) => (
               <option key={option} value={option}>
                 {option}

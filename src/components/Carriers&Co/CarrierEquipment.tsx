@@ -17,7 +17,7 @@ const equipmentTypeOptions = ["Dry Van 53'", "Reefer 53'", "Flatbed 53'"];
 const equipmentTypeSchema = z.object({
   equipments: z.enum(equipmentTypeOptions as [string, ...string[]], {
     errorMap: () => ({ message: 'Invalid equipment type' }),
-  }),
+  }).optional(),
 });
 
 const CarrierEquipment: React.FC<CarrierEquipmentProps> = ({ equipments, index, handleEquipmentChange, handleRemoveEquipment, onAddEquipment }) => {

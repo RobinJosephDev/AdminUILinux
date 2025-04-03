@@ -21,12 +21,9 @@ const addInfoSchema = z.object({
     .max(200, 'Contact name must be at most 200 characters long')
     .regex(/^[a-zA-Z0-9\s.,'-]*$/, 'Only letters, numbers,spaces, apostrophes, periods, commas, and hyphens allowed')
     .optional(),
-  lead_type: z.enum(['AB', 'BC', 'BDS', 'CA', 'DPD MAGMA', 'MB', 'ON', 'Super Leads', 'TBAB', 'USA'], {
-    errorMap: () => ({ message: 'Invalid lead type' }),
-  }),
   equipment_type: z.enum(['Van', 'Reefer', 'Flatbed', 'Triaxle', 'Maxi', 'Btrain', 'Roll tite'], {
     errorMap: () => ({ message: 'Invalid equipment type' }),
-  }),
+  }) .optional(),
   assigned_to: z
     .string()
     .min(1, 'Assigned To is required')

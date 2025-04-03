@@ -144,7 +144,7 @@ const EditUserDetails: React.FC<EditUserDetailsProps> = ({ formUser, setFormUser
             value={formUser.role || ''}
             onChange={(e) => validateAndSetField('role', e.target.value)}
           >
-            <option value="">Select Role</option>
+            <option value="" disabled>Select Role</option>
             {roles.map((role) => (
               <option key={role} value={role}>{role}</option>
             ))}

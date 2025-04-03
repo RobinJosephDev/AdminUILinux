@@ -14,7 +14,7 @@ const orderSchema = z.object({
     .regex(/^\d{1,3}(,\d{3})*(\.\d{1,2})?$/, 'Enter a valid amount (e.g., 1000, 1,000.50)')
     .optional(),
 
-  currency: z.enum(['CAD', 'USD'], { message: 'Please select a valid currency' }),
+  currency: z.enum(['CAD', 'USD'], { message: 'Please select a valid currency' }).optional(),
 });
 
 const fields = [{ key: 'base_price', label: 'Base Price', placeholder: 'Enter Base Price', type: 'text' }];
