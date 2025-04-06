@@ -23,3 +23,9 @@ body {
 header {
   background-color: #333333 !important;
 }
+@media (max-width: 400px) {
+
+  body,main {
+    padding: 0 0.5rem;
+  }
+}
