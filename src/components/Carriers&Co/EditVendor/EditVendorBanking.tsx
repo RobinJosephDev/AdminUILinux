@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, FC } from 'react';
-import { Vendor } from '../../../types/VendorTypes';
+import { Vendor } from '../../../styles/types/VendorTypes';
 import { z } from 'zod';
 import DOMPurify from 'dompurify';
 import { useGoogleAutocomplete } from '../../../hooks/useGoogleAutocomplete';

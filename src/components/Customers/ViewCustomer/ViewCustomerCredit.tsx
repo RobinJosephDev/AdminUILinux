@@ -1,4 +1,4 @@
-import { Customer, FileData } from '../../../types/CustomerTypes';
+import { Customer, FileData } from '../../../styles/types/CustomerTypes';
 
 interface ViewCustomerCreditProps {
   formCustomer: Customer;

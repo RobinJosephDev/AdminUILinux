@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
-import { User } from '../../types/UserTypes';
+import { User } from '../../styles/types/UserTypes';
 
 interface UseEditUserProps {
   user: User | null;

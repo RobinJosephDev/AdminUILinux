@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import ViewQuoteGeneral from './ViewQuoteGeneral';
 import ViewQuoteDelivery from './ViewQuoteDelivery';
 import ViewQuotePickup from './ViewQuotePickup';
-import { Quote } from '../../../types/QuoteTypes';
+import { Quote } from '../../../styles/types/QuoteTypes';
 
 interface ViewQuoteFormProps {
   quote: Quote | null;

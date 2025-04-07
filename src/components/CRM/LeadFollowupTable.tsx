@@ -5,7 +5,7 @@ import EditFuForm from './EditFollowup/EditFuForm';
 import ViewFuForm from './ViewFollowup/ViewFuForm';
 import Pagination from '../common/Pagination';
 import useFollowupTable from '../../hooks/table/useFollowupTable';
-import { Followup } from '../../types/FollowupTypes';
+import { Followup } from '../../styles/types/FollowupTypes';
 
 const LeadFollowupTable: React.FC = () => {
   const {

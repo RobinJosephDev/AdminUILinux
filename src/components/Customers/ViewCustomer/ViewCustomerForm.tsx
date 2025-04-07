@@ -7,7 +7,7 @@ import ViewCustomBroker from './ViewCustomBroker';
 import ViewCustomerCredit from './ViewCustomerCredit';
 import ViewCustomerContact from './ViewCustomerContact';
 import ViewCustomerEquipment from './ViewCustomerEquipment';
-import { Customer, Equipment, Contact } from '../../../types/CustomerTypes';
+import { Customer, Equipment, Contact } from '../../../styles/types/CustomerTypes';
 
 interface ViewCustomerFormProps {
   customer: Customer;

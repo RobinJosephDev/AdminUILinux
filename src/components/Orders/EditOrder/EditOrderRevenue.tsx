@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Order } from '../../../types/OrderTypes';
+import { Order } from '../../../styles/types/OrderTypes';
 import { z } from 'zod';
 
 interface OrderRevenueProps {

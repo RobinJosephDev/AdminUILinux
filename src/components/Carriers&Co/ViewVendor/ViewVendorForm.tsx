@@ -1,5 +1,5 @@
 import { FC, useEffect, useState } from 'react';
-import { Vendor } from '../../../types/VendorTypes';
+import { Vendor } from '../../../styles/types/VendorTypes';
 import ViewVendorType from './ViewVendorType';
 import ViewVendorDetails from './ViewVendorDetails';
 import ViewVendorPrimaryAddress from './ViewVendorPrimaryAddress';

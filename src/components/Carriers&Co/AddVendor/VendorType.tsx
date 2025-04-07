@@ -1,7 +1,7 @@
 import { FC, useState } from 'react';
 import DOMPurify from 'dompurify';
 import { z } from 'zod';
-import { Vendor } from '../../../types/VendorTypes';
+import { Vendor } from '../../../styles/types/VendorTypes';
 
 interface VendorTypeProps {
   vendor: Vendor;

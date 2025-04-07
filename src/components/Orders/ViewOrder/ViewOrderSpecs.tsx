@@ -1,5 +1,5 @@
 import React from 'react';
-import { Order } from '../../../types/OrderTypes';
+import { Order } from '../../../styles/types/OrderTypes';
 
 interface ViewOrderSpecsProps {
   formOrder: Order;

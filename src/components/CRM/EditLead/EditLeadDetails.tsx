@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import DOMPurify from 'dompurify';
 import { z } from 'zod';
-import { Lead } from '../../../types/LeadTypes';
+import { Lead } from '../../../styles/types/LeadTypes';
 
 interface EditLeadDetailsProps {
   formLead: Lead;

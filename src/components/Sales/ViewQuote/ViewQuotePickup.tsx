@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { Location } from '../../../types/QuoteTypes';
+import { Location } from '../../../styles/types/QuoteTypes';
 
 interface ViewQuotePickupProps {
   pickup: Location;

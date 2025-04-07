@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
-import { Broker } from '../../types/BrokerTypes';
+import { Broker } from '../../styles/types/BrokerTypes';
 
 interface UseEditBrokerProps {
   broker: Broker | null;

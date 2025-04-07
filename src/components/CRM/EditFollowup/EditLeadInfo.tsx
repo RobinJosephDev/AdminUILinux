@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import DOMPurify from 'dompurify';
 import { z } from 'zod';
-import { Followup } from '../../../types/FollowupTypes';
+import { Followup } from '../../../styles/types/FollowupTypes';
 
 interface leadInfoProps {
   followupEdit: Followup;

@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
-import { Order } from '../../../types/OrderTypes';
+import { Order } from '../../../styles/types/OrderTypes';
 import { z } from 'zod';
 import axios from 'axios';
-import { Customer } from '../../../types/CustomerTypes';
+import { Customer } from '../../../styles/types/CustomerTypes';
 
 interface OrderGeneralProps {
   order: Order;

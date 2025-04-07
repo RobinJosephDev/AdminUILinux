@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
-import { Lead, User } from "../../../types/LeadTypes";
+import { Lead, User } from "../../../styles/types/LeadTypes";
 
 interface Employee {
   id: string;

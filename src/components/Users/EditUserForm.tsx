@@ -1,6 +1,6 @@
 import useEditUser from '../../hooks/edit/useEditUser';
 import EditUserDetails from './EditUserDetails';
-import { User } from '../../types/UserTypes';
+import { User } from '../../styles/types/UserTypes';
 
 interface EditUserFormProps {
   user: User | null;

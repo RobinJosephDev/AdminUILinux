@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { Carrier } from '../../../types/CarrierTypes';
+import { Carrier } from '../../../styles/types/CarrierTypes';
 
 interface ViewGeneralProps {
   formCarrier: Carrier;

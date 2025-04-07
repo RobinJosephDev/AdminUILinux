@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
-import { Quote } from '../../../types/QuoteTypes';
+import { Quote } from '../../../styles/types/QuoteTypes';
 import { z } from 'zod';
 import axios from 'axios';
-import { Customer } from '../../../types/CustomerTypes';
+import { Customer } from '../../../styles/types/CustomerTypes';
 
 interface EditQuoteGeneralProps {
   formQuote: Quote;

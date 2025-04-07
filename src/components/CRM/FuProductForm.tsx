@@ -2,7 +2,7 @@ import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import { FC, useCallback, useState } from 'react';
 import { z } from 'zod';
 import DOMPurify from 'dompurify';
-import { Product } from '../../types/FollowupTypes';
+import { Product } from '../../styles/types/FollowupTypes';
 
 interface FuProductFormProps {
   products: Product[];

@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import DOMPurify from 'dompurify';
 import { z } from 'zod';
-import { Lead } from '../../../types/LeadTypes';
+import { Lead } from '../../../styles/types/LeadTypes';
 import axios from 'axios';
 import Swal from 'sweetalert2';
-import { User } from '../../../types/UserTypes';
+import { User } from '../../../styles/types/UserTypes';
 
 interface EditAdditionalInfoProps {
   formLead: Lead;

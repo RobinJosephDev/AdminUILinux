@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { Lane } from "../../../types/CarrierTypes";
+import { Lane } from "../../../styles/types/CarrierTypes";
 
 interface ViewCarrierLaneProps {
   lane: Lane;

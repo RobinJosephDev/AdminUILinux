@@ -1,7 +1,7 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect } from 'vitest';
 import BrokerDetails from '../../../../src/components/Carriers&Co/AddBroker/BrokerDetails';
-import { Broker } from '../../../../src/types/BrokerTypes';
+import { Broker } from '../../../../src/styles/types/BrokerTypes';
 import { useState } from 'react';
 
 const MockBrokerDetails = () => {

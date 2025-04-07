@@ -2,7 +2,7 @@ import EditQuoteGeneral from './EditQuoteGeneral';
 import QuotePickup from '../QuotePickup';
 import QuoteDelivery from '../QuoteDelivery';
 import { PlusOutlined } from '@ant-design/icons';
-import { Quote, Location } from '../../../types/QuoteTypes';
+import { Quote, Location } from '../../../styles/types/QuoteTypes';
 import useEditQuote from '../../../hooks/edit/useEditQuote';
 
 interface EditQuoteFormProps {

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { User } from '../../types/UserTypes';
+import { User } from '../../styles/types/UserTypes';
 
 interface ViewUserFormProps {
   onClose: () => void;

@@ -1,6 +1,6 @@
 import { FC } from "react";
 import { DeleteOutlined } from "@ant-design/icons";
-import { Contact } from "../../../types/CarrierTypes";
+import { Contact } from "../../../styles/types/CarrierTypes";
 
 interface ViewCarrierContactProps {
   contact: Contact;

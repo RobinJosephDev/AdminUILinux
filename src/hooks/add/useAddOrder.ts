@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
-import { Order, Charge, Location } from '../../types/OrderTypes';
+import { Order, Charge, Location } from '../../styles/types/OrderTypes';
 
 const API_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api';
 

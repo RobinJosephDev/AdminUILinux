@@ -2,7 +2,7 @@ import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import { useCallback, useState } from 'react';
 import { z } from 'zod';
 import DOMPurify from 'dompurify';
-import { Equipment } from '../../types/CarrierTypes';
+import { Equipment } from '../../styles/types/CarrierTypes';
 
 interface CarrierEquipmentProps {
   equipments: Equipment[];

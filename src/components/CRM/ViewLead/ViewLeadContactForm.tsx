@@ -1,4 +1,4 @@
-import { Contact } from "../../../types/LeadTypes";
+import { Contact } from "../../../styles/types/LeadTypes";
 
 
 interface ViewLeadContactFormProps {

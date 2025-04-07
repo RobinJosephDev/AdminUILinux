@@ -2,7 +2,7 @@ import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import { FC, useCallback, useState } from 'react';
 import { z } from 'zod';
 import DOMPurify from 'dompurify';
-import { Contact } from '../../types/VendorTypes';
+import { Contact } from '../../styles/types/VendorTypes';
 
 interface VendorContactProps {
   contacts: Contact[];

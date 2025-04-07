@@ -8,7 +8,7 @@ import OrderCharges from '../OrderCharges';
 import OrderDiscounts from '../OrderDiscounts';
 import EditOrderTax from './EditOrderTax';
 import { PlusOutlined } from '@ant-design/icons';
-import { Order, Location, Charge } from '../../../types/OrderTypes';
+import { Order, Location, Charge } from '../../../styles/types/OrderTypes';
 import useEditOrder from '../../../hooks/edit/useEditOrder';
 
 interface EditOrderFormProps {

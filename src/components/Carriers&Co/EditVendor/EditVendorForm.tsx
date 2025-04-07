@@ -11,7 +11,7 @@ import EditVendorBanking from './EditVendorBanking';
 import EditVendorCargoInsurance from './EditVendorCargoInsurance';
 import EditVendorLiabilityInsurance from './EditVendorLiabilityInsurance';
 import useEditVendor from '../../../hooks/edit/useEditVendor';
-import { Vendor } from '../../../types/VendorTypes';
+import { Vendor } from '../../../styles/types/VendorTypes';
 
 interface EditVendorFormProps {
   vendor: Vendor | null;

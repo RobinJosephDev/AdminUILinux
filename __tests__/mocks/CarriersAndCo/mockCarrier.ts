@@ -1,4 +1,4 @@
-import { Carrier } from '../../../src/types/CarrierTypes';
+import { Carrier } from '../../../src/styles/types/CarrierTypes';
 
 export const mockCarrier: Carrier = {
   id: 0,

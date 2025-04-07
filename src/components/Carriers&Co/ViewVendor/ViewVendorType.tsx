@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { Vendor } from "../../../types/VendorTypes";
+import { Vendor } from "../../../styles/types/VendorTypes";
 
 interface ViewVendorTypeProps {
   formVendor: Vendor;

@@ -2,7 +2,7 @@ import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import { ChangeEvent, FC, useCallback, useState } from 'react';
 import { z } from 'zod';
 import DOMPurify from 'dompurify';
-import { Order, Charge } from '../../types/OrderTypes';
+import { Order, Charge } from '../../styles/types/OrderTypes';
 
 interface OrderChargesProps {
   order: Order;

@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { Equipment } from "../../../types/CarrierTypes";
+import { Equipment } from "../../../styles/types/CarrierTypes";
 
 interface ViewCarrierEquipmentProps {
   equipment: Equipment;

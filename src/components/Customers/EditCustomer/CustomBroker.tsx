@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { z } from 'zod';
 import axios from 'axios';
-import { Customer } from '../../../types/CustomerTypes';
-import { Broker } from '../../../types/BrokerTypes';
+import { Customer } from '../../../styles/types/CustomerTypes';
+import { Broker } from '../../../styles/types/BrokerTypes';
 
 interface CustomerInfoProps {
   formCustomer: Customer;

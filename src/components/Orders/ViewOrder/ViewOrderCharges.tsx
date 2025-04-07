@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { Charge } from '../../../types/OrderTypes';
+import { Charge } from '../../../styles/types/OrderTypes';
 
 interface ViewOrderChargesProps {
   charge: Charge;

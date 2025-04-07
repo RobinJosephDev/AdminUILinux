@@ -9,7 +9,7 @@ import ViewMailingAddress from './ViewMailingAddress';
 import ViewCarrierContact from './ViewCarrierContact';
 import ViewCarrierEquipment from './ViewCarrierEquipment';
 import ViewCarrierLane from './ViewCarrierLane';
-import { Carrier } from '../../../types/CarrierTypes';
+import { Carrier } from '../../../styles/types/CarrierTypes';
 
 interface ViewCarrierFormProps {
   carrier: Carrier | null;

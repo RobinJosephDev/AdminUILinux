@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { z } from 'zod';
-import { User } from '../../types/UserTypes';
+import { User } from '../../styles/types/UserTypes';
 
 interface UserDetailsProps {
   user: User;

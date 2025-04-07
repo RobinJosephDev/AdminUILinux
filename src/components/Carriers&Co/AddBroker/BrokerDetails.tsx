@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { z } from 'zod';
-import { Broker } from '../../../types/BrokerTypes';
+import { Broker } from '../../../styles/types/BrokerTypes';
 import { useGoogleAutocomplete } from '../../../hooks/useGoogleAutocomplete';
 
 declare global {

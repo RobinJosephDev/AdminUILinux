@@ -1,7 +1,7 @@
 import { describe, expect, it, vi, beforeAll } from 'vitest'; // Import beforeAll from vitest
 import { render, fireEvent, screen, waitFor } from '@testing-library/react';
 import MailingAddress from '../../../../src/components/Carriers&Co/AddCarrier/MailingAddress';
-import { Carrier } from '../../../../src/types/CarrierTypes';
+import { Carrier } from '../../../../src/styles/types/CarrierTypes';
 
 const mockSetCarrier = vi.fn();
 

@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { Contact } from '../../../types/VendorTypes';
+import { Contact } from '../../../styles/types/VendorTypes';
 
 interface ViewVendorContactProps {
   contact: Contact;

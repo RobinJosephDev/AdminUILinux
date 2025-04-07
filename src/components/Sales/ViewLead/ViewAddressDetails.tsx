@@ -1,4 +1,4 @@
-import { Lead } from "../../../types/LeadTypes";
+import { Lead } from "../../../styles/types/LeadTypes";
 
 interface ViewAddressDetailsProps {
   formLead: Lead;

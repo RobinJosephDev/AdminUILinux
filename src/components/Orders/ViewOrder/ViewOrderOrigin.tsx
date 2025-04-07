@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { Location } from '../../../types/OrderTypes';
+import { Location } from '../../../styles/types/OrderTypes';
 
 interface ViewOrderOriginProps {
   origin: Location;

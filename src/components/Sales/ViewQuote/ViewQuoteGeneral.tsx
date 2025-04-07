@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { Quote } from '../../../types/QuoteTypes';
+import { Quote } from '../../../styles/types/QuoteTypes';
 
 interface ViewQuoteGeneralProps {
   formQuote: Quote;

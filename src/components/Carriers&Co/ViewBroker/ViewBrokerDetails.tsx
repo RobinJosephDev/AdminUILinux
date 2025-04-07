@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { Broker } from "../../../types/BrokerTypes";
+import { Broker } from "../../../styles/types/BrokerTypes";
 
 interface ViewBrokerDetailsProps {
   formBroker: Broker;

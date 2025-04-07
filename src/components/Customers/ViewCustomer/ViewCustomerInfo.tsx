@@ -1,4 +1,4 @@
-import { Customer } from '../../../types/CustomerTypes';
+import { Customer } from '../../../styles/types/CustomerTypes';
 
 interface ViewCustomerInfoProps {
   formCustomer: Customer;

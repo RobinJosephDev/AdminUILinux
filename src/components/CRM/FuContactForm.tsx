@@ -2,7 +2,7 @@ import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import { FC, useCallback, useState } from 'react';
 import { z } from 'zod';
 import DOMPurify from 'dompurify';
-import { Contact } from '../../types/FollowupTypes';
+import { Contact } from '../../styles/types/FollowupTypes';
 
 interface FuContactFormProps {
   contacts: Contact[];

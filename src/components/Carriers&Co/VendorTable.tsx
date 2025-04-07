@@ -4,7 +4,7 @@ import { EditOutlined, DeleteOutlined, MailOutlined, PlusOutlined, SearchOutline
 import AddVendorForm from './AddVendor/AddVendorForm';
 import EditVendorForm from './EditVendor/EditVendorForm';
 import ViewVendorForm from './ViewVendor/ViewVendorForm';
-import { Vendor } from '../../types/VendorTypes';
+import { Vendor } from '../../styles/types/VendorTypes';
 import Pagination from '../common/Pagination';
 import useVendorTable from '../../hooks/table/useVendorTable';
 

@@ -4,7 +4,7 @@ import { mockCarrier } from '../../../mocks/CarriersAndCo/mockCarrier';
 import '@testing-library/jest-dom';
 import { useState } from 'react';
 import { describe, expect, it, vi, beforeAll, afterEach } from 'vitest';
-import { Carrier } from '../../../../src/types/CarrierTypes';
+import { Carrier } from '../../../../src/styles/types/CarrierTypes';
 
 // Define proper types for PrimaryAddress props
 interface PrimaryAddressProps {

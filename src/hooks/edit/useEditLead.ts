@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
-import { Lead, Contact } from '../../types/LeadTypes';
+import { Lead, Contact } from '../../styles/types/LeadTypes';
 
 // Helper function to format date strings
 const formatDateForInput = (date: string | Date) => {

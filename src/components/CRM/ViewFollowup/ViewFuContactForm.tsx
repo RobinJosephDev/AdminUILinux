@@ -1,5 +1,5 @@
 import React from 'react';
-import { Contact } from '../../../types/FollowupTypes';
+import { Contact } from '../../../styles/types/FollowupTypes';
 
 interface ViewFuContactFormProps {
   contact: Contact;

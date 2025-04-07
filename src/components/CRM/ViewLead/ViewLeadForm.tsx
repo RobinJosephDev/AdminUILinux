@@ -4,7 +4,7 @@ import ViewLeadDetails from './ViewLeadDetails';
 import ViewAddressDetails from './ViewAddressDetails';
 import ViewAdditionalInfo from './ViewAdditionalInfo';
 import ViewLeadContactForm from './ViewLeadContactForm';
-import { Lead, Contact } from '../../../types/LeadTypes';
+import { Lead, Contact } from '../../../styles/types/LeadTypes';
 
 interface ViewLeadFormProps {
   lead: Lead | null;

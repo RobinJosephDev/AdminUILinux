@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Customer } from '../../../types/CustomerTypes';
+import { Customer } from '../../../styles/types/CustomerTypes';
 import { z } from 'zod';
 import DOMPurify from 'dompurify';
 import { useGoogleAutocomplete } from '../../../hooks/useGoogleAutocomplete';

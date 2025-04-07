@@ -6,7 +6,7 @@ import ViewFuAddInfo from './ViewFuAddInfo';
 import ViewFuDetail from './ViewFuDetail';
 import ViewFuContactForm from './ViewFuContactForm';
 import ViewFuProductForm from './ViewFuProductForm';
-import { Followup, Contact, Product, Customer } from '../../../types/FollowupTypes';
+import { Followup, Contact, Product, Customer } from '../../../styles/types/FollowupTypes';
 
 interface ViewFuFormProps {
   followUp?: Followup;

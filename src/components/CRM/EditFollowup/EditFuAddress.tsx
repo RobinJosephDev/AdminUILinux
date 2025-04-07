@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Followup } from '../../../types/FollowupTypes';
+import { Followup } from '../../../styles/types/FollowupTypes';
 import { z } from 'zod';
 import DOMPurify from 'dompurify';
 import { useGoogleAutocomplete } from '../../../hooks/useGoogleAutocomplete';

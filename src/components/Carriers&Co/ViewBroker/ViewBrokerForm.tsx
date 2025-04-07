@@ -1,6 +1,6 @@
 import { useEffect, useState, FC } from 'react';
 import ViewBrokerDetails from './ViewBrokerDetails';
-import { Broker } from '../../../types/BrokerTypes';
+import { Broker } from '../../../styles/types/BrokerTypes';
 
 interface ViewBrokerFormProps {
   broker: Broker | null;

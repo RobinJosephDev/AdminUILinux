@@ -8,7 +8,7 @@ import ViewOrderRevenue from './ViewOrderRevenue';
 import ViewOrderCharges from './ViewOrderCharges';
 import ViewOrderDiscounts from './ViewOrderDiscounts';
 import ViewOrderTax from './ViewOrderTax';
-import { Order } from '../../../types/OrderTypes';
+import { Order } from '../../../styles/types/OrderTypes';
 
 interface ViewOrderFormProps {
   order: Order | null;

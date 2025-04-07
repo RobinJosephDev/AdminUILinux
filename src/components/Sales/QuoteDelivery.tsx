@@ -2,7 +2,7 @@ import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import { FC, useCallback, useState } from 'react';
 import { z } from 'zod';
 import DOMPurify from 'dompurify';
-import { Quote, Location } from '../../types/QuoteTypes';
+import { Quote, Location } from '../../styles/types/QuoteTypes';
 import { useGoogleAutocomplete } from '../../hooks/useGoogleAutocomplete';
 
 declare global {

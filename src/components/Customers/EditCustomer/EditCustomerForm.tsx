@@ -8,7 +8,7 @@ import CustomerContact from '../CustomerContact';
 import CustomerEquipment from '../CustomerEquipment';
 import { PlusOutlined } from '@ant-design/icons';
 import useEditCustomer from '../../../hooks/edit/useEditCustomer';
-import { Customer } from '../../../types/CustomerTypes';
+import { Customer } from '../../../styles/types/CustomerTypes';
 
 interface EditCustomerFormProps {
   customer: Customer | null;

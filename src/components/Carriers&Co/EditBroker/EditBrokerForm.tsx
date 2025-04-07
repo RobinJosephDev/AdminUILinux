@@ -1,6 +1,6 @@
 import useEditBroker from '../../../hooks/edit/UseEditBroker';
 import EditBrokerDetails from './EditBrokerDetails';
-import { Broker } from '../../../types/BrokerTypes';
+import { Broker } from '../../../styles/types/BrokerTypes';
 
 interface EditBrokerFormProps {
   broker: Broker | null;

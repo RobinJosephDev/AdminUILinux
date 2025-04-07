@@ -2,7 +2,7 @@ import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import { useCallback, useState } from 'react';
 import { z } from 'zod';
 import DOMPurify from 'dompurify';
-import { Lane } from '../../types/CarrierTypes';
+import { Lane } from '../../styles/types/CarrierTypes';
 
 interface CarrierLaneProps {
   lanes: Lane[];
