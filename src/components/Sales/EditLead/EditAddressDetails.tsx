@@ -43,8 +43,8 @@ const addressSchema = z.object({
     .optional(),
   unit_no: z
     .string()
-    .max(30, 'Phone cannot exceed 30 characters')
-    .regex(/^[0-9-+()\s]*$/, 'Invalid phone format')
+    .max(20, 'Unit no. cannot exceed 20 characters')
+    .regex(/^[a-zA-Z0-9\s,.'-]*$/, 'Invalid unit no. format')
     .optional(),
 });
 

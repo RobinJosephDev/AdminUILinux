@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Carrier } from '../../../styles/types/CarrierTypes';
+import { Carrier } from '../../../types/CarrierTypes';
 import * as z from 'zod';
 import DOMPurify from 'dompurify';
 
@@ -8,41 +8,53 @@ interface EditLiabilityInsuranceProps {
   setFormCarrier: React.Dispatch<React.SetStateAction<Carrier>>;
 }
 
+const sanitizeInput = (input: string) => DOMPurify.sanitize(input);
+
+const parseDate = (dateStr: string) => new Date(dateStr);
+
+const formatDateForInput = (dateStr?: string) => {
+  if (!dateStr || !/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return '';
+  return dateStr;
+};
+
+const carrierSchema = z
+  .object({
+    li_provider: z
+      .string()
+      .max(150, 'Liability Insurance Provider must be at most 150 characters')
+      .regex(/^[a-zA-Z0-9\s.,'-]*$/, 'Only letters, numbers,spaces, apostrophes, periods, commas, and hyphens allowed')
+      .optional(),
+    li_policy_no: z
+      .string()
+      .max(50, 'Policy Number must be at most 50 characters')
+      .regex(/^[a-zA-Z0-9\s.-]*$/, 'Only letters, numbers, spaces, periods, and hyphens allowed')
+      .optional(),
+    li_coverage: z.number().optional(),
+    li_start_date: z
+      .string()
+      .regex(/^\d{4}-\d{2}-\d{2}$/, { message: 'Start date must be in YYYY-MM-DD format' })
+      .optional(),
+    li_end_date: z
+      .string()
+      .regex(/^\d{4}-\d{2}-\d{2}$/, { message: 'End date must be in YYYY-MM-DD format' })
+      .optional(),
+  })
+  .refine((data) => !data.li_start_date || !data.li_end_date || parseDate(data.li_start_date) <= parseDate(data.li_end_date), {
+    message: 'End date must be after or equal to start date',
+    path: ['li_end_date'],
+  });
+
 const EditLiabilityInsurance: React.FC<EditLiabilityInsuranceProps> = ({ formCarrier, setFormCarrier }) => {
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const sanitizeInput = (input: string) => DOMPurify.sanitize(input);
 
-  const carrierSchema = z
-    .object({
-      li_provider: z
-        .string()
-        .max(150, 'Liability Insurance Provider must be at most 150 characters')
-        .regex(/^[a-zA-Z0-9\s.,'-]*$/, 'Only letters, numbers,spaces, apostrophes, periods, commas, and hyphens allowed')
-        .optional(),
-      li_policy_no: z
-        .string()
-        .max(50, 'Policy Number must be at most 50 characters')
-        .regex(/^[a-zA-Z0-9\s.-]*$/, 'Only letters, numbers, spaces, periods, and hyphens allowed')
-        .optional(),
-      li_coverage: z.number().optional(),
-      li_start_date: z
-        .string()
-        .regex(/^\d{2}-\d{2}-\d{4}$/, { message: 'Start date must be in DD-MM-YYYY format' })
-        .optional(),
-      li_end_date: z
-        .string()
-        .regex(/^\d{2}-\d{2}-\d{4}$/, { message: 'End date must be in DD-MM-YYYY format' })
-        .optional(),
-    })
-    .refine((data) => !data.li_start_date || !data.li_end_date || new Date(data.li_start_date) <= new Date(data.li_end_date), {
-      message: 'End date must be after or equal to start date',
-      path: ['li_end_date'],
-    });
-
-  const handleChange = (key: keyof Carrier, value: string | number) => {
+  const handleChange = (key: keyof Carrier, value: string | number | undefined) => {
     const sanitizedValue = typeof value === 'string' ? sanitizeInput(value) : value;
+    let transformedValue = sanitizedValue;
 
-    const newCarrier = { ...formCarrier, [key]: sanitizedValue };
+    if ((key === 'li_start_date' || key === 'li_end_date') && typeof sanitizedValue === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(sanitizedValue)) {
+      transformedValue = sanitizedValue;
+    }
+    const newCarrier = { ...formCarrier, [key]: transformedValue };
 
     const result = carrierSchema.safeParse(newCarrier);
     if (!result.success) {
@@ -76,8 +88,14 @@ const EditLiabilityInsurance: React.FC<EditLiabilityInsuranceProps> = ({ formCar
             <input
               type={type}
               id={key}
-              value={(formCarrier[key as keyof Carrier] as string | number) || ''}
-              onChange={(e) => handleChange(key as keyof Carrier, type === 'number' ? Number(e.target.value) : e.target.value)}
+              value={
+                type === 'date'
+                  ? formatDateForInput(formCarrier[key as keyof Carrier] as string)
+                  : (formCarrier[key as keyof Carrier] as string | number | undefined) || ''
+              }
+              onChange={(e) =>
+                handleChange(key as keyof Carrier, type === 'number' ? (e.target.value ? Number(e.target.value) : undefined) : e.target.value)
+              }
               placeholder={placeholder || ''}
             />
             {errors[key] && (

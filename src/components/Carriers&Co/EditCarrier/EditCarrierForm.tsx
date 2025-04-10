@@ -5,7 +5,7 @@ import EditLiabilityInsurance from './EditLiabilityInsurance';
 import EditCargoInsurance from './EditCargoInsurance';
 import EditPrimaryAddress from './EditPrimaryAddress';
 import EditMailingAddress from './EditMailingAddress';
-import { Carrier } from '../../../styles/types/CarrierTypes';
+import { Carrier } from '../../../types/CarrierTypes';
 import EditInternalNotes from './EditInternalNotes';
 import { PlusOutlined } from '@ant-design/icons';
 import CarrierContact from '../CarrierContact';

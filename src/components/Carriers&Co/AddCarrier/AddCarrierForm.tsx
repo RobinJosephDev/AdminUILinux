@@ -35,7 +35,7 @@ const AddCarrierForm: React.FC<AddCarrierFormProps> = ({ onClose, onSuccess }) =
 
   return (
     <div className="form-container">
-      <form onSubmit={handleSubmit} data-testid="carrier-form" encType="multipart/form-data">
+      <form onSubmit={handleSubmit} className="form-main">
         <General carrier={carrier} setCarrier={setCarrier} />
         <CarrierDetails carrier={carrier} setCarrier={setCarrier} />
         <LiabilityInsurance carrier={carrier} setCarrier={setCarrier} />

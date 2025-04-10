@@ -8,7 +8,7 @@ import CustomerContact from '../CustomerContact';
 import CustomerEquipment from '../CustomerEquipment';
 import { PlusOutlined } from '@ant-design/icons';
 import useEditCustomer from '../../../hooks/edit/useEditCustomer';
-import { Customer } from '../../../styles/types/CustomerTypes';
+import { Customer } from '../../../types/CustomerTypes';
 
 interface EditCustomerFormProps {
   customer: Customer | null;
@@ -54,7 +54,7 @@ const EditCustomerForm: React.FC<EditCustomerFormProps> = ({ customer, onClose, 
             {formCustomer.cust_contact.map((contact, index) => (
               <CustomerContact
                 key={index}
-                contacts={formCustomer.cust_contact}
+                cust_contact={formCustomer.cust_contact}
                 index={index}
                 onAddContact={handleAddContact}
                 handleRemoveContact={handleRemoveContact}

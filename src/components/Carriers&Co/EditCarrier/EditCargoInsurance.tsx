@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Carrier } from '../../../styles/types/CarrierTypes';
+import { Carrier } from '../../../types/CarrierTypes';
 import * as z from 'zod';
 import DOMPurify from 'dompurify';
 
@@ -7,6 +7,15 @@ interface EditCargoInsuranceProps {
   formCarrier: Carrier;
   setFormCarrier: React.Dispatch<React.SetStateAction<Carrier>>;
 }
+// Helper to sanitize input
+const sanitizeInput = (input: string) => DOMPurify.sanitize(input);
+
+const parseDate = (dateStr: string) => new Date(dateStr); // Correct for 'yyyy-mm-dd' input format
+
+const formatDateForInput = (dateStr?: string) => {
+  if (!dateStr || !/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return '';
+  return dateStr;
+};
 
 const carrierSchema = z
   .object({
@@ -23,14 +32,14 @@ const carrierSchema = z
     ci_coverage: z.number().optional(),
     ci_start_date: z
       .string()
-      .regex(/^\d{2}-\d{2}-\d{4}$/, { message: 'Start date must be in DD-MM-YYYY format' })
+      .regex(/^\d{4}-\d{2}-\d{2}$/, { message: 'Start date must be in YYYY-MM-DD format' })
       .optional(),
     ci_end_date: z
       .string()
-      .regex(/^\d{2}-\d{2}-\d{4}$/, { message: 'End date must be in DD-MM-YYYY format' })
+      .regex(/^\d{4}-\d{2}-\d{2}$/, { message: 'End date must be in YYYY-MM-DD format' })
       .optional(),
   })
-  .refine((data) => !data.ci_start_date || !data.ci_end_date || new Date(data.ci_start_date) <= new Date(data.ci_end_date), {
+  .refine((data) => !data.ci_start_date || !data.ci_end_date || parseDate(data.ci_start_date) <= parseDate(data.ci_end_date), {
     message: 'End date must be after or equal to start date',
     path: ['ci_end_date'],
   });
@@ -39,12 +48,14 @@ const EditCargoInsurance: React.FC<EditCargoInsuranceProps> = ({ formCarrier, se
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [uploading, setUploading] = useState<boolean>(false);
   const API_URL = import.meta.env.VITE_API_BASE_URL?.trim() || 'http://127.0.0.1:8000/api';
-  const MAX_FILE_SIZE = 10 * 1024 * 1024;
-  const sanitizeInput = (input: string) => DOMPurify.sanitize(input);
 
-  const handleChange = (key: keyof Carrier, value: string | number) => {
+  const handleChange = (key: keyof Carrier, value: string | number | undefined) => {
     const sanitizedValue = typeof value === 'string' ? sanitizeInput(value) : value;
-    const newCarrier = { ...formCarrier, [key]: sanitizedValue };
+    let transformedValue = sanitizedValue;
+    if ((key === 'ci_start_date' || key === 'ci_end_date') && typeof sanitizedValue === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(sanitizedValue)) {
+      transformedValue = sanitizedValue;
+    }
+    const newCarrier = { ...formCarrier, [key]: transformedValue };
     const result = carrierSchema.safeParse(newCarrier);
 
     if (!result.success) {
@@ -120,7 +131,11 @@ const EditCargoInsurance: React.FC<EditCargoInsuranceProps> = ({ formCarrier, se
             <input
               type={type}
               id={key}
-              value={(formCarrier[key as keyof Carrier] as string | number) || ''}
+              value={
+                type === 'date'
+                  ? formatDateForInput(formCarrier[key as keyof Carrier] as string)
+                  : (formCarrier[key as keyof Carrier] as string | number) || ''
+              }
               onChange={(e) => handleChange(key as keyof Carrier, type === 'number' ? Number(e.target.value) : e.target.value)}
               placeholder={placeholder || ''}
             />

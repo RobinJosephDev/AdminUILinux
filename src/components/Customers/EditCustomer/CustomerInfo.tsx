@@ -20,15 +20,10 @@ const formCustomerSchema = z.object({
     .min(1, 'Customer Ref. No is required')
     .max(100, 'Customer Ref. No cannot exceed 100 characters')
     .regex(/^[a-zA-Z0-9\s.,'"-]+$/, 'Only letters, numbers, spaces, apostrophes, periods, commas, and hyphens allowed'),
-  cust_type: z
-    .enum(customerTypeOptions as [string, ...string[]], {
-      errorMap: () => ({ message: 'Invalid customer type' }),
-    }),
-  cust_website: z
-    .string()
-    .max(150, 'Branch cannot exceed 150 characters')
-    .regex(/^[a-zA-Z0-9\s.,'"-]*$/, 'Only letters, numbers, spaces, apostrophes, periods, commas, and hyphens allowed')
-    .optional(),
+  cust_type: z.enum(customerTypeOptions as [string, ...string[]], {
+    errorMap: () => ({ message: 'Invalid customer type' }),
+  }),
+  cust_website: z.string().url('Invalid website URL format').max(150, 'Website URL cannot exceed 150 characters').optional(),
   cust_email: z.string().max(255, 'Email cannot exceed 255 characters').email('Invalid email format').optional(),
   cust_contact_no: z
     .string()
@@ -43,7 +38,7 @@ const formCustomerSchema = z.object({
   cust_tax_id: z
     .string()
     .max(20, 'Tax ID cannot exceed 20 characters')
-    .regex(/^[a-zA-Z0-9_/.-]*$/, 'Only letters, numbers, dashes, underscores, slashes, and spaces allowed')
+    .regex(/^[a-zA-Z0-9\s_/.-]*$/, 'Only letters, numbers, dashes, underscores, slashes, and spaces allowed')
     .optional(),
 });
 
@@ -84,7 +79,6 @@ const CustomerInfo: React.FC<CustomerInfoProps> = ({ formCustomer, setFormCustom
         }));
 
         setCustomers(formattedCustomers);
- 
       } catch (error) {
         console.error('Error fetching customers:', error);
       }
@@ -189,7 +183,9 @@ const CustomerInfo: React.FC<CustomerInfoProps> = ({ formCustomer, setFormCustom
             value={formCustomer.cust_type}
             onChange={(e) => setFormCustomer((prevOrder) => ({ ...prevOrder, cust_type: e.target.value }))}
           >
-            <option value="" disabled>Select...</option>
+            <option value="" disabled>
+              Select...
+            </option>
             {customerTypeOptions.map((option) => (
               <option key={option} value={option}>
                 {option}

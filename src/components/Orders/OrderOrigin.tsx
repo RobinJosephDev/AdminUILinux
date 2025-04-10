@@ -2,7 +2,7 @@ import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import { FC, useCallback, useState } from 'react';
 import { z } from 'zod';
 import DOMPurify from 'dompurify';
-import { Order, Location } from '../../styles/types/OrderTypes';
+import { Order, Location } from '../../types/OrderTypes';
 import { useGoogleAutocomplete } from '../../hooks/useGoogleAutocomplete';
 
 declare global {
@@ -126,6 +126,17 @@ const OrderOrigin: FC<OrderOriginProps> = ({ setOrder, origin_location, index, h
       }
 
       let error = '';
+      let transformedValue = sanitizedValue;
+
+      if (field === 'date' && /^\d{4}-\d{2}-\d{2}$/.test(sanitizedValue)) {
+        const [yyyy, mm, dd] = sanitizedValue.split('-');
+        transformedValue = `${dd}-${mm}-${yyyy}`;
+      }
+      if (field === 'date') {
+        const formattedDate = new Date(value).toISOString().split('T')[0]; // format to yyyy-MM-dd
+        handleOriginChange(index, { ...origin, [field]: formattedDate });
+        return;
+      }
       const updatedOrigin = { ...origin, [field]: parsedValue };
       const result = originSchema.safeParse(updatedOrigin);
 
@@ -152,8 +163,8 @@ const OrderOrigin: FC<OrderOriginProps> = ({ setOrder, origin_location, index, h
     { label: 'Currency', key: 'currency', type: 'text', placeholder: 'Enter currency (e.g., USD, EUR)' },
     { label: 'Equipment', key: 'equipment', type: 'text', placeholder: 'Enter equipment details' },
     { label: 'Pickup PO', key: 'pickup_po', type: 'text', placeholder: 'Enter pickup PO number' },
-    { label: 'Packages', key: 'packages', type: 'text', placeholder: 'Enter number of packages' },
-    { label: 'Weight', key: 'weight', type: 'text', placeholder: 'Enter weight (kg/lbs)' },
+    { label: 'Packages', key: 'packages', type: 'number', placeholder: 'Enter number of packages' },
+    { label: 'Weight', key: 'weight', type: 'number', placeholder: 'Enter weight (kg/lbs)' },
     { label: 'Dimensions', key: 'dimensions', type: 'text', placeholder: 'Enter dimensions (LxWxH cm/inches)' },
     { label: 'Notes', key: 'notes', type: 'textarea', placeholder: 'Enter additional notes' },
   ];

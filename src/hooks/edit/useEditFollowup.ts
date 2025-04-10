@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
-import { Followup, Contact, Product } from '../../styles/types/FollowupTypes';
+import { Followup, Contact, Product } from '../../types/FollowupTypes';
 
 const API_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api';
 
@@ -35,23 +35,16 @@ const useEditFollowup = (followup: Followup | null, onClose: () => void, onUpdat
 
   useEffect(() => {
     if (followup) {
-      setFollowupEdit({
+      const parsedContacts = Array.isArray(followup.contacts) ? followup.contacts : JSON.parse(followup.contacts || '[]');
+      const parsedProducts = Array.isArray(followup.products) ? followup.products : JSON.parse(followup.products || '[]');
+
+      const updatedFollowup = {
         ...followup,
-        contacts:
-          Array.isArray(followup.contacts) && followup.contacts.length > 0
-            ? followup.contacts.map((contact) => ({
-                ...contact,
-                id: contact.id,
-              }))
-            : [], // Default to empty array if contacts is NULL or invalid
-        products:
-          Array.isArray(followup.products) && followup.products.length > 0
-            ? followup.products.map((product) => ({
-                ...product,
-                id: product.id,
-              }))
-            : [],
-      });
+        contacts: parsedContacts.length > 0 ? parsedContacts : [],
+        products: parsedProducts.length > 0 ? parsedProducts : [],
+      };
+
+      setFollowupEdit(updatedFollowup);
     }
   }, [followup]);
 
@@ -115,10 +108,7 @@ const useEditFollowup = (followup: Followup | null, onClose: () => void, onUpdat
   const handleAddProduct = () => {
     setFollowupEdit((prevFollowup) => ({
       ...prevFollowup,
-      products: [
-        ...prevFollowup.products,
-        { id: '', name: '', quantity: 0 },
-      ],
+      products: [...prevFollowup.products, { id: '', name: '', quantity: 0 }],
     }));
   };
 

@@ -2,7 +2,7 @@ import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import { useCallback, useState } from 'react';
 import { z } from 'zod';
 import DOMPurify from 'dompurify';
-import { Equipment } from '../../styles/types/CarrierTypes';
+import { Equipment } from '../../types/CarrierTypes';
 
 interface CarrierEquipmentProps {
   equipments: Equipment[];
@@ -12,26 +12,40 @@ interface CarrierEquipmentProps {
   handleRemoveEquipment: (index: number) => void;
 }
 
-const equipmentTypeOptions = ["Dry Van 53'", "Reefer 53'", "Flatbed 53'"];
+// Updated: use objects with id and name
+const equipmentTypeOptions = [
+  { id: 1, name: "Dry Van 53'" },
+  { id: 2, name: "Reefer 53'" },
+  { id: 3, name: "Flatbed 53'" },
+];
 
+// Updated: accept numeric ID
 const equipmentTypeSchema = z.object({
-  equipments: z.enum(equipmentTypeOptions as [string, ...string[]], {
-    errorMap: () => ({ message: 'Invalid equipment type' }),
-  }).optional(),
+  equipment: z
+    .number({
+      required_error: 'Equipment type is required',
+      invalid_type_error: '',
+    })
+    .min(1, 'Please select a valid equipment type'),
 });
 
 const CarrierEquipment: React.FC<CarrierEquipmentProps> = ({ equipments, index, handleEquipmentChange, handleRemoveEquipment, onAddEquipment }) => {
   const equipment = equipments[index] ?? {};
-  const [errors, setErrors] = useState<{ type?: string }>({});
+  const [errors, setErrors] = useState<{ equipment?: string }>({});
 
   const validateAndSetEquipment = useCallback(
     (field: keyof Equipment, value: string) => {
       const sanitizedValue = DOMPurify.sanitize(value);
-      let error = '';
+      const numericValue = Number(sanitizedValue);
 
-      const updatedEquipment = { ...equipment, [field]: sanitizedValue };
+      const updatedEquipment: Equipment = {
+        ...equipment,
+        [field]: sanitizedValue || undefined,
+      };
+
       const result = equipmentTypeSchema.safeParse(updatedEquipment);
 
+      let error = '';
       if (!result.success) {
         const fieldError = result.error.errors.find((err) => err.path[0] === field);
         error = fieldError ? fieldError.message : '';
@@ -57,20 +71,20 @@ const CarrierEquipment: React.FC<CarrierEquipmentProps> = ({ equipments, index, 
         <select
           id={`equipment-${index}`}
           name="equipment"
-          value={equipment.equipment || ''}
+          value={equipment.equipment ?? ''}
           onChange={(e) => validateAndSetEquipment('equipment', e.target.value)}
           style={{ width: '180px', padding: '8px' }}
         >
           <option value="">Select Equipment</option>
           {equipmentTypeOptions.map((option) => (
-            <option key={option} value={option}>
-              {option}
+            <option key={option.id} value={option.name}>
+              {option.name}
             </option>
           ))}
         </select>
-        {errors.type && (
+        {errors.equipment && (
           <span className="error" style={{ color: 'red' }}>
-            {errors.type}
+            {errors.equipment}
           </span>
         )}
       </div>

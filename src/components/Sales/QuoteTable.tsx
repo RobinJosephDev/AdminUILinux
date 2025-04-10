@@ -7,7 +7,7 @@ import EditQuoteForm from './EditQuote/EditQuoteForm';
 import ViewQuoteForm from './ViewQuote/ViewQuoteForm';
 import useQuoteTable from '../../hooks/table/useQuoteTable';
 import Pagination from '../common/Pagination';
-import { Quote } from '../../styles/types/QuoteTypes';
+import { Quote } from '../../types/QuoteTypes';
 
 const QuoteTable: React.FC = () => {
   const {

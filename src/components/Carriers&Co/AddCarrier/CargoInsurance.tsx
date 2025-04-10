@@ -1,37 +1,47 @@
 import { useState } from 'react';
-import { Carrier } from '../../../styles/types/CarrierTypes';
+import { Carrier } from '../../../types/CarrierTypes';
 import * as z from 'zod';
 import DOMPurify from 'dompurify';
-import { ZAxis } from 'recharts';
 
 interface CargoInsuranceProps {
   carrier: Carrier;
   setCarrier: React.Dispatch<React.SetStateAction<Carrier>>;
 }
 
+const sanitizeInput = (input: string) => DOMPurify.sanitize(input);
+
+const parseDate = (dateStr: string) => new Date(dateStr); // Correct for 'yyyy-mm-dd' input format
+
+const formatDateForInput = (dateStr?: string) => {
+  if (!dateStr || !/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return '';
+  return dateStr;
+};
+// Validation schema using Zod
 const carrierSchema = z
   .object({
     ci_provider: z
       .string()
       .max(150, 'Cargo Insurance Provider must be at most 150 characters')
-      .regex(/^[a-zA-Z0-9\s.,'-]*$/, 'Only letters, numbers,spaces, apostrophes, periods, commas, and hyphens allowed')
-      .optional(),
+      .regex(/^[a-zA-Z0-9\s.,'-]*$/, 'Only letters, numbers, spaces, apostrophes, periods, commas, and hyphens allowed')
+      .optional()
+      .or(z.literal('')),
     ci_policy_no: z
       .string()
       .max(50, 'Policy Number must be at most 50 characters')
       .regex(/^[a-zA-Z0-9\s.-]*$/, 'Only letters, numbers, spaces, periods, and hyphens allowed')
-      .optional(),
-    ci_coverage: z.number().optional(),
+      .optional()
+      .or(z.literal('')),
+    ci_coverage: z.coerce.number().optional(),
     ci_start_date: z
       .string()
-      .regex(/^\d{2}-\d{2}-\d{4}$/, { message: 'Start date must be in DD-MM-YYYY format' })
+      .regex(/^\d{4}-\d{2}-\d{2}$/, { message: 'Start date must be in YYYY-MM-DD format' })
       .optional(),
     ci_end_date: z
       .string()
-      .regex(/^\d{2}-\d{2}-\d{4}$/, { message: 'End date must be in DD-MM-YYYY format' })
+      .regex(/^\d{4}-\d{2}-\d{2}$/, { message: 'End date must be in YYYY-MM-DD format' })
       .optional(),
   })
-  .refine((data) => !data.ci_start_date || !data.ci_end_date || new Date(data.ci_start_date) <= new Date(data.ci_end_date), {
+  .refine((data) => !data.ci_start_date || !data.ci_end_date || parseDate(data.ci_start_date) <= parseDate(data.ci_end_date), {
     message: 'End date must be after or equal to start date',
     path: ['ci_end_date'],
   });
@@ -40,12 +50,17 @@ const CargoInsurance: React.FC<CargoInsuranceProps> = ({ carrier, setCarrier }) 
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [uploading, setUploading] = useState<boolean>(false);
   const API_URL = import.meta.env.VITE_API_BASE_URL?.trim() || 'http://127.0.0.1:8000/api';
-  const MAX_FILE_SIZE = 10 * 1024 * 1024;
-  const sanitizeInput = (input: string) => DOMPurify.sanitize(input);
 
-  const handleChange = (key: keyof Carrier, value: string | number) => {
+  const handleChange = (key: keyof Carrier, value: string | number | undefined) => {
     const sanitizedValue = typeof value === 'string' ? sanitizeInput(value) : value;
-    const newCarrier = { ...carrier, [key]: sanitizedValue };
+
+    let transformedValue = sanitizedValue;
+
+    if ((key === 'ci_start_date' || key === 'ci_end_date') && typeof sanitizedValue === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(sanitizedValue)) {
+      transformedValue = sanitizedValue;
+    }
+
+    const newCarrier = { ...carrier, [key]: transformedValue };
     const result = carrierSchema.safeParse(newCarrier);
 
     if (!result.success) {
@@ -57,12 +72,15 @@ const CargoInsurance: React.FC<CargoInsuranceProps> = ({ carrier, setCarrier }) 
     } else {
       setErrors({});
     }
+
     setCarrier(newCarrier);
   };
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+
+    setUploading(true);
 
     const formData = new FormData();
     formData.append('coi_cert', file);
@@ -77,18 +95,16 @@ const CargoInsurance: React.FC<CargoInsuranceProps> = ({ carrier, setCarrier }) 
       });
 
       const data = await response.json();
-      console.log('Upload response:', data); // Debugging log
+      console.log('Upload response:', data);
 
-      // ✅ Fix the response handling
       if (data.files?.coi_cert?.fileUrl) {
-        // Ensure fileUrl is absolute
-        const baseURL = API_URL.replace('/api', ''); // Get base URL from API
+        const baseURL = API_URL.replace('/api', '');
         const fullFileUrl = data.files.coi_cert.fileUrl.startsWith('http') ? data.files.coi_cert.fileUrl : `${baseURL}${data.files.coi_cert.fileUrl}`;
 
         setCarrier((prevCarrier) => ({
           ...prevCarrier,
-          coi_cert: fullFileUrl, // Store full file URL
-          coi_cert_name: data.files.coi_cert.fileName, // Store original filename
+          coi_cert: fullFileUrl,
+          coi_cert_name: data.files.coi_cert.fileName,
         }));
       } else {
         console.error('File URL not returned in response', data);
@@ -121,7 +137,11 @@ const CargoInsurance: React.FC<CargoInsuranceProps> = ({ carrier, setCarrier }) 
             <input
               type={type}
               id={key}
-              value={(carrier[key as keyof Carrier] as string | number) || ''}
+              value={
+                type === 'date'
+                  ? formatDateForInput(carrier[key as keyof Carrier] as string)
+                  : (carrier[key as keyof Carrier] as string | number) || ''
+              }
               onChange={(e) => handleChange(key as keyof Carrier, type === 'number' ? Number(e.target.value) : e.target.value)}
               placeholder={placeholder || ''}
             />
@@ -134,7 +154,7 @@ const CargoInsurance: React.FC<CargoInsuranceProps> = ({ carrier, setCarrier }) 
         ))}
 
         <div className="form-group" style={{ flex: 1 }}>
-          <label htmlFor="brokCarrAggmt">Certificate of Insurance</label>
+          <label htmlFor="coi_cert">Certificate of Insurance</label>
           <input type="file" onChange={handleFileChange} />
           {typeof carrier.coi_cert === 'string' && carrier.coi_cert && (
             <div>
@@ -143,7 +163,6 @@ const CargoInsurance: React.FC<CargoInsuranceProps> = ({ carrier, setCarrier }) 
               </a>
             </div>
           )}
-
           {uploading && <p>Uploading...</p>}
         </div>
       </div>

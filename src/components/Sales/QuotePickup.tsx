@@ -2,7 +2,7 @@ import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import { FC, useCallback, useState } from 'react';
 import { z } from 'zod';
 import DOMPurify from 'dompurify';
-import { Quote, Location } from '../../styles/types/QuoteTypes';
+import { Quote, Location } from '../../types/QuoteTypes';
 import { useGoogleAutocomplete } from '../../hooks/useGoogleAutocomplete';
 
 declare global {
@@ -126,6 +126,18 @@ const QuotePickup: FC<QuotePickupProps> = ({ setQuote, quote_pickup, index, hand
       }
 
       let error = '';
+      let transformedValue = sanitizedValue;
+
+      if (field === 'date' && /^\d{4}-\d{2}-\d{2}$/.test(sanitizedValue)) {
+        const [yyyy, mm, dd] = sanitizedValue.split('-');
+        transformedValue = `${dd}-${mm}-${yyyy}`;
+      }
+      if (field === 'date') {
+        const formattedDate = new Date(value).toISOString().split('T')[0]; // format to yyyy-MM-dd
+        handlePickupChange(index, { ...pickup, [field]: formattedDate });
+        return;
+      }      
+      
       const updatedPickup = { ...pickup, [field]: parsedValue };
       const result = pickupSchema.safeParse(updatedPickup);
 
@@ -147,13 +159,13 @@ const QuotePickup: FC<QuotePickupProps> = ({ setQuote, quote_pickup, index, hand
     { label: 'Country', key: 'country', type: 'text', placeholder: 'Enter country' },
     { label: 'Postal Code', key: 'postal', type: 'text', placeholder: 'Enter postal code' },
     { label: 'Phone', key: 'phone', type: 'text', placeholder: 'Enter phone number' },
-    { label: 'Date', key: 'date', type: 'date', placeholder: 'Enter date (YYYY-MM-DD)' },
+    { label: 'Date', key: 'date', type: 'date' },
     { label: 'Time', key: 'time', placeholder: 'Enter time (HH:MM)' },
     { label: 'Currency', key: 'currency', type: 'text', placeholder: 'Enter currency (e.g., USD, EUR)' },
     { label: 'Equipment', key: 'equipment', type: 'text', placeholder: 'Enter equipment details' },
     { label: 'Pickup PO', key: 'pickup_po', type: 'text', placeholder: 'Enter pickup PO number' },
-    { label: 'Packages', key: 'packages', type: 'text', placeholder: 'Enter number of packages' },
-    { label: 'Weight', key: 'weight', type: 'text', placeholder: 'Enter weight (kg/lbs)' },
+    { label: 'Packages', key: 'packages', type: 'number', placeholder: 'Enter number of packages' },
+    { label: 'Weight', key: 'weight', type: 'number', placeholder: 'Enter weight (kg/lbs)' },
     { label: 'Dimensions', key: 'dimensions', type: 'text', placeholder: 'Enter dimensions (LxWxH cm/inches)' },
     { label: 'Notes', key: 'notes', type:'textarea', placeholder: 'Enter additional notes' },
   ];

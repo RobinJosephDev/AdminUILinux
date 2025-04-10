@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import DOMPurify from 'dompurify';
 import { z } from 'zod';
-import { Lead } from '../../../styles/types/LeadTypes';
+import { Lead } from '../../../types/LeadTypes';
 
 interface EditLeadDetailsProps {
   formLead: Lead;
@@ -61,8 +61,15 @@ const EditLeadDetails: React.FC<EditLeadDetailsProps> = ({ formLead, setFormLead
   const validateAndSetLead = (field: keyof Lead, value: string) => {
     const sanitizedValue = DOMPurify.sanitize(value);
     let error = '';
+    let transformedValue = sanitizedValue;
 
-    const tempLead = { ...formLead, [field]: sanitizedValue };
+    // Convert YYYY-MM-DD to DD-MM-YYYY before validation
+    if (field === 'lead_date' && /^\d{4}-\d{2}-\d{2}$/.test(sanitizedValue)) {
+      const [yyyy, mm, dd] = sanitizedValue.split('-');
+      transformedValue = `${dd}-${mm}-${yyyy}`;
+    }
+    
+    const tempLead = { ...formLead, [field]: transformedValue };
     const result = leadDetailSchema.safeParse(tempLead);
 
     if (!result.success) {
@@ -71,7 +78,7 @@ const EditLeadDetails: React.FC<EditLeadDetailsProps> = ({ formLead, setFormLead
     }
 
     setErrors((prevErrors) => ({ ...prevErrors, [field]: error }));
-    setFormLead(tempLead);
+    setFormLead((prevLead) => ({ ...prevLead, [field]: sanitizedValue }));
   };
 
   const fields = [

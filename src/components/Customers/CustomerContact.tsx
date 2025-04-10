@@ -2,10 +2,10 @@ import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import { FC, useCallback, useState } from 'react';
 import { z } from 'zod';
 import DOMPurify from 'dompurify';
-import { Contact } from '../../styles/types/CustomerTypes';
+import { Contact } from '../../types/CustomerTypes';
 
 interface CustomerContactProps {
-  contacts: Contact[];
+  cust_contact: Contact[];
   index: number;
   onAddContact: () => void;
   handleContactChange: (index: number, updatedContact: Contact) => void;
@@ -26,7 +26,7 @@ const contactSchema = z.object({
   ext: z
     .string()
     .max(10, 'Extension cannot exceed 10 characters')
-    .regex(/^[[a-zA-Z0-9-]*$/, 'Only letters, numbers and hyphens allowed')
+    .regex(/^[a-zA-Z0-9-]*$/, 'Only letters, numbers and hyphens allowed')
     .optional(),
   email: z.string().max(255, 'Email must be at most 255 characters').email('Invalid email format').optional(),
   fax: z
@@ -41,8 +41,8 @@ const contactSchema = z.object({
     .optional(),
 });
 
-const CustomerContact: FC<CustomerContactProps> = ({ contacts, index, handleContactChange, handleRemoveContact, onAddContact }) => {
-  const contact = contacts[index] ?? {};
+const CustomerContact: FC<CustomerContactProps> = ({ cust_contact, index, handleContactChange, handleRemoveContact, onAddContact }) => {
+  const contact = cust_contact[index] ?? {};
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const validateAndSetContact = useCallback(

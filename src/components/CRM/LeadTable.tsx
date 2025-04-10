@@ -7,7 +7,7 @@ import ViewLeadForm from './ViewLead/ViewLeadForm';
 import { EditOutlined, DeleteOutlined, EyeOutlined, PlusOutlined, SearchOutlined, CalendarOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import useLeadTable from '../../hooks/table/useLeadTable';
-import { Lead } from '../../styles/types/LeadTypes';
+import { Lead } from '../../types/LeadTypes';
 import Pagination from '../common/Pagination';
 
 const LeadTable: React.FC = () => {

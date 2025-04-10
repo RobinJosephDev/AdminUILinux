@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import DOMPurify from 'dompurify';
 import { z } from 'zod';
-import { Lead } from '../../../styles/types/LeadTypes';
+import { Lead } from '../../../types/LeadTypes';
 import axios from 'axios';
 import Swal from 'sweetalert2';
-import { User } from '../../../styles/types/UserTypes';
+import { User } from '../../../types/UserTypes';
 
 interface EditAdditionalInfoProps {
   formLead: Lead;
@@ -21,9 +21,11 @@ const addInfoSchema = z.object({
     .max(200, 'Contact name must be at most 200 characters long')
     .regex(/^[a-zA-Z0-9\s.,'-]*$/, 'Only letters, numbers,spaces, apostrophes, periods, commas, and hyphens allowed')
     .optional(),
-  equipment_type: z.enum(['Van', 'Reefer', 'Flatbed', 'Triaxle', 'Maxi', 'Btrain', 'Roll tite'], {
-    errorMap: () => ({ message: 'Invalid equipment type' }),
-  }) .optional(),
+  equipment_type: z
+    .enum(['Van', 'Reefer', 'Flatbed', 'Triaxle', 'Maxi', 'Btrain', 'Roll tite'], {
+      errorMap: () => ({ message: 'Invalid equipment type' }),
+    })
+    .optional(),
   assigned_to: z
     .string()
     .min(1, 'Assigned To is required')
@@ -72,7 +74,14 @@ const EditAdditionalInfo: React.FC<EditAdditionalInfoProps> = ({ formLead, setFo
     const sanitizedValue = DOMPurify.sanitize(value);
     let error = '';
 
-    const tempLead = { ...formLead, [field]: sanitizedValue };
+    let transformedValue = sanitizedValue;
+
+    if (field === 'follow_up_date' && /^\d{4}-\d{2}-\d{2}$/.test(sanitizedValue)) {
+      const [yyyy, mm, dd] = sanitizedValue.split('-');
+      transformedValue = `${dd}-${mm}-${yyyy}`;
+    }
+
+    const tempLead = { ...formLead, [field]: transformedValue };
     const result = addInfoSchema.safeParse(tempLead);
 
     if (!result.success) {
@@ -81,7 +90,7 @@ const EditAdditionalInfo: React.FC<EditAdditionalInfoProps> = ({ formLead, setFo
     }
 
     setErrors((prevErrors) => ({ ...prevErrors, [field]: error }));
-    setFormLead(tempLead);
+    setFormLead((prevLead) => ({ ...prevLead, [field]: sanitizedValue }));
   };
 
   const fields = [

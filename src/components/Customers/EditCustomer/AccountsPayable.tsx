@@ -49,7 +49,7 @@ const APSchema = z.object({
   cust_ap_unit_no: z
     .string()
     .max(30, 'Unit No cannot exceed 30 characters')
-    .regex(/^[0-9-+()\s]*$/, 'Invalid phone format')
+    .regex(/^[0-9-+()\s]*$/, 'Invalid Unit No format')
     .optional(),
   cust_ap_email: z.string().max(255, 'Email cannot exceed 255 characters').email('Invalid email format').optional(),
   cust_ap_phone: z

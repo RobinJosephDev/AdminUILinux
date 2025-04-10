@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import DOMPurify from 'dompurify';
 import { z } from 'zod';
-import { Followup } from '../../../styles/types/FollowupTypes';
+import { Followup } from '../../../types/FollowupTypes';
 
 interface AdditionalInfoProps {
   followupEdit: Followup;
@@ -34,8 +34,14 @@ const EditFuAddInfo: React.FC<AdditionalInfoProps> = ({ followupEdit, setFollowu
   const validateAndSetFollowup = (field: keyof Followup, value: string) => {
     const sanitizedValue = DOMPurify.sanitize(value);
     let error = '';
+    let transformedValue = sanitizedValue;
 
-    const tempFollowup = { ...followupEdit, [field]: sanitizedValue };
+    if (field === 'next_follow_up_date' && /^\d{4}-\d{2}-\d{2}$/.test(sanitizedValue)) {
+      const [yyyy, mm, dd] = sanitizedValue.split('-');
+      transformedValue = `${dd}-${mm}-${yyyy}`;
+    }
+
+    const tempFollowup = { ...followupEdit, [field]: transformedValue };
     const result = addInfoSchema.safeParse(tempFollowup);
 
     if (!result.success) {
@@ -44,7 +50,7 @@ const EditFuAddInfo: React.FC<AdditionalInfoProps> = ({ followupEdit, setFollowu
     }
 
     setErrors((prevErrors) => ({ ...prevErrors, [field]: error }));
-    setFollowupEdit(tempFollowup);
+    setFollowupEdit((prevFollowup) => ({ ...prevFollowup, [field]: sanitizedValue }));
   };
 
   const fields = [

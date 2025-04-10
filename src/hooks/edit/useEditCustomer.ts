@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
-import { Customer, Contact, Equipment } from '../../styles/types/CustomerTypes';
+import { Customer, Contact, Equipment } from '../../types/CustomerTypes';
 
 const API_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api';
 
@@ -140,14 +140,14 @@ const useEditCustomer = (customer: Customer | null, onClose: () => void, onUpdat
 
   const handleRemoveContact = (index: number) => {
     setFormCustomer((prevCustomer) =>
-      prevCustomer ? { ...prevCustomer, contacts: prevCustomer.cust_contact.filter((_, i) => i !== index) } : prevCustomer
+      prevCustomer ? { ...prevCustomer, cust_contact: prevCustomer.cust_contact.filter((_, i) => i !== index) } : prevCustomer
     );
   };
 
   const handleContactChange = (index: number, updatedContact: Contact) => {
     setFormCustomer((prevCustomer) =>
       prevCustomer
-        ? { ...prevCustomer, contacts: prevCustomer.cust_contact.map((contact, i) => (i === index ? updatedContact : contact)) }
+        ? { ...prevCustomer, cust_contact: prevCustomer.cust_contact.map((contact, i) => (i === index ? updatedContact : contact)) }
         : prevCustomer
     );
   };
@@ -161,14 +161,14 @@ const useEditCustomer = (customer: Customer | null, onClose: () => void, onUpdat
 
   const handleRemoveEquipment = (index: number) => {
     setFormCustomer((prevCarrier) =>
-      prevCarrier ? { ...prevCarrier, equipments: prevCarrier.cust_equipment.filter((_, i) => i !== index) } : prevCarrier
+      prevCarrier ? { ...prevCarrier, cust_equipment: prevCarrier.cust_equipment.filter((_, i) => i !== index) } : prevCarrier
     );
   };
 
   const handleEquipmentChange = (index: number, updatedEquipment: Equipment) => {
     setFormCustomer((prevCarrier) =>
       prevCarrier
-        ? { ...prevCarrier, equipments: prevCarrier.cust_equipment.map((equipment, i) => (i === index ? updatedEquipment : equipment)) }
+        ? { ...prevCarrier, cust_equipment: prevCarrier.cust_equipment.map((equipment, i) => (i === index ? updatedEquipment : equipment)) }
         : prevCarrier
     );
   };

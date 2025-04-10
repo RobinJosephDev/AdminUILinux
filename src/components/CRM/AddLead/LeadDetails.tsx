@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import DOMPurify from 'dompurify';
 import { z } from 'zod';
-import { Lead } from '../../../styles/types/LeadTypes';
+import { Lead } from '../../../types/LeadTypes';
 
 interface LeadDetailsProps {
   lead: Lead;
@@ -62,7 +62,15 @@ const LeadDetails: React.FC<LeadDetailsProps> = ({ lead, setLead }) => {
     const sanitizedValue = DOMPurify.sanitize(value);
     let error = '';
 
-    const tempLead = { ...lead, [field]: sanitizedValue };
+    let transformedValue = sanitizedValue;
+
+    // Convert YYYY-MM-DD to DD-MM-YYYY before validation
+    if (field === 'lead_date' && /^\d{4}-\d{2}-\d{2}$/.test(sanitizedValue)) {
+      const [yyyy, mm, dd] = sanitizedValue.split('-');
+      transformedValue = `${dd}-${mm}-${yyyy}`;
+    }
+
+    const tempLead = { ...lead, [field]: transformedValue };
     const result = leadDetailSchema.safeParse(tempLead);
 
     if (!result.success) {
@@ -71,7 +79,7 @@ const LeadDetails: React.FC<LeadDetailsProps> = ({ lead, setLead }) => {
     }
 
     setErrors((prevErrors) => ({ ...prevErrors, [field]: error }));
-    setLead(tempLead);
+    setLead((prevLead) => ({ ...prevLead, [field]: sanitizedValue }));
   };
 
   const fields = [
@@ -112,7 +120,9 @@ const LeadDetails: React.FC<LeadDetailsProps> = ({ lead, setLead }) => {
             Lead Type <span style={{ color: 'red' }}>*</span>
           </label>
           <select id="lead_type" value={lead.lead_type || ''} onChange={(e) => setLead((prevLead) => ({ ...prevLead, lead_type: e.target.value }))}>
-            <option value="" disabled>Select Lead Type</option>
+            <option value="" disabled>
+              Select Lead Type
+            </option>
             <option value="AB">AB</option>
             <option value="BC">BC</option>
             <option value="BDS">BDS</option>
@@ -139,7 +149,9 @@ const LeadDetails: React.FC<LeadDetailsProps> = ({ lead, setLead }) => {
             value={lead.lead_status || ''}
             onChange={(e) => setLead((prevLead) => ({ ...prevLead, lead_status: e.target.value }))}
           >
-            <option value="" disabled>Select Lead Status</option>
+            <option value="" disabled>
+              Select Lead Status
+            </option>
             <option value="Prospect">Prospect</option>
             <option value="Lanes discussed">Lanes discussed</option>
             <option value="Prod/Equip noted">Prod/Equip noted</option>

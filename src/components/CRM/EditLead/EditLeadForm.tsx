@@ -3,7 +3,7 @@ import EditLeadDetails from './EditLeadDetails';
 import EditAddressDetails from './EditAddressDetails';
 import EditAdditionalInfo from './EditAdditionalInfo';
 import { PlusOutlined } from '@ant-design/icons';
-import { Lead, Contact } from '../../../styles/types/LeadTypes';
+import { Lead } from '../../../types/LeadTypes';
 import useEditLead from '../../../hooks/edit/useEditLead';
 
 interface EditLeadFormProps {

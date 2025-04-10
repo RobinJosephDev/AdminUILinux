@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import DOMPurify from 'dompurify';
 import { z } from 'zod';
-import { Lead } from '../../../styles/types/LeadTypes';
+import { Lead } from '../../../types/LeadTypes';
 import axios from 'axios';
 import Swal from 'sweetalert2';
-import { User } from '../../../styles/types/UserTypes';
+import { User } from '../../../types/UserTypes';
 
 interface EditAdditionalInfoProps {
   formLead: Lead;
@@ -77,8 +77,13 @@ const EditAdditionalInfo: React.FC<EditAdditionalInfoProps> = ({ formLead, setFo
   const validateAndSetLead = (field: keyof Lead, value: string) => {
     const sanitizedValue = DOMPurify.sanitize(value);
     let error = '';
+    let transformedValue = sanitizedValue;
 
-    const tempLead = { ...formLead, [field]: sanitizedValue };
+    if (field === 'follow_up_date' && /^\d{4}-\d{2}-\d{2}$/.test(sanitizedValue)) {
+      const [yyyy, mm, dd] = sanitizedValue.split('-');
+      transformedValue = `${dd}-${mm}-${yyyy}`;
+    }
+    const tempLead = { ...formLead, [field]: transformedValue };
     const result = addInfoSchema.safeParse(tempLead);
 
     if (!result.success) {
@@ -87,7 +92,7 @@ const EditAdditionalInfo: React.FC<EditAdditionalInfoProps> = ({ formLead, setFo
     }
 
     setErrors((prevErrors) => ({ ...prevErrors, [field]: error }));
-    setFormLead(tempLead);
+    setFormLead((prevLead) => ({ ...prevLead, [field]: sanitizedValue }));
   };
 
   const fields = [

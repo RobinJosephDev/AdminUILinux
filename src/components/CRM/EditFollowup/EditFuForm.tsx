@@ -3,7 +3,7 @@ import EditFuAddInfo from './EditFuAddInfo';
 import { PlusOutlined } from '@ant-design/icons';
 import FuContactForm from '../FuContactForm';
 import FuProductForm from '../FuProductForm';
-import { Followup } from '../../../styles/types/FollowupTypes';
+import { Followup } from '../../../types/FollowupTypes';
 import useEditFollowup from '../../../hooks/edit/useEditFollowup';
 import EditLeadInfo from './EditLeadInfo';
 

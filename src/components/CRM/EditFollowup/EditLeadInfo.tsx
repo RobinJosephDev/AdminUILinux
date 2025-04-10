@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import DOMPurify from 'dompurify';
 import { z } from 'zod';
-import { Followup } from '../../../styles/types/FollowupTypes';
+import { Followup } from '../../../types/FollowupTypes';
 
 interface leadInfoProps {
   followupEdit: Followup;
@@ -46,8 +46,15 @@ const EditLeadInfo: React.FC<leadInfoProps> = ({ followupEdit, setFollowupEdit }
   const validateAndSetFollowup = (field: keyof Followup, value: string) => {
     const sanitizedValue = DOMPurify.sanitize(value);
     let error = '';
+    let transformedValue = sanitizedValue;
 
-    const tempLead = { ...followupEdit, [field]: sanitizedValue };
+    // Convert YYYY-MM-DD to DD-MM-YYYY before validation
+    if (field === 'lead_date' && /^\d{4}-\d{2}-\d{2}$/.test(sanitizedValue)) {
+      const [yyyy, mm, dd] = sanitizedValue.split('-');
+      transformedValue = `${dd}-${mm}-${yyyy}`;
+    }
+
+    const tempLead = { ...followupEdit, [field]: transformedValue };
     const result = leadInfoSchema.safeParse(tempLead);
 
     if (!result.success) {
@@ -56,7 +63,7 @@ const EditLeadInfo: React.FC<leadInfoProps> = ({ followupEdit, setFollowupEdit }
     }
 
     setErrors((prevErrors) => ({ ...prevErrors, [field]: error }));
-    setFollowupEdit(tempLead);
+    setFollowupEdit((prevFollowup) => ({ ...prevFollowup, [field]: sanitizedValue }));
   };
 
   const fields = [
@@ -98,7 +105,7 @@ const EditLeadInfo: React.FC<leadInfoProps> = ({ followupEdit, setFollowupEdit }
           <select
             id="lead_type"
             value={followupEdit.lead_type || ''}
-            onChange={(e) => setFollowupEdit((prevLead) => ({ ...prevLead, lead_type: e.target.value }))}
+            onChange={(e) => setFollowupEdit((prevFollowup) => ({ ...prevFollowup, lead_type: e.target.value }))}
           >
             <option value="" disabled>
               Select Lead Type
@@ -122,7 +129,7 @@ const EditLeadInfo: React.FC<leadInfoProps> = ({ followupEdit, setFollowupEdit }
           <select
             id="lead_status"
             value={followupEdit.lead_status || ''}
-            onChange={(e) => setFollowupEdit((prevLead) => ({ ...prevLead, lead_status: e.target.value }))}
+            onChange={(e) => setFollowupEdit((prevFollowup) => ({ ...prevFollowup, lead_status: e.target.value }))}
           >
             <option value="" disabled>
               Select Lead Status

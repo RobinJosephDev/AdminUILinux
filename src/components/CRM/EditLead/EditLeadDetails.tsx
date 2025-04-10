@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import DOMPurify from 'dompurify';
 import { z } from 'zod';
-import { Lead } from '../../../styles/types/LeadTypes';
+import { Lead } from '../../../types/LeadTypes';
 
 interface EditLeadDetailsProps {
   formLead: Lead;
@@ -62,7 +62,15 @@ const EditLeadDetails: React.FC<EditLeadDetailsProps> = ({ formLead, setFormLead
     const sanitizedValue = DOMPurify.sanitize(value);
     let error = '';
 
-    const tempLead = { ...formLead, [field]: sanitizedValue };
+    let transformedValue = sanitizedValue;
+
+    // Convert YYYY-MM-DD to DD-MM-YYYY before validation
+    if (field === 'lead_date' && /^\d{4}-\d{2}-\d{2}$/.test(sanitizedValue)) {
+      const [yyyy, mm, dd] = sanitizedValue.split('-');
+      transformedValue = `${dd}-${mm}-${yyyy}`;
+    }
+
+    const tempLead = { ...formLead, [field]: transformedValue };
     const result = leadDetailSchema.safeParse(tempLead);
 
     if (!result.success) {
@@ -71,7 +79,7 @@ const EditLeadDetails: React.FC<EditLeadDetailsProps> = ({ formLead, setFormLead
     }
 
     setErrors((prevErrors) => ({ ...prevErrors, [field]: error }));
-    setFormLead(tempLead);
+    setFormLead((prevLead) => ({ ...prevLead, [field]: sanitizedValue }));
   };
 
   const fields = [
@@ -116,7 +124,9 @@ const EditLeadDetails: React.FC<EditLeadDetailsProps> = ({ formLead, setFormLead
             value={formLead.lead_type || ''}
             onChange={(e) => setFormLead((prevLead) => ({ ...prevLead, lead_type: e.target.value }))}
           >
-            <option value="" disabled>Select Lead Type</option>
+            <option value="" disabled>
+              Select Lead Type
+            </option>
             <option value="AB">AB</option>
             <option value="BC">BC</option>
             <option value="BDS">BDS</option>
@@ -143,7 +153,9 @@ const EditLeadDetails: React.FC<EditLeadDetailsProps> = ({ formLead, setFormLead
             value={formLead.lead_status || ''}
             onChange={(e) => setFormLead((prevLead) => ({ ...prevLead, lead_status: e.target.value }))}
           >
-            <option value="" disabled>Select Lead Status</option>
+            <option value="" disabled>
+              Select Lead Status
+            </option>
             <option value="Prospect">Prospect</option>
             <option value="Lanes discussed">Lanes discussed</option>
             <option value="Prod/Equip noted">Prod/Equip noted</option>

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
-import { Carrier, Contact, Equipment, Lane } from '../../styles/types/CarrierTypes';
+import { Carrier, Contact, Equipment, Lane } from '../../types/CarrierTypes';
 
 // Helper function to format date strings
 const formatDateForInput = (date: string | Date) => {
@@ -76,13 +76,11 @@ const useEditCarrier = (carrier: Carrier | null, onClose: () => void, onUpdate: 
   useEffect(() => {
     if (carrier) {
       const parsedContacts = Array.isArray(carrier.contacts) ? carrier.contacts : JSON.parse(carrier.contacts || '[]');
-      const parsedEquipments = Array.isArray(carrier.equipments) ? carrier.equipments : JSON.parse(carrier.equipments || '[]');
       const parsedLanes = Array.isArray(carrier.lanes) ? carrier.lanes : JSON.parse(carrier.lanes || '[]');
 
-      const updatedVendor = {
+      const updatedCarrier = {
         ...carrier,
         contacts: parsedContacts.length > 0 ? parsedContacts : [],
-        equipments: parsedEquipments.length > 0 ? parsedEquipments : [],
         lanes: parsedLanes.length > 0 ? parsedLanes : [],
         li_start_date: formatDateForInput(carrier.li_start_date),
         li_end_date: formatDateForInput(carrier.li_end_date),
@@ -90,7 +88,7 @@ const useEditCarrier = (carrier: Carrier | null, onClose: () => void, onUpdate: 
         ci_end_date: formatDateForInput(carrier.ci_end_date),
       };
 
-      setFormCarrier(updatedVendor);
+      setFormCarrier(updatedCarrier);
     }
   }, [carrier]);
 
@@ -168,36 +166,42 @@ const useEditCarrier = (carrier: Carrier | null, onClose: () => void, onUpdate: 
 
   //Equipments
   const handleAddEquipment = () => {
-    setFormCarrier((prevCarrier) => (prevCarrier ? { ...prevCarrier, equipments: [...prevCarrier.equipments, { equipment: '' }] } : prevCarrier));
+    setFormCarrier((prev) => ({ ...prev, equipments: [...prev.equipments, { equipment: '' }] }));
   };
 
   const handleRemoveEquipment = (index: number) => {
-    setFormCarrier((prevCarrier) =>
-      prevCarrier ? { ...prevCarrier, equipments: prevCarrier.equipments.filter((_, i) => i !== index) } : prevCarrier
-    );
+    setFormCarrier((prev) => ({
+      ...prev,
+      equipments: prev.equipments.filter((_, i) => i !== index),
+    }));
   };
 
   const handleEquipmentChange = (index: number, updatedEquipment: Equipment) => {
-    setFormCarrier((prevCarrier) =>
-      prevCarrier
-        ? { ...prevCarrier, equipments: prevCarrier.equipments.map((equipment, i) => (i === index ? updatedEquipment : equipment)) }
-        : prevCarrier
-    );
+    const updatedEquipments = formCarrier.equipments.map((equipment, i) => (i === index ? updatedEquipment : equipment));
+    setFormCarrier((prevCarrier) => ({
+      ...prevCarrier,
+      equipments: updatedEquipments,
+    }));
   };
 
   //Lanes
   const handleAddLane = () => {
-    setFormCarrier((prevCarrier) => (prevCarrier ? { ...prevCarrier, lanes: [...prevCarrier.lanes, { from: '', to: '' }] } : prevCarrier));
+    setFormCarrier((prev) => ({ ...prev, lanes: [...prev.lanes, { from: '', to: '' }] }));
   };
 
   const handleRemoveLane = (index: number) => {
-    setFormCarrier((prevCarrier) => (prevCarrier ? { ...prevCarrier, lanes: prevCarrier.lanes.filter((_, i) => i !== index) } : prevCarrier));
+    setFormCarrier((prev) => ({
+      ...prev,
+      lanes: prev.lanes.filter((_, i) => i !== index),
+    }));
   };
 
-  const handleLaneChange = (index: number, updatedContact: Lane) => {
-    setFormCarrier((prevCarrier) =>
-      prevCarrier ? { ...prevCarrier, lanes: prevCarrier.lanes.map((lane, i) => (i === index ? updatedContact : lane)) } : prevCarrier
-    );
+  const handleLaneChange = (index: number, updatedLane: Lane) => {
+    const updatedLanes = formCarrier.lanes.map((lane, i) => (i === index ? updatedLane : lane));
+    setFormCarrier((prevCarrier) => ({
+      ...prevCarrier,
+      lanes: updatedLanes,
+    }));
   };
 
   return {

@@ -1,11 +1,13 @@
-import { EditOutlined, DeleteOutlined, EyeOutlined, SearchOutlined, CalendarOutlined } from '@ant-design/icons';
+import React from 'react';
 import { Table, TableHeader } from '../common/Table';
 import Modal from '../common/Modal';
+import '../../styles/Form.css';
 import EditFuForm from './EditFollowup/EditFuForm';
 import ViewFuForm from './ViewFollowup/ViewFuForm';
+import { EditOutlined, DeleteOutlined, EyeOutlined, SearchOutlined, CalendarOutlined } from '@ant-design/icons';
 import Pagination from '../common/Pagination';
 import useFollowupTable from '../../hooks/table/useFollowupTable';
-import { Followup } from '../../styles/types/FollowupTypes';
+import { Followup } from '../../types/FollowupTypes';
 
 const LeadFollowupTable: React.FC = () => {
   const {
@@ -132,8 +134,8 @@ const LeadFollowupTable: React.FC = () => {
       <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
 
       {/* Edit Followup Modal */}
-      <Modal isOpen={isEditModalOpen} onClose={closeEditModal} title="Edit Followup">
-        {selectedFollowup && <EditFuForm followup={selectedFollowup} onClose={closeEditModal} onUpdate={updateFollowup} />}
+      <Modal isOpen={isEditModalOpen} onClose={() => setEditModalOpen(false)} title="Edit Followup">
+        {selectedFollowup && <EditFuForm followup={selectedFollowup} onClose={() => setEditModalOpen(false)} onUpdate={updateFollowup} />}
       </Modal>
 
       {/* View Followup Modal */}
