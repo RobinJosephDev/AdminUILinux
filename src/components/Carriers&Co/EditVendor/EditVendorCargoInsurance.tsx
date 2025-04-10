@@ -1,5 +1,5 @@
 import { FC, useState } from 'react';
-import { Vendor } from '../../../styles/types/VendorTypes';
+import { Vendor } from '../../../types/VendorTypes';
 import { z } from 'zod';
 import DOMPurify from 'dompurify';
 
@@ -7,7 +7,14 @@ interface EditVendorCargoInsuranceProps {
   formVendor: Vendor;
   setFormVendor: React.Dispatch<React.SetStateAction<Vendor>>;
 }
+const sanitizeInput = (input: string) => DOMPurify.sanitize(input);
 
+const parseDate = (dateStr: string) => new Date(dateStr);
+
+const formatDateForInput = (dateStr?: string) => {
+  if (!dateStr || !/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return '';
+  return dateStr;
+};
 const vendorCargoSchema = z
   .object({
     cargo_company: z
@@ -17,50 +24,58 @@ const vendorCargoSchema = z
       .optional(),
     cargo_policy_start: z
       .string()
-      .regex(/^\d{2}-\d{2}-\d{4}$/, { message: 'Start date must be in DD-MM-YYYY format' })
+      .regex(/^\d{4}-\d{2}-\d{2}$/, { message: 'Start date must be in YYYY-MM-DD format' })
       .optional(),
     cargo_policy_end: z
       .string()
-      .regex(/^\d{2}-\d{2}-\d{4}$/, { message: 'End date must be in DD-MM-YYYY format' })
+      .regex(/^\d{4}-\d{2}-\d{2}$/, { message: 'End date must be in YYYY-MM-DD format' })
       .optional(),
-    cargo_ins_amt: z.string().min(0, 'Coverage amount must be at least 0').optional(),
+    cargo_ins_amt: z
+      .string()
+      .regex(/^\d+(\.\d{1,2})?$/, 'Coverage amount must be a valid number')
+      .optional(),
   })
-  .refine(
-    (data) => {
-      if (!data.cargo_policy_start || !data.cargo_policy_end) return true;
-      const start = new Date(data.cargo_policy_start);
-      const end = new Date(data.cargo_policy_end);
-      return !isNaN(start.getTime()) && !isNaN(end.getTime()) && start <= end;
-    },
-    {
-      message: 'End date must be after or equal to start date',
-      path: ['cargo_policy_end'],
-    }
-  );
+  .refine((data) => !data.cargo_policy_start || !data.cargo_policy_end || parseDate(data.cargo_policy_start) <= parseDate(data.cargo_policy_end), {
+    message: 'End date must be after or equal to start date',
+    path: ['cargo_policy_end'],
+  });
 
 const EditVendorCargoInsurance: React.FC<EditVendorCargoInsuranceProps> = ({ formVendor, setFormVendor }) => {
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
-  const validateAndSetVendor = (field: keyof Vendor, value: string) => {
-    const sanitizedValue = DOMPurify.sanitize(value);
-    let error = '';
+  const handleChange = (key: keyof Vendor, value: string | number | undefined) => {
+    const sanitizedValue = typeof value === 'string' ? sanitizeInput(value) : value;
 
-    const tempVendor = { ...formVendor, [field]: sanitizedValue };
+    let transformedValue = sanitizedValue;
 
-    const result = vendorCargoSchema.safeParse(tempVendor);
-    if (!result.success) {
-      const fieldError = result.error.errors.find((err) => err.path[0] === field);
-      error = fieldError ? fieldError.message : '';
+    if (
+      (key === 'cargo_policy_start' || key === 'cargo_policy_end') &&
+      typeof sanitizedValue === 'string' &&
+      /^\d{4}-\d{2}-\d{2}$/.test(sanitizedValue)
+    ) {
+      transformedValue = sanitizedValue;
     }
 
-    setErrors((prevErrors) => ({ ...prevErrors, [field]: error }));
-    setFormVendor(tempVendor);
+    const newVendor = { ...formVendor, [key]: transformedValue };
+    const result = vendorCargoSchema.safeParse(newVendor);
+
+    if (!result.success) {
+      const fieldErrors: Record<string, string> = {};
+      result.error.errors.forEach((err) => {
+        fieldErrors[err.path[0]] = err.message;
+      });
+      setErrors(fieldErrors);
+    } else {
+      setErrors({});
+    }
+
+    setFormVendor(newVendor);
   };
   const fields: { label: string; key: keyof Vendor; type?: string }[] = [
     { label: 'Cargo Insurance Provider', key: 'cargo_company' },
     { label: 'Start Date', key: 'cargo_policy_start', type: 'date' },
     { label: 'End Date', key: 'cargo_policy_end', type: 'date' },
-    { label: 'Coverage Amount', key: 'cargo_ins_amt', type: 'number' },
+    { label: 'Coverage Amount', key: 'cargo_ins_amt', type: 'text' },
   ];
   return (
     <fieldset className="form-section">
@@ -73,8 +88,12 @@ const EditVendorCargoInsurance: React.FC<EditVendorCargoInsuranceProps> = ({ for
             <input
               id={key}
               type={type || 'text'}
-              value={(formVendor[key] as string | number) || ''}
-              onChange={(e) => validateAndSetVendor(key, e.target.value)}
+              value={
+                type === 'date'
+                  ? formatDateForInput(formVendor[key as keyof Vendor] as string)
+                  : (formVendor[key as keyof Vendor] as string | number) || ''
+              }
+              onChange={(e) => handleChange(key as keyof Vendor, type === 'number' ? Number(e.target.value) : e.target.value)}
             />
             {errors[key] && (
               <span className="error" style={{ color: 'red' }}>

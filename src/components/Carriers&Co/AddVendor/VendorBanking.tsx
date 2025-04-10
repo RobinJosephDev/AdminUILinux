@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, FC } from 'react';
-import { Vendor } from '../../../styles/types/VendorTypes';
+import { Vendor } from '../../../types/VendorTypes';
 import { z } from 'zod';
 import DOMPurify from 'dompurify';
 import { useGoogleAutocomplete } from '../../../hooks/useGoogleAutocomplete';
@@ -21,7 +21,11 @@ const vendorBankingSchema = z.object({
     .max(150, 'Bank name must be at most 150 characters')
     .regex(/^[a-zA-Z0-9\s.,'-]*$/, 'Only letters, numbers,spaces, apostrophes, periods, commas, and hyphens allowed')
     .optional(),
-  bank_phone: z.string().max(15, 'Phone must be at most 15 digits').regex(/^\d*$/, 'Only numbers allowed').optional(),
+  bank_phone: z
+    .string()
+    .max(30, 'Phone no cannot exceed 30 characters')
+    .regex(/^[0-9-+()\s]*$/, 'Invalid phone format')
+    .optional(),
   bank_email: z.string().max(255, 'Email must be at most 255 characters').email('Invalid email format').optional(),
   bank_us_acc_no: z
     .string()

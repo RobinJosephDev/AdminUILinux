@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { z } from 'zod';
-import { Broker } from '../../../styles/types/BrokerTypes';
+import { Broker } from '../../../types/BrokerTypes';
 import { useGoogleAutocomplete } from '../../../hooks/useGoogleAutocomplete';
 
 declare global {
@@ -47,7 +47,8 @@ const brokerSchema = z.object({
   broker_email: z.string().max(255, 'Email cannot be more than 255 characters').email('Invalid email format').optional(),
   broker_phone: z
     .string()
-    .regex(/^[0-9\-\(\)\s]{0,15}$/, 'Invalid phone number')
+    .max(30, 'Phone cannot exceed 30 characters')
+    .regex(/^[0-9-+()\s]*$/, 'Invalid phone format')
     .optional(),
   broker_ext: z
     .string()
@@ -55,7 +56,8 @@ const brokerSchema = z.object({
     .optional(),
   broker_fax: z
     .string()
-    .regex(/^[0-9\-\(\)\s]{0,15}$/, 'Invalid fax number')
+    .max(20, 'Fax exceed 20 characters')
+    .regex(/^[0-9-+()\s]*$/, 'Invalid fax format')
     .optional(),
 });
 

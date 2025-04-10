@@ -1,5 +1,5 @@
 import { FC, useState } from 'react';
-import { Vendor } from '../../../styles/types/VendorTypes';
+import { Vendor } from '../../../types/VendorTypes';
 import { z } from 'zod';
 import DOMPurify from 'dompurify';
 
@@ -7,7 +7,14 @@ interface VendorLiabilityInsuranceProps {
   vendor: Vendor;
   setVendor: React.Dispatch<React.SetStateAction<Vendor>>;
 }
+const sanitizeInput = (input: string) => DOMPurify.sanitize(input);
 
+const parseDate = (dateStr: string) => new Date(dateStr);
+
+const formatDateForInput = (dateStr?: string) => {
+  if (!dateStr || !/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return '';
+  return dateStr;
+};
 const liabilitySchema = z
   .object({
     liab_company: z
@@ -17,50 +24,58 @@ const liabilitySchema = z
       .optional(),
     liab_policy_start: z
       .string()
-      .regex(/^\d{2}-\d{2}-\d{4}$/, { message: 'Start date must be in DD-MM-YYYY format' })
+      .regex(/^\d{4}-\d{2}-\d{2}$/, { message: 'Start date must be in YYYY-MM-DD format' })
       .optional(),
     liab_policy_end: z
       .string()
-      .regex(/^\d{2}-\d{2}-\d{4}$/, { message: 'End date must be in DD-MM-YYYY format' })
+      .regex(/^\d{4}-\d{2}-\d{2}$/, { message: 'End date must be in YYYY-MM-DD format' })
       .optional(),
-    liab_ins_amt: z.string().regex(/^\d*$/, 'Coverage amount must be a positive number').optional(),
+    liab_ins_amt: z
+      .string()
+      .regex(/^\d+(\.\d{1,2})?$/, 'Coverage amount must be a valid number')
+      .optional(),
   })
-  .refine(
-    (data) => {
-      if (!data.liab_policy_start || !data.liab_policy_end) return true;
-      const start = new Date(data.liab_policy_start);
-      const end = new Date(data.liab_policy_end);
-      return !isNaN(start.getTime()) && !isNaN(end.getTime()) && start <= end;
-    },
-    {
-      message: 'End date must be after or equal to start date',
-      path: ['liab_policy_end'],
-    }
-  );
+  .refine((data) => !data.liab_policy_start || !data.liab_policy_end || parseDate(data.liab_policy_start) <= parseDate(data.liab_policy_end), {
+    message: 'End date must be after or equal to start date',
+    path: ['liab_policy_end'],
+  });
 
 const VendorLiabilityInsurance: FC<VendorLiabilityInsuranceProps> = ({ vendor, setVendor }) => {
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  const validateAndSetVendor = (field: keyof Vendor, value: string) => {
-    const sanitizedValue = DOMPurify.sanitize(value);
-    let error = '';
+  const handleChange = (key: keyof Vendor, value: string | number | undefined) => {
+    const sanitizedValue = typeof value === 'string' ? sanitizeInput(value) : value;
 
-    const tempVendor = { ...vendor, [field]: sanitizedValue };
+    let transformedValue = sanitizedValue;
 
-    const result = liabilitySchema.safeParse(tempVendor);
-    if (!result.success) {
-      const fieldError = result.error.errors.find((err) => err.path[0] === field);
-      error = fieldError ? fieldError.message : '';
+    if (
+      (key === 'liab_policy_start' || key === 'liab_policy_end') &&
+      typeof sanitizedValue === 'string' &&
+      /^\d{4}-\d{2}-\d{2}$/.test(sanitizedValue)
+    ) {
+      transformedValue = sanitizedValue;
     }
 
-    setErrors((prevErrors) => ({ ...prevErrors, [field]: error }));
-    setVendor(tempVendor);
+    const newVendor = { ...vendor, [key]: transformedValue };
+    const result = liabilitySchema.safeParse(newVendor);
+
+    if (!result.success) {
+      const fieldErrors: Record<string, string> = {};
+      result.error.errors.forEach((err) => {
+        fieldErrors[err.path[0]] = err.message;
+      });
+      setErrors(fieldErrors);
+    } else {
+      setErrors({});
+    }
+
+    setVendor(newVendor);
   };
   const fields: { label: string; key: keyof Vendor; type?: string; placeholder?: string }[] = [
     { label: 'Liability Insurance Provider', key: 'liab_company', placeholder: 'Enter provider name' },
     { label: 'Start Date', key: 'liab_policy_start', type: 'date' },
     { label: 'End Date', key: 'liab_policy_end', type: 'date' },
-    { label: 'Coverage Amount', key: 'liab_ins_amt', type: 'number', placeholder: 'Enter coverage amount' },
+    { label: 'Coverage Amount', key: 'liab_ins_amt', type: 'text', placeholder: 'Enter coverage amount' },
   ];
   return (
     <fieldset className="form-section">
@@ -73,8 +88,10 @@ const VendorLiabilityInsurance: FC<VendorLiabilityInsuranceProps> = ({ vendor, s
             <input
               id={key}
               type={type || 'text'}
-              value={(vendor[key] as string | number) || ''}
-              onChange={(e) => validateAndSetVendor(key, e.target.value)}
+              value={
+                type === 'date' ? formatDateForInput(vendor[key as keyof Vendor] as string) : (vendor[key as keyof Vendor] as string | number) || ''
+              }
+              onChange={(e) => handleChange(key as keyof Vendor, type === 'number' ? Number(e.target.value) : e.target.value)}
               placeholder={placeholder}
             />
             {errors[key] && (

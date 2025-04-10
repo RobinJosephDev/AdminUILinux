@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import DOMPurify from 'dompurify';
 import { z } from 'zod';
-import { Broker } from '../../../styles/types/BrokerTypes';
+import { Broker } from '../../../types/BrokerTypes';
 import { useGoogleAutocomplete } from '../../../hooks/useGoogleAutocomplete';
 
 declare global {
@@ -49,7 +49,8 @@ const brokerSchema = z.object({
   broker_email: z.string().max(255, 'Email cannot be more than 255 characters').email('Invalid email format').optional(),
   broker_phone: z
     .string()
-    .regex(/^[0-9\-\(\)\s]{0,15}$/, 'Invalid phone number')
+    .max(30, 'Phone cannot exceed 30 characters')
+    .regex(/^[0-9-+()\s]*$/, 'Invalid phone format')
     .optional(),
   broker_ext: z
     .string()
@@ -57,7 +58,8 @@ const brokerSchema = z.object({
     .optional(),
   broker_fax: z
     .string()
-    .regex(/^[0-9\-\(\)\s]{0,15}$/, 'Invalid fax number')
+    .max(20, 'Fax exceed 20 characters')
+    .regex(/^[0-9-+()\s]*$/, 'Invalid fax format')
     .optional(),
 });
 
@@ -108,7 +110,9 @@ const EditBrokerDetails: React.FC<EditBrokerDetailsProps> = ({ formBroker, setFo
       <div className="form-grid" style={{ display: 'grid', gap: '1rem', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))' }}>
         {fields.map(({ label, key, type }) => (
           <div className="form-group" key={key}>
-            {label} {key === 'broker_name' && <span style={{ color: 'red' }}>*</span>}
+            <label htmlFor={key}>
+              {label} {key === 'broker_name' && <span style={{ color: 'red' }}>*</span>}
+            </label>
             <input
               id={key}
               type={type || 'text'}

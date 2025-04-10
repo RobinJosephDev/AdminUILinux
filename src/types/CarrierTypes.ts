@@ -7,7 +7,7 @@ export interface Contact {
 }
 
 export interface Equipment {
-  equipment?: string;
+  equipment: string;
 }
 
 export interface Lane {

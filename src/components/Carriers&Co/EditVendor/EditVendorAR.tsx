@@ -1,7 +1,7 @@
 import { FC, useState } from 'react';
 import DOMPurify from 'dompurify';
 import { z } from 'zod';
-import { Vendor } from '../../../styles/types/VendorTypes';
+import { Vendor } from '../../../types/VendorTypes';
 
 interface EditVendorARProps {
   formVendor: Vendor;
@@ -15,8 +15,16 @@ const vendorARSchema = z.object({
     .regex(/^[a-zA-Z0-9\s.,'-]*$/, 'Only letters, numbers,spaces, apostrophes, periods, commas, and hyphens allowed')
     .optional(),
   ar_email: z.string().max(255, 'Name must be at most 255 characters').email('Invalid email format').optional(),
-  ar_contact_no: z.string().max(15, 'Contact No must be at most 15 characters').regex(/^\d*$/, 'Contact number must be numeric').optional(),
-  ar_ext: z.string().max(10, 'Extension must be at most 10 characters').regex(/^\d*$/, 'Extension must be numeric').optional(),
+  ar_contact_no: z
+    .string()
+    .max(30, 'Contact no cannot exceed 30 characters')
+    .regex(/^[0-9-+()\s]*$/, 'Invalid phone format')
+    .optional(),
+  ar_ext: z
+    .string()
+    .max(20, 'Extension cannot exceed 20 characters')
+    .regex(/^[0-9-+()\s]*$/, 'Invalid extension format')
+    .optional(),
 });
 
 const EditVendorAR: React.FC<EditVendorARProps> = ({ formVendor, setFormVendor }) => {
