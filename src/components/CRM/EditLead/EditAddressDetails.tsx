@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Lead } from '../../../styles/types/LeadTypes';
+import { Lead } from '../../../types/LeadTypes';
 import { z } from 'zod';
 import DOMPurify from 'dompurify';
 import { useGoogleAutocomplete } from '../../../hooks/useGoogleAutocomplete';

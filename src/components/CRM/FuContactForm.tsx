@@ -16,7 +16,7 @@ const contactSchema = z.object({
   name: z
     .string()
     .max(200, 'Name must be at most 200 characters')
-    .regex(/^[a-zA-Z\s.,'-]+$/, 'Only letters, spaces, apostrophes, periods,commas and hyphens allowed')
+    .regex(/^[a-zA-Z\s.,'-]*$/, 'Only letters, spaces, apostrophes, periods,commas and hyphens allowed')
     .optional(),
   phone: z
     .string()

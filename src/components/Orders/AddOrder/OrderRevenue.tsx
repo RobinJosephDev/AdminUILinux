@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Order } from '../../../styles/types/OrderTypes';
+import { Order } from '../../../types/OrderTypes';
 import { z } from 'zod';
 
 interface OrderRevenueProps {
@@ -10,7 +10,7 @@ interface OrderRevenueProps {
 const orderSchema = z.object({
   base_price: z
     .string()
-    .max(20, 'Base price cannot exceed 15 characters')
+    .max(20, 'Base price cannot exceed 20 characters')
     .regex(/^\d{1,3}(,\d{3})*(\.\d{1,2})?$/, 'Enter a valid amount (e.g., 1000, 1,000.50)')
     .optional(),
 
