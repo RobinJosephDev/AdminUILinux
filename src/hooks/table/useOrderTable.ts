@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
-import moment from 'moment';
-import { Order } from '../../styles/types/OrderTypes';
+import { Order } from '../../types/OrderTypes';
 
 const API_URL = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:3000/api';
 
@@ -123,6 +122,42 @@ const useOrderTable = () => {
     }
   };
 
+  const duplicateOrder = async (id: number) => {
+    try {
+      const token = localStorage.getItem('token');
+  
+      const response = await axios.post(
+        `${API_URL}/order/${id}/duplicate`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+  
+      const duplicatedOrder = response.data.order;
+  
+      Swal.fire({
+        icon: 'success',
+        title: 'Duplicated!',
+        text: 'Order has been duplicated successfully.',
+        timer: 2000,
+        showConfirmButton: false,
+      });
+  
+      setOrders((prev) => [duplicatedOrder, ...prev]);
+    } catch (error: any) {
+      console.error('Failed to duplicate order:', error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: error?.response?.data?.message || 'Could not duplicate the order.',
+      });
+    }
+  };
+  
+
   const handleSort = (key: string) => {
     if (sortBy === key) {
       setSortDesc(!sortDesc);
@@ -180,6 +215,7 @@ const useOrderTable = () => {
     toggleSelectAll,
     toggleSelect,
     deleteSelected,
+    duplicateOrder,
     handleSort,
     updateOrder,
     handlePageChange,

@@ -1,11 +1,22 @@
 import { Table, TableHeader } from '../common/Table';
 import Modal from '../common/Modal';
-import { EditOutlined, DeleteOutlined, SearchOutlined, PlusOutlined, EyeOutlined, CalendarOutlined, ClockCircleOutlined } from '@ant-design/icons';
+import {
+  EditOutlined,
+  DeleteOutlined,
+  SearchOutlined,
+  PlusOutlined,
+  EyeOutlined,
+  CalendarOutlined,
+  ClockCircleOutlined,
+  CopyOutlined,
+  FilePdfOutlined,
+} from '@ant-design/icons';
 import EditOrderForm from './EditOrder/EditOrderForm';
 import AddOrderForm from './AddOrder/AddOrderForm';
 import ViewOrderForm from './ViewOrder/ViewOrderForm';
 import useOrderTable from '../../hooks/table/useOrderTable';
 import Pagination from '../common/Pagination';
+import jsPDF from 'jspdf';
 
 const OrderTable: React.FC = () => {
   const {
@@ -36,6 +47,7 @@ const OrderTable: React.FC = () => {
     toggleSelectAll,
     toggleSelect,
     deleteSelected,
+    duplicateOrder,
     handleSort,
     updateOrder,
     handlePageChange,
@@ -49,6 +61,37 @@ const OrderTable: React.FC = () => {
         <span className="sort-icon">{sortBy === header.key ? (sortDesc ? '▼' : '▲') : '▼'}</span>
       </div>
     );
+  };
+  const generatePdf = () => {
+    const selectedOrderId = selectedIds[0];
+    const order = orders.find((o) => o.id === selectedOrderId);
+    if (!order) return;
+
+    const doc = new jsPDF();
+
+    doc.setFontSize(16);
+    doc.text(`Order Details - ID: ${order.id}`, 10, 10);
+
+    doc.setFontSize(12);
+    doc.text(`Customer: ${order.customer || '-'}`, 10, 20);
+    doc.text(`Ref No: ${order.customer_ref_no || '-'}`, 10, 30);
+    doc.text(`PO No: ${order.customer_po_no || '-'}`, 10, 40);
+    doc.text(`Equipment: ${order.equipment || '-'}`, 10, 50);
+
+    try {
+      const origin = typeof order.origin_location === 'string' ? JSON.parse(order.origin_location) : order.origin_location;
+      const destination = typeof order.destination_location === 'string' ? JSON.parse(order.destination_location) : order.destination_location;
+
+      doc.text(`Pickup Date: ${origin?.[0]?.date || '-'}`, 10, 60);
+      doc.text(`Pickup Time: ${origin?.[0]?.time || '-'}`, 10, 70);
+
+      doc.text(`Delivery Date: ${destination?.[0]?.date || '-'}`, 10, 80);
+      doc.text(`Delivery Time: ${destination?.[0]?.time || '-'}`, 10, 90);
+    } catch (err) {
+      doc.text('Error parsing pickup/delivery data.', 10, 100);
+    }
+
+    doc.save(`Order_${order.id}.pdf`);
   };
 
   const headers: TableHeader[] = [
@@ -117,6 +160,9 @@ const OrderTable: React.FC = () => {
           <button onClick={() => openEditModal(item)} className="btn-edit">
             <EditOutlined />
           </button>
+          <button onClick={() => duplicateOrder(item.id)} className="btn-duplicate">
+            <CopyOutlined />
+          </button>
         </>
       ),
     },
@@ -134,6 +180,9 @@ const OrderTable: React.FC = () => {
           </div>
           <button onClick={() => setAddModalOpen(true)} className="add-button">
             <PlusOutlined />
+          </button>
+          <button onClick={generatePdf} className="pdf-button" disabled={selectedIds.length !== 1}>
+            <FilePdfOutlined />
           </button>
           <button onClick={deleteSelected} className="delete-button">
             <DeleteOutlined />

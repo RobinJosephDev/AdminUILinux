@@ -116,7 +116,7 @@ const UserTable: React.FC = () => {
 
       <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
 
-      <Modal isOpen={isEditModalOpen} title="Edit Broker" onClose={() => setEditModalOpen(false)}>
+      <Modal isOpen={isEditModalOpen} title="Edit User" onClose={() => setEditModalOpen(false)}>
         {selectedUser && <EditUserForm user={selectedUser} onUpdate={updateUser} onClose={() => setEditModalOpen(false)} />}
       </Modal>
 
