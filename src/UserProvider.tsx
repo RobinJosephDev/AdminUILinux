@@ -3,16 +3,20 @@ import { createContext, useContext, useState, useEffect, ReactNode } from 'react
 export interface UserContextType {
   userRole: string | null;
   setUserRole: (role: string | null) => void;
+  userPermissions: string[] | null;
+  setUserPermissions: (permissions: string[] | null) => void;
 }
 
 export const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [userRole, setUserRole] = useState<string | null>(localStorage.getItem('userRole'));
+  const [userPermissions, setUserPermissions] = useState<string[] | null>(JSON.parse(localStorage.getItem('userPermissions') || 'null'));
 
   useEffect(() => {
     const syncUserRole = () => {
       setUserRole(localStorage.getItem('userRole'));
+      setUserPermissions(JSON.parse(localStorage.getItem('userPermissions') || 'null'));
     };
 
     window.addEventListener('storage', syncUserRole);
@@ -32,7 +36,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     };
   }, []);
 
-  return <UserContext.Provider value={{ userRole, setUserRole }}>{children}</UserContext.Provider>;
+  return <UserContext.Provider value={{ userRole, setUserRole, userPermissions, setUserPermissions }}>{children}</UserContext.Provider>;
 };
 
 export const useUser = (): UserContextType => {

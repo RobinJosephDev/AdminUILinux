@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
-import { User } from '../../styles/types/UserTypes';
+import { User } from '../../types/UserTypes';
 
 const API_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api';
 
