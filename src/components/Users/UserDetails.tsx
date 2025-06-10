@@ -6,7 +6,6 @@ interface UserDetailsProps {
   user: User;
   setUser: React.Dispatch<React.SetStateAction<User>>;
 }
-
 const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/;
 
 const userSchema = z
@@ -39,7 +38,6 @@ const userSchema = z
     role: z.enum(['Admin', 'Employee', 'Carrier', 'Customer'], {
       errorMap: () => ({ message: 'Invalid role selection' }),
     }),
-    permissions: z.array(z.string()).optional(),
   })
   .refine((data) => data.password === data.password_confirmation, {
     message: 'Passwords do not match',
@@ -48,13 +46,11 @@ const userSchema = z
 
 const roles = ['Admin', 'Employee', 'Carrier', 'Customer'];
 
-const employeeModules = ['Leads', 'Followup', 'Quotes', 'Quotes(Leads)', 'Customers', 'Orders', 'Carriers', 'Vendors', 'Brokers', 'Users'];
-
 const UserDetails: React.FC<UserDetailsProps> = ({ user, setUser }) => {
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const validateAndSetField = (field: keyof User, value: string) => {
-    const tempUser = { ...user, [field]: value };
+    let tempUser = { ...user, [field]: value };
     const result = userSchema.safeParse(tempUser);
 
     if (!result.success) {
@@ -62,23 +58,6 @@ const UserDetails: React.FC<UserDetailsProps> = ({ user, setUser }) => {
       setErrors((prevErrors) => ({ ...prevErrors, [field]: fieldError?.message || '' }));
     } else {
       setErrors((prevErrors) => ({ ...prevErrors, [field]: '' }));
-    }
-
-    setUser(tempUser);
-  };
-
-  const togglePermission = (permission: string) => {
-    const permissions = user.permissions || [];
-    const updatedPermissions = permissions.includes(permission) ? permissions.filter((p) => p !== permission) : [...permissions, permission];
-
-    const tempUser = { ...user, permissions: updatedPermissions };
-    const result = userSchema.safeParse(tempUser);
-
-    if (!result.success) {
-      const permError = result.error.errors.find((err) => err.path[0] === 'permissions');
-      setErrors((prevErrors) => ({ ...prevErrors, permissions: permError?.message || '' }));
-    } else {
-      setErrors((prevErrors) => ({ ...prevErrors, permissions: '' }));
     }
 
     setUser(tempUser);
@@ -215,26 +194,6 @@ const UserDetails: React.FC<UserDetailsProps> = ({ user, setUser }) => {
             </span>
           )}
         </div>
-
-        {/* Conditional Permissions for Employee */}
-        {user.role === 'Employee' && (
-          <div className="form-group" style={{ gridColumn: '1 / -1' }}>
-            <label>Access Permissions</label>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem' }}>
-              {employeeModules.map((module) => (
-                <label key={module} style={{ display: 'flex', alignItems: 'center' }}>
-                  <input type="checkbox" checked={user.permissions?.includes(module) || false} onChange={() => togglePermission(module)} />
-                  <span style={{ marginLeft: '0.5rem' }}>{module}</span>
-                </label>
-              ))}
-            </div>
-            {errors.permissions && (
-              <span className="error" style={{ color: 'red' }}>
-                {errors.permissions}
-              </span>
-            )}
-          </div>
-        )}
       </div>
     </fieldset>
   );

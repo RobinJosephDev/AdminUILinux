@@ -8,7 +8,7 @@ const LoginPage = () => {
   const [loading, setLoading] = useState(false);
   const [redirect, setRedirect] = useState(false);
   const API_URL = import.meta.env.VITE_API_BASE_URL;
-  const { setUserRole, setUserPermissions } = useUser();
+  const { setUserRole } = useUser();
 
   const sanitizeInput = (input: string): string => input.replace(/[<>"/=]/g, '');
 
@@ -52,32 +52,27 @@ const LoginPage = () => {
     }
   };
 
-  const handleLoginSuccess = (data: { token: string; user: { id: number; role: string; permissions?: string[] } }) => {
+  const handleLoginSuccess = (data: { token: string; user: { id: number; role: string } }) => {
     const expiryTime = Date.now() + 1 * 60 * 60 * 1000;
 
     localStorage.setItem('token', data.token);
     localStorage.setItem('userId', data.user.id.toString());
     localStorage.setItem('userRole', data.user.role);
-
-    // Save permissions, default to empty array if none sent
-    const permissions = data.user.permissions || [];
-    localStorage.setItem('userPermissions', JSON.stringify(permissions));
-
     localStorage.setItem('tokenExpiry', expiryTime.toString());
 
     axios.defaults.headers.common['Authorization'] = `Bearer ${data.token}`;
-
+  
     setUserRole(data.user.role);
-    setUserPermissions(permissions); // Update context with permissions
-
+  
     setTimeout(() => {
       window.location.href = '/';
     }, 100);
-  };
+  };  
 
   if (redirect) {
     window.location.href = '/';
   }
+  
 
   return (
     <div className="auth-container">

@@ -10,6 +10,7 @@ import {
   ClockCircleOutlined,
   CopyOutlined,
   FilePdfOutlined,
+  TruckOutlined,
 } from '@ant-design/icons';
 import EditOrderForm from './EditOrder/EditOrderForm';
 import AddOrderForm from './AddOrder/AddOrderForm';
@@ -184,6 +185,9 @@ const OrderTable: React.FC = () => {
           <button onClick={generatePdf} className="pdf-button" disabled={selectedIds.length !== 1}>
             <FilePdfOutlined />
           </button>
+          {/* <button onClick={() => openDisptachModal(item)} className="dispatch-button" disabled={selectedIds.length !== 1}>
+            <TruckOutlined />
+          </button> */}
           <button onClick={deleteSelected} className="delete-button">
             <DeleteOutlined />
           </button>
@@ -215,6 +219,9 @@ const OrderTable: React.FC = () => {
       <Modal isOpen={isAddModalOpen} onClose={() => setAddModalOpen(false)} title="Add Order">
         <AddOrderForm onClose={() => setAddModalOpen(false)} onSuccess={fetchOrders} />
       </Modal>
+      {/* <Modal isOpen={isAddModalOpen} onClose={() => setAddModalOpen(false)} title="Add Dispatch">
+        <AddDispatchForm onClose={() => setAddModalOpen(false)} onSuccess={fetchDispatches} />
+      </Modal> */}
       <Modal isOpen={isViewModalOpen} onClose={() => setViewModalOpen(false)} title="Order Details">
         {selectedOrder && <ViewOrderForm order={selectedOrder} onClose={() => setViewModalOpen(false)} />}
       </Modal>
