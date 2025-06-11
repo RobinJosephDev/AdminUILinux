@@ -81,15 +81,24 @@ const CustomNavbar: React.FC = () => {
           <Nav.Link as={NavLink} to="/customer">
             <FiUsers className="nav-icon" /> Customers
           </Nav.Link>
-          <Nav.Link as={NavLink} to="/order">
-            <FiPackage className="nav-icon" /> Orders
-          </Nav.Link>
+
+          <NavDropdown title="Orders" id="quotes-dropdown" className="custom-dropdown">
+            <NavDropdown.Item as={NavLink} to="/order" className="custom-dropdown-item">
+              <FiClipboard className="dropdown-icon" /> Orders
+            </NavDropdown.Item>
+            <NavDropdown.Item as={NavLink} to="/dispatch" className="custom-dropdown-item">
+              <FiTruck className="dropdown-icon" /> Dispatches
+            </NavDropdown.Item>
+          </NavDropdown>
+
           <Nav.Link as={NavLink} to="/carrier">
             <FiTruck className="nav-icon" /> Carriers
           </Nav.Link>
+
           <Nav.Link as={NavLink} to="/vendor">
             <FiPackage className="nav-icon" /> Vendors
           </Nav.Link>
+
           <Nav.Link as={NavLink} to="/broker">
             <FiUsers className="nav-icon" /> Brokers
           </Nav.Link>

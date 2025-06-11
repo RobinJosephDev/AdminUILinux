@@ -14,8 +14,10 @@ import {
 } from '@ant-design/icons';
 import EditOrderForm from './EditOrder/EditOrderForm';
 import AddOrderForm from './AddOrder/AddOrderForm';
+import AddDispatchForm from '../Dispatches/AddDispatch/AddDispatchForm';
 import ViewOrderForm from './ViewOrder/ViewOrderForm';
 import useOrderTable from '../../hooks/table/useOrderTable';
+import useDispatchTable from '../../hooks/table/useDispatchTable';
 import Pagination from '../common/Pagination';
 import jsPDF from 'jspdf';
 
@@ -53,6 +55,8 @@ const OrderTable: React.FC = () => {
     updateOrder,
     handlePageChange,
   } = useOrderTable();
+
+  const { fetchDispatches } = useDispatchTable();
 
   const renderSortableHeader = (header: TableHeader) => {
     if (header.key === 'checkbox' || header.key === 'actions') return header.label;
@@ -185,9 +189,9 @@ const OrderTable: React.FC = () => {
           <button onClick={generatePdf} className="pdf-button" disabled={selectedIds.length !== 1}>
             <FilePdfOutlined />
           </button>
-          {/* <button onClick={() => openDisptachModal(item)} className="dispatch-button" disabled={selectedIds.length !== 1}>
+          <button onClick={() => setAddModalOpen(true)} className="dispatch-button" disabled={selectedIds.length !== 1}>
             <TruckOutlined />
-          </button> */}
+          </button>
           <button onClick={deleteSelected} className="delete-button">
             <DeleteOutlined />
           </button>
@@ -219,9 +223,9 @@ const OrderTable: React.FC = () => {
       <Modal isOpen={isAddModalOpen} onClose={() => setAddModalOpen(false)} title="Add Order">
         <AddOrderForm onClose={() => setAddModalOpen(false)} onSuccess={fetchOrders} />
       </Modal>
-      {/* <Modal isOpen={isAddModalOpen} onClose={() => setAddModalOpen(false)} title="Add Dispatch">
+      <Modal isOpen={isAddModalOpen} onClose={() => setAddModalOpen(false)} title="Add Dispatch">
         <AddDispatchForm onClose={() => setAddModalOpen(false)} onSuccess={fetchDispatches} />
-      </Modal> */}
+      </Modal>
       <Modal isOpen={isViewModalOpen} onClose={() => setViewModalOpen(false)} title="Order Details">
         {selectedOrder && <ViewOrderForm order={selectedOrder} onClose={() => setViewModalOpen(false)} />}
       </Modal>
