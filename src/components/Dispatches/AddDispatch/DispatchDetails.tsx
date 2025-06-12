@@ -154,16 +154,40 @@ const DispatchDetails: React.FC<DispatchDetailsProps> = ({ dispatch, setDispatch
             </span>
           )}
         </div>
-        {fields.map(({ key, label, placeholder }) => (
+        {fields.map(({ key, label, placeholder, type }) => (
           <div className="form-group" key={key} style={{ flex: '1 1 45%' }}>
             <label htmlFor={key}>{label}</label>
-            <input
-              type="text"
-              id={key}
-              placeholder={placeholder}
-              value={String(dispatch[key as keyof Dispatch] || '')}
-              onChange={(e) => validateAndSetDispatch(key as keyof Dispatch, e.target.value)}
-            />
+            {type === 'dropdown' ? (
+              <select
+                id={key}
+                value={String(dispatch[key as keyof Dispatch] || '')}
+                onChange={(e) => validateAndSetDispatch(key as keyof Dispatch, e.target.value)}
+              >
+                <option value="" disabled>
+                  Select {label.toLowerCase()}
+                </option>
+                {key === 'equipment' &&
+                  ["DRY VAN 53'", "FLATBED 53'", "REEFER 53'"].map((option) => (
+                    <option key={option} value={option}>
+                      {option}
+                    </option>
+                  ))}
+                {key === 'currency' &&
+                  ['CAD', 'USD'].map((option) => (
+                    <option key={option} value={option}>
+                      {option}
+                    </option>
+                  ))}
+              </select>
+            ) : (
+              <input
+                type="text"
+                id={key}
+                placeholder={placeholder}
+                value={String(dispatch[key as keyof Dispatch] || '')}
+                onChange={(e) => validateAndSetDispatch(key as keyof Dispatch, e.target.value)}
+              />
+            )}
             {errors[key] && (
               <span className="error" style={{ color: 'red' }}>
                 {errors[key]}

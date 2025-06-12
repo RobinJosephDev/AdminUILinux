@@ -9,6 +9,7 @@ import {
   CalendarOutlined,
   ClockCircleOutlined,
   CopyOutlined,
+  FileOutlined,
   FilePdfOutlined,
   TruckOutlined,
 } from '@ant-design/icons';
@@ -19,7 +20,6 @@ import ViewOrderForm from './ViewOrder/ViewOrderForm';
 import useOrderTable from '../../hooks/table/useOrderTable';
 import useDispatchTable from '../../hooks/table/useDispatchTable';
 import Pagination from '../common/Pagination';
-import jsPDF from 'jspdf';
 
 const OrderTable: React.FC = () => {
   const {
@@ -51,6 +51,8 @@ const OrderTable: React.FC = () => {
     toggleSelect,
     deleteSelected,
     duplicateOrder,
+    generatePdf,
+    generateInvoice,
     handleSort,
     updateOrder,
     handlePageChange,
@@ -66,37 +68,6 @@ const OrderTable: React.FC = () => {
         <span className="sort-icon">{sortBy === header.key ? (sortDesc ? '▼' : '▲') : '▼'}</span>
       </div>
     );
-  };
-  const generatePdf = () => {
-    const selectedOrderId = selectedIds[0];
-    const order = orders.find((o) => o.id === selectedOrderId);
-    if (!order) return;
-
-    const doc = new jsPDF();
-
-    doc.setFontSize(16);
-    doc.text(`Order Details - ID: ${order.id}`, 10, 10);
-
-    doc.setFontSize(12);
-    doc.text(`Customer: ${order.customer || '-'}`, 10, 20);
-    doc.text(`Ref No: ${order.customer_ref_no || '-'}`, 10, 30);
-    doc.text(`PO No: ${order.customer_po_no || '-'}`, 10, 40);
-    doc.text(`Equipment: ${order.equipment || '-'}`, 10, 50);
-
-    try {
-      const origin = typeof order.origin_location === 'string' ? JSON.parse(order.origin_location) : order.origin_location;
-      const destination = typeof order.destination_location === 'string' ? JSON.parse(order.destination_location) : order.destination_location;
-
-      doc.text(`Pickup Date: ${origin?.[0]?.date || '-'}`, 10, 60);
-      doc.text(`Pickup Time: ${origin?.[0]?.time || '-'}`, 10, 70);
-
-      doc.text(`Delivery Date: ${destination?.[0]?.date || '-'}`, 10, 80);
-      doc.text(`Delivery Time: ${destination?.[0]?.time || '-'}`, 10, 90);
-    } catch (err) {
-      doc.text('Error parsing pickup/delivery data.', 10, 100);
-    }
-
-    doc.save(`Order_${order.id}.pdf`);
   };
 
   const headers: TableHeader[] = [
@@ -186,11 +157,14 @@ const OrderTable: React.FC = () => {
           <button onClick={() => setAddModalOpen(true)} className="add-button">
             <PlusOutlined />
           </button>
+          <button onClick={() => setAddModalOpen(true)} className="dispatch-button" disabled={selectedIds.length !== 1}>
+            <TruckOutlined />
+          </button>
           <button onClick={generatePdf} className="pdf-button" disabled={selectedIds.length !== 1}>
             <FilePdfOutlined />
           </button>
-          <button onClick={() => setAddModalOpen(true)} className="dispatch-button" disabled={selectedIds.length !== 1}>
-            <TruckOutlined />
+          <button onClick={generateInvoice} className="invoice-button" disabled={selectedIds.length !== 1}>
+            <FileOutlined />
           </button>
           <button onClick={deleteSelected} className="delete-button">
             <DeleteOutlined />
@@ -219,7 +193,6 @@ const OrderTable: React.FC = () => {
       <Modal isOpen={isEditModalOpen} onClose={() => setEditModalOpen(false)} title="Edit Order">
         {selectedOrder && <EditOrderForm order={selectedOrder} onClose={() => setEditModalOpen(false)} onUpdate={updateOrder} />}
       </Modal>
-
       <Modal isOpen={isAddModalOpen} onClose={() => setAddModalOpen(false)} title="Add Order">
         <AddOrderForm onClose={() => setAddModalOpen(false)} onSuccess={fetchOrders} />
       </Modal>

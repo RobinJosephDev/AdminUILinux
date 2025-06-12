@@ -33,13 +33,32 @@ const useEditDispatch = (dispatch: Dispatch | null, onClose: () => void, onUpdat
 
   useEffect(() => {
     if (dispatch) {
-      const parsedCharges = Array.isArray(dispatch.charges) ? dispatch.charges : JSON.parse(dispatch.charges || '[]');
-      const parsedDiscounts = Array.isArray(dispatch.discounts) ? dispatch.discounts : JSON.parse(dispatch.discounts || '[]');
+      let parsedCharges = dispatch.charges;
+      let parsedDiscounts = dispatch.discounts;
+
+      // Only parse if they're strings
+      if (typeof parsedCharges === 'string') {
+        try {
+          parsedCharges = JSON.parse(parsedCharges);
+        } catch (e) {
+          console.error('Failed to parse charges:', e);
+          parsedCharges = [];
+        }
+      }
+
+      if (typeof parsedDiscounts === 'string') {
+        try {
+          parsedDiscounts = JSON.parse(parsedDiscounts);
+        } catch (e) {
+          console.error('Failed to parse discounts:', e);
+          parsedDiscounts = [];
+        }
+      }
 
       const updatedDispatch = {
         ...dispatch,
-        charges: parsedCharges.length > 0 ? parsedCharges : [],
-        discounts: parsedDiscounts.length > 0 ? parsedDiscounts : [],
+        charges: Array.isArray(parsedCharges) ? parsedCharges : [],
+        discounts: Array.isArray(parsedDiscounts) ? parsedDiscounts : [],
       };
 
       setFormDispatch(updatedDispatch);

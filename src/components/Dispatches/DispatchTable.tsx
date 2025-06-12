@@ -68,18 +68,89 @@ const OrderTable: React.FC = () => {
     if (!dispatch) return;
 
     const doc = new jsPDF();
+    let y = 10;
 
     doc.setFontSize(16);
-    doc.text(`Dispatch Details - ID: ${dispatch.id}`, 10, 10);
+    doc.text(`Magma Confirmation #${dispatch.id}`, 10, y);
+    y += 10;
 
     doc.setFontSize(12);
-    doc.text(`Carrier: ${dispatch.carrier || '-'}`, 10, 20);
-    doc.text(`Truck Unit No: ${dispatch.truck_unit_no || '-'}`, 10, 30);
-    doc.text(`Trailer Unit No: ${dispatch.trailer_unit_no || '-'}`, 10, 40);
-    doc.text(`Equipment: ${dispatch.equipment || '-'}`, 10, 50);
-    doc.text(`Tracking Code: ${dispatch.tracking_code || '-'}`, 10, 50);
+    doc.text('MAGMA LOGISTICS INC.', 10, y);
+    doc.text('Carrier: ' + (dispatch.carrier || '-'), 130, y);
+    y += 7;
 
-    doc.save(`Dispatch_${dispatch.id}.pdf`);
+    doc.text('8501 Bruceville RD APT 235', 10, y);
+    doc.text(dispatch.carrier_address || '-', 130, y);
+    y += 7;
+
+    doc.text('Elk Grove ,CA,USA ,95758', 10, y);
+    doc.text('Phone: ' + (dispatch.carrier_phone || '-'), 130, y);
+    y += 10;
+
+    doc.text(`Date: ${new Date().toLocaleDateString('en-CA')}`, 10, y);
+    y += 10;
+
+    // Equipment and Commodity
+    doc.text(`Equipment: ${dispatch.equipment || '-'}`, 10, y);
+    doc.text(`Temperature: ${dispatch.temperature || '-'}`, 80, y);
+    doc.text(`Load Type: ${dispatch.load_type || '-'}`, 130, y);
+    y += 7;
+    doc.text(`Commodity: ${dispatch.commodity || '-'}`, 10, y);
+    y += 10;
+
+    // Pickup Section
+    doc.setFont(undefined, 'bold');
+    doc.text('Pickup Shipper(s) Details', 10, y);
+    doc.setFont(undefined, 'normal');
+    y += 7;
+
+    doc.text(dispatch.pickup_address || '-', 10, y);
+    y += 7;
+    doc.text(`Pickup Date & Time: ${dispatch.pickup_time || '-'}`, 10, y);
+    y += 7;
+    doc.text(`Skids: ${dispatch.pickup_skids || '0'}, Weight: ${dispatch.pickup_weight || '-'} LBS`, 10, y);
+    y += 7;
+    doc.text(`Dims: ${dispatch.pickup_dims || '-'}`, 10, y);
+    y += 10;
+
+    // Delivery Section
+    doc.setFont(undefined, 'bold');
+    doc.text('Delivery Consignee(s) Details', 10, y);
+    doc.setFont(undefined, 'normal');
+    y += 7;
+
+    doc.text(dispatch.delivery_address || '-', 10, y);
+    y += 7;
+    doc.text(`Delivery Date & Time: ${dispatch.delivery_time || '-'}`, 10, y);
+    y += 7;
+    doc.text(`Skids: ${dispatch.delivery_skids || '0'}, Weight: ${dispatch.delivery_weight || '-'} LBS`, 10, y);
+    y += 7;
+    doc.text(`Dims: ${dispatch.delivery_dims || '-'}`, 10, y);
+    y += 10;
+
+    // Charges
+    doc.text(`Charges = USD$${dispatch.final_price || '0.00'}`, 10, y);
+    y += 7;
+    doc.text(`All Inclusive Rate = USD$${dispatch.final_price || '0.00'}`, 10, y);
+    y += 10;
+
+    // Notes
+    const notes = `Payment term is 30 working days from receipt of freight bill and proof of delivery. 
+Any delays in pickup and delivery will apply rescheduling fee $350. 
+Check-in call needed for in-transit shipments 7:00 AM pacific time. 
+Double brokered shipment leads to non-payment of freight charges and Magma Logistics reserves the right to pay to end carrier whosoever in ACI/ACE manifest. 
+Pallet Case count discrepancy must be reported at the time of loading and unloading. 
+Clear copy of ACI/ACE manifest, shipper packing slip, Bill of Lading, and signed Carrier Confirmation are required to process invoice.`;
+
+    doc.setFontSize(10);
+    doc.text(doc.splitTextToSize(notes, 180), 10, y);
+    y += 50;
+
+    // Signature Lines
+    doc.text('For Magma Logistics Inc. ____________________', 10, y);
+    doc.text('For Carrier ____________________', 130, y);
+
+    doc.save(`Dispatch_${dispatch.id}_RateConfirmation.pdf`);
   };
 
   const headers: TableHeader[] = [

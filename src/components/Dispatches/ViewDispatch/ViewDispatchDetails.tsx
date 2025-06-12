@@ -103,6 +103,10 @@ const ViewDispatchDetails: React.FC<ViewDispatchDetailsProps> = ({ formDispatch 
           <label htmlFor="fedIdNo">Border</label>
           <div>{formDispatch.border}</div>
         </div>
+        <div className="form-group" style={{ flex: 1 }}>
+          <label htmlFor="fedIdNo">Currency</label>
+          <div>{formDispatch.currency}</div>
+        </div>
       </div>
     </fieldset>
   );
