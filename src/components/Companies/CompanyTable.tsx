@@ -1,30 +1,34 @@
+import { EditOutlined, DeleteOutlined, MailOutlined, PlusOutlined, SearchOutlined, EyeOutlined } from '@ant-design/icons';
 import { Table, TableHeader } from '../common/Table';
 import Modal from '../common/Modal';
-import '../../styles/Form.css';
-import EditCustomerForm from './EditCustomer/EditCustomerForm';
-import { EditOutlined, DeleteOutlined, MailOutlined, SearchOutlined, EyeOutlined } from '@ant-design/icons';
-import ViewCustomerForm from './ViewCustomer/ViewCustomerForm';
-import useCustomerTable from '../../hooks/table/useCustomerTable';
+import useCompanyTable from '../../hooks/table/useCompanyTable';
+import EditCompanyForm from './EditCompany/EditCompanyForm';
+import AddCompanyForm from './AddCompany/AddCompanyForm';
+import ViewCarrierForm from './ViewCompany/ViewCompanyForm';
 import Pagination from '../common/Pagination';
 
-const CustomerTable: React.FC = () => {
+const CompanyTable: React.FC = () => {
   const {
-    customers,
+    fetchCompanies,
+    companies,
     loading,
     searchQuery,
     setSearchQuery,
     sortBy,
     sortDesc,
-    selectedCustomers,
+    selectedCompanies,
+    setSelectedCompanies,
     paginatedData,
     totalPages,
     currentPage,
     setCurrentPage,
     isEditModalOpen,
-    isEmailModalOpen,
+    isAddModalOpen,
     isViewModalOpen,
-    selectedCustomer,
+    isEmailModalOpen,
+    selectedCompany,
     setEditModalOpen,
+    setAddModalOpen,
     setViewModalOpen,
     setEmailModalOpen,
     toggleSelectAll,
@@ -35,11 +39,10 @@ const CustomerTable: React.FC = () => {
     setEmailData,
     sendEmails,
     openViewModal,
-    rowsPerPage,
     handleSort,
-    updateCustomer,
+    updateCompany,
     handlePageChange,
-  } = useCustomerTable();
+  } = useCompanyTable();
 
   const renderSortableHeader = (header: TableHeader) => {
     if (header.key === 'checkbox' || header.key === 'actions') return header.label;
@@ -55,22 +58,19 @@ const CustomerTable: React.FC = () => {
     {
       key: 'checkbox',
       label: (
-        <input type="checkbox" onChange={toggleSelectAll} checked={selectedCustomers.length === paginatedData.length && paginatedData.length > 0} />
+        <input type="checkbox" onChange={toggleSelectAll} checked={selectedCompanies.length === paginatedData.length && paginatedData.length > 0} />
       ) as JSX.Element,
-      render: (item) => <input type="checkbox" checked={selectedCustomers.includes(item.id!)} onChange={() => toggleSelect(item.id)} />,
+      render: (item) => <input type="checkbox" checked={selectedCompanies.includes(item.id!)} onChange={() => toggleSelect(item.id)} />,
     },
-    { key: 'cust_name', label: 'Name' },
-    { key: 'cust_type', label: 'Type' },
-    { key: 'cust_email', label: 'Email' },
-    { key: 'cust_contact_no', label: 'Contact No' },
-    { key: 'cust_primary_city', label: 'Primary City' },
-    { key: 'cust_primary_state', label: 'Primary State' },
-    { key: 'cust_primary_country', label: 'Primary Country' },
-    {
-      key: 'cust_credit_status',
-      label: 'Status',
-      render: (item) => <span className={`badge ${getStatusClass(item.cust_credit_status)}`}>{item.cust_credit_status}</span>,
-    },
+    { key: 'name', label: 'Name' },
+    { key: 'phone', label: 'Phone' },
+    { key: 'cell', label: 'Cell' },
+    { key: 'email', label: 'Email' },
+    { key: 'city', label: 'City' },
+    { key: 'state', label: 'State' },
+    { key: 'website', label: 'Website' },
+    { key: 'gst_hst_no', label: 'GST/HST No.' },
+    { key: 'qst_no', label: 'QST No.' },
     {
       key: 'actions',
       label: '',
@@ -87,32 +87,21 @@ const CustomerTable: React.FC = () => {
     },
   ];
 
-  const getStatusClass = (status) => {
-    switch (status) {
-      case 'Approved':
-        return 'badge-product';
-      case 'Not Approved':
-        return 'badge-lanes';
-      default:
-        return 'badge-default';
-    }
-  };
-
   return (
     <div>
       <div className="header-container">
         <div className="header-container-left">
-          <div className="header-actions">
-            <h1 className="page-heading">Customers</h1>
-          </div>
+          <h1 className="page-heading">Companies</h1>
         </div>
-
         <div className="search-container">
           <div className="search-input-wrapper">
             <SearchOutlined className="search-icon" />
             <input className="search-bar" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
           </div>
-          <button onClick={() => setEmailModalOpen(true)} className="send-email-button" disabled={selectedCustomers.length === 0}>
+          <button onClick={() => setAddModalOpen(true)} className="add-button">
+            <PlusOutlined />
+          </button>
+          <button onClick={() => setEmailModalOpen(true)} className="send-email-button" disabled={selectedCompanies.length === 0}>
             <MailOutlined />
           </button>
           <button onClick={deleteSelected} className="delete-button">
@@ -123,33 +112,40 @@ const CustomerTable: React.FC = () => {
 
       {loading ? (
         <div>Loading...</div>
-      ) : customers.length === 0 ? (
+      ) : companies.length === 0 ? (
         <div>No records found</div>
       ) : (
         <Table
           data={paginatedData}
           headers={headers.map((header) => ({
             ...header,
-            label: renderSortableHeader(header), // Render sortable header logic
+            label: renderSortableHeader(header),
           }))}
           handleSort={handleSort}
           sortBy={sortBy}
           sortDesc={sortDesc}
         />
       )}
+
       <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
 
-      <Modal isOpen={isEditModalOpen} onClose={() => setEditModalOpen(false)} title="Edit Customer">
-        {selectedCustomer && <EditCustomerForm customer={selectedCustomer} onClose={() => setEditModalOpen(false)} onUpdate={updateCustomer} />}
+      <Modal isOpen={isEditModalOpen} title="Edit Company" onClose={() => setEditModalOpen(false)}>
+        {selectedCompany && <EditCompanyForm company={selectedCompany} onUpdate={updateCompany} onClose={() => setEditModalOpen(false)} />}
       </Modal>
-      <Modal isOpen={isViewModalOpen} onClose={() => setViewModalOpen(false)} title="Customer Details">
-        {selectedCustomer && <ViewCustomerForm customer={selectedCustomer} onClose={() => setViewModalOpen(false)} />}
+
+      <Modal isOpen={isAddModalOpen} onClose={() => setAddModalOpen(false)} title="Add Company">
+        <AddCompanyForm onClose={() => setAddModalOpen(false)} onSuccess={fetchCompanies} />
       </Modal>
+
       <Modal isOpen={isEmailModalOpen} onClose={() => setEmailModalOpen(false)} title="Send Email">
         <button onClick={sendEmails}>Send</button>
+      </Modal>
+
+      <Modal isOpen={isViewModalOpen} onClose={() => setViewModalOpen(false)} title="Company Details">
+        {selectedCompany && <ViewCarrierForm company={selectedCompany} onClose={() => setViewModalOpen(false)} />}
       </Modal>
     </div>
   );
 };
 
-export default CustomerTable;
+export default CompanyTable;

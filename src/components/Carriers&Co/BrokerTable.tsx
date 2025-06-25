@@ -68,7 +68,7 @@ const BrokerTable: React.FC = () => {
     { key: 'broker_fax', label: 'Fax', render: (item) => item.broker_fax || <span>-</span> },
     {
       key: 'actions',
-      label: 'Actions',
+      label: '',
       render: (item) => (
         <>
           <button onClick={() => openViewModal(item)} className="btn-view">

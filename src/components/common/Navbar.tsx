@@ -5,7 +5,7 @@ import axios from 'axios';
 import '../../styles/Navbar.css';
 import { Navbar, Nav, NavDropdown } from 'react-bootstrap';
 import { NavLink } from 'react-router-dom';
-import { FiClipboard, FiUsers, FiLogOut, FiFileText, FiPackage, FiTruck, FiSettings } from 'react-icons/fi';
+import { FiHome, FiClipboard, FiUsers, FiLogOut, FiFileText, FiPackage, FiTruck, FiSettings, FiBriefcase } from 'react-icons/fi';
 import { useUser } from '../../UserProvider';
 
 const API_URL = import.meta.env.VITE_API_BASE_URL;
@@ -60,6 +60,10 @@ const CustomNavbar: React.FC = () => {
       <Navbar.Toggle aria-controls="basic-navbar-nav" />
       <Navbar.Collapse id="basic-navbar-nav">
         <Nav>
+          <Nav.Link as={NavLink} to="/">
+            <FiHome className="nav-icon" /> Home
+          </Nav.Link>
+
           <NavDropdown title="CRM" id="crm-dropdown" className="custom-dropdown">
             <NavDropdown.Item as={NavLink} to="/lead" className="custom-dropdown-item">
               <FiClipboard className="dropdown-icon" /> Leads
@@ -91,24 +95,24 @@ const CustomNavbar: React.FC = () => {
             </NavDropdown.Item>
           </NavDropdown>
 
-          <Nav.Link as={NavLink} to="/carrier">
-            <FiTruck className="nav-icon" /> Carriers
-          </Nav.Link>
-
-          <Nav.Link as={NavLink} to="/vendor">
-            <FiPackage className="nav-icon" /> Vendors
-          </Nav.Link>
-
-          <Nav.Link as={NavLink} to="/broker">
-            <FiUsers className="nav-icon" /> Brokers
-          </Nav.Link>
+          <NavDropdown title="Carriers & Co" id="quotes-dropdown" className="custom-dropdown">
+            <NavDropdown.Item as={NavLink} to="/carrier" className="custom-dropdown-item">
+              <FiTruck className="dropdown-icon" /> Carriers
+            </NavDropdown.Item>
+            <NavDropdown.Item as={NavLink} to="/vendor" className="custom-dropdown-item">
+              <FiPackage className="dropdown-icon" /> Vendors
+            </NavDropdown.Item>
+            <NavDropdown.Item as={NavLink} to="/broker" className="custom-dropdown-item">
+              <FiUsers className="dropdown-icon" /> Brokers
+            </NavDropdown.Item>
+          </NavDropdown>
 
           <NavDropdown title="More" id="more-dropdown" className="custom-dropdown">
             <NavDropdown.Item as={NavLink} to="/user" className="custom-dropdown-item">
               <FiUsers className="dropdown-icon" /> Users
             </NavDropdown.Item>
-            <NavDropdown.Item as={NavLink} to="/settings" className="custom-dropdown-item">
-              <FiSettings className="dropdown-icon" /> Settings
+            <NavDropdown.Item as={NavLink} to="/company" className="custom-dropdown-item">
+              <FiBriefcase className="dropdown-icon" /> Companies
             </NavDropdown.Item>
             <NavDropdown.Divider />
             <NavDropdown.Item onClick={handleLogout} className="custom-dropdown-item logout">

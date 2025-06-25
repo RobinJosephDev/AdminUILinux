@@ -17,6 +17,7 @@ const BrokerPage = lazy(() => import('./pages/Carriers&Co/BrokerPage'));
 const UserPage = lazy(() => import('./pages/Users/UserPage'));
 const QuotePage = lazy(() => import('./pages/Sales/QuotePage'));
 const DispatchPage = lazy(() => import('./pages/Orders/DispatchPage'));
+const CompanyPage = lazy(() => import('./pages/Companies/CompanyPage'));
 
 const AppRoutes: React.FC = () => (
   <UserProvider>
@@ -140,6 +141,17 @@ const AppRoutes: React.FC = () => (
           element={
             <ProtectedRoute>
               <BrokerPage />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Company */}
+
+        <Route
+          path="/company"
+          element={
+            <ProtectedRoute>
+              <CompanyPage />
             </ProtectedRoute>
           }
         />

@@ -1,34 +1,11 @@
 import { FC } from "react";
-import { Carrier } from "../../../styles/types/CarrierTypes";
+import { Carrier } from "../../../types/CarrierTypes";
 
 interface ViewCarrierDetailsProps {
   formCarrier: Carrier;
 }
 
 const ViewCarrierDetails: FC<ViewCarrierDetailsProps> = ({ formCarrier }) => {
-  const carrierTypeOptions: string[] = [
-    "US Authorization",
-    "Air Freight",
-    "Canadian",
-    "Common",
-    "Intermodal",
-    "Local Cartage",
-    "Mexican",
-    "Ocean Freight",
-    "Other",
-  ];
-
-  const ratingOptions: string[] = [
-    "Unrated",
-    "Preferred",
-    "Excellent",
-    "Good",
-    "Poor",
-    "Not Recommended",
-    "Do not use",
-    "Blank",
-    "Probationary",
-  ];
 
   // Render download link if file URL exists
   const renderDownloadLink = (fileUrl?: string, fileLabel?: string) => {

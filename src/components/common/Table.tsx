@@ -12,7 +12,6 @@ export interface TableHeader {
   render?: (item: any) => JSX.Element; // Generalized item type
 }
 
-
 export interface TableProps {
   data: any[];
   headers: TableHeader[];
@@ -21,7 +20,6 @@ export interface TableProps {
   sortDesc: boolean;
 }
 
-
 export const Table: React.FC<TableProps> = ({ data, headers, handleSort, sortBy, sortDesc }) => {
   return (
     <div className="table-container">
@@ -29,18 +27,17 @@ export const Table: React.FC<TableProps> = ({ data, headers, handleSort, sortBy,
         <table className="table table-striped">
           <thead>
             <tr>
-              {headers.map((header) => (
-                <th key={header.key} style={{ width: header.width || 'auto' }} onClick={() => handleSort(header.key)} className="col">
+              {headers.map((header, index) => (
+                <th
+                  key={header.key}
+                  style={{ width: header.width || 'auto' }}
+                  onClick={() => handleSort(header.key)}
+                  className={`col ${index === headers.length - 1 ? 'last-column' : ''}`}
+                >
                   <div className="header-content">
                     {header.label}
                     <i
-                      className={`fa ${
-                        sortBy === header.key
-                          ? sortDesc
-                            ? 'fa-sort-down' // descending
-                            : '' // ascending
-                          : 'fa-sort-down' // default sort icon for unsorted columns
-                      }`}
+                      className={`fa ${sortBy === header.key ? (sortDesc ? 'fa-sort-down' : '') : 'fa-sort-down'}`}
                       style={{ marginLeft: '5px' }}
                     ></i>
                   </div>
@@ -48,11 +45,12 @@ export const Table: React.FC<TableProps> = ({ data, headers, handleSort, sortBy,
               ))}
             </tr>
           </thead>
+
           <tbody>
             {data.map((item) => (
               <tr key={item.id}>
-                {headers.map((header) => (
-                  <td key={header.key} className="data-row">
+                {headers.map((header, index) => (
+                  <td key={header.key} className={`data-row ${index === headers.length - 1 ? 'last-column' : ''}`}>
                     {header.render ? header.render(item) : item[header.key]}
                   </td>
                 ))}
@@ -60,8 +58,6 @@ export const Table: React.FC<TableProps> = ({ data, headers, handleSort, sortBy,
             ))}
           </tbody>
         </table>
-
-        
       </div>
     </div>
   );

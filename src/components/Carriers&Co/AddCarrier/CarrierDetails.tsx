@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Carrier } from '../../../styles/types/CarrierTypes';
+import { Carrier } from '../../../types/CarrierTypes';
 import { z } from 'zod';
 import DOMPurify from 'dompurify';
 

@@ -168,7 +168,7 @@ Clear copy of ACI/ACE manifest, shipper packing slip, Bill of Lading, and signed
     { key: 'final_price', label: 'Final Price', render: (dispatch) => dispatch.final_price || <span>-</span> },
     {
       key: 'actions',
-      label: 'Actions',
+      label: '',
       render: (item) => (
         <>
           <button onClick={() => openViewModal(item)} className="btn-view">

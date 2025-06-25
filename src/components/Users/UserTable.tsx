@@ -63,7 +63,7 @@ const UserTable: React.FC = () => {
     { key: 'role', label: 'Role', render: (item) => item.role || <span>-</span> },
     {
       key: 'actions',
-      label: 'Actions',
+      label: '',
       render: (item) => (
         <>
           <button onClick={() => openViewModal(item)} className="btn-view">

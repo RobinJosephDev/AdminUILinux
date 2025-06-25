@@ -70,7 +70,7 @@ const CarrierTable: React.FC = () => {
     { key: 'rating', label: 'Rating' },
     {
       key: 'actions',
-      label: 'Actions',
+      label: '',
       render: (item) => (
         <>
           <button onClick={() => openViewModal(item)} className="btn-view">
@@ -87,7 +87,9 @@ const CarrierTable: React.FC = () => {
   return (
     <div>
       <div className="header-container">
-        <h1 className="page-heading">Carriers</h1>
+        <div className="header-container-left">
+          <h1 className="page-heading">Carriers</h1>
+        </div>
         <div className="search-container">
           <div className="search-input-wrapper">
             <SearchOutlined className="search-icon" />

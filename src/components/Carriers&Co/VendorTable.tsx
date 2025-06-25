@@ -70,7 +70,7 @@ const VendorTable: React.FC = () => {
     { key: 'service', label: 'Service', render: (item) => item.service || <span>-</span> },
     {
       key: 'actions',
-      label: 'Actions',
+      label: '',
       render: (item) => (
         <>
           <button onClick={() => openViewModal(item)} className="btn-view">

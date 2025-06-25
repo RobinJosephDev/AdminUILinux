@@ -13,7 +13,7 @@
   align-items: center;
   padding-left: 1rem !important;
   padding-right: 1rem !important;
-  gap: 2rem;
+  gap: 7rem;
   background-color: #000;
 }
 
@@ -30,6 +30,13 @@
 .nav-link {
   border: 1px solid #2c3e50;
   font-size: 13px !important;
+  color: #e2e2e2 !important;
+}
+
+#quotes-dropdown,
+#crm-dropdown,
+#more-dropdown {
+  color: #e2e2e2;
 }
 
 .nav-link-custom {

@@ -66,7 +66,7 @@ const QuoteTable: React.FC = () => {
     { key: 'quote_booked_by', label: 'Booked by', render: (quote) => quote.quote_booked_by || <span>-</span> },
     {
       key: 'actions',
-      label: 'Actions',
+      label: '',
       render: (item) => (
         <>
           <button onClick={() => openViewModal(item)} className="btn-view">

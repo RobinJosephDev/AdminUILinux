@@ -70,7 +70,7 @@ const LeadFollowupTable: React.FC = () => {
     },
     {
       key: 'actions',
-      label: 'Actions',
+      label: '',
       render: (item) => (
         <>
           <button onClick={() => openViewModal(item)} className="btn-view">
