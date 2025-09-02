@@ -16,22 +16,22 @@ const companySchema = z.object({
     .regex(/^[a-zA-Z0-9\s.,'-]+$/, 'Only letters, numbers, spaces, apostrophes, periods, commas, and hyphens allowed'),
   invoice_terms: z
     .string()
-    .max(100, 'Invoice Terms cannot exceed 100 characters')
-    .regex(/^[a-zA-Z0-9\s.,'-]+$/, 'Only letters, numbers, spaces, apostrophes, periods, commas, and hyphens allowed')
+    .max(500, 'Invoice Terms cannot exceed 500 characters')
+    .regex(/^[a-zA-Z0-9\s.,'-]*$/, 'Only letters, numbers, spaces, apostrophes, periods, commas, and hyphens allowed')
     .optional(),
   rate_conf_terms: z
     .string()
-    .max(100, 'Rate Conf terms cannot exceed 100 characters')
+    .max(500, 'Rate Conf terms cannot exceed 500 characters')
     .regex(/^[a-zA-Z0-9\s.,'-]*$/, 'Only letters, numbers, spaces, apostrophes, periods, commas, and hyphens allowed')
     .optional(),
   quote_terms: z
     .string()
-    .max(100, 'Quote Terms cannot exceed 100 characters')
+    .max(500, 'Quote Terms cannot exceed 500 characters')
     .regex(/^[a-zA-Z0-9\s.,'-]*$/, 'Only letters, numbers, spaces, apostrophes, periods, commas, and hyphens allowed')
     .optional(),
   invoice_reminder: z
     .string()
-    .max(100, 'Inovice Reminder cannot exceed 100 characters')
+    .max(200, 'Inovice Reminder cannot exceed 200 characters')
     .regex(/^[a-zA-Z0-9\s.,'-]*$/, 'Only letters, numbers, spaces, apostrophes, periods, commas, and hyphens allowed')
     .optional(),
 });

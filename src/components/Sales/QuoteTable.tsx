@@ -94,18 +94,29 @@ const QuoteTable: React.FC = () => {
             <SearchOutlined className="search-icon" />
             <input className="search-bar" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
           </div>
-          <button onClick={() => setEmailModalOpen(true)} className="send-email-button" disabled={selectedIds.length === 0}>
-            <MailOutlined />
-          </button>
-          <button onClick={deleteSelected} className="delete-button">
-            <DeleteOutlined />
-          </button>
+
         </div>
       </div>
+
+      {/* Selection Banner */}
+      {selectedIds.length > 0 && (
+        <div className="selection-banner">
+          <span>
+            {selectedIds.length} item{selectedIds.length > 1 ? 's' : ''} selected
+          </span>
+          <button className="text-email-btn" onClick={() => setEmailModalOpen(true)} disabled={selectedIds.length !== 1}>
+            Email
+          </button>
+          <button className="text-delete-btn" onClick={deleteSelected}>
+            Delete
+          </button>
+        </div>
+      )}
+
       {loading ? (
         <div>Loading...</div>
       ) : quotes.length === 0 ? (
-        <div>No records found</div>
+        <div className="no-record">No records found</div>
       ) : (
         <Table
           data={paginatedData}

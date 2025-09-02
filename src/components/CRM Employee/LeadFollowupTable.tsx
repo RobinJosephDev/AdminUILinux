@@ -1,16 +1,16 @@
-import React from 'react';
+import { EditOutlined, DeleteOutlined, EyeOutlined, PlusOutlined, SearchOutlined, CalendarOutlined } from '@ant-design/icons';
 import { Table, TableHeader } from '../common/Table';
 import Modal from '../common/Modal';
-import '../../styles/Form.css';
 import EditFuForm from './EditFollowup/EditFuForm';
 import ViewFuForm from './ViewFollowup/ViewFuForm';
-import { EditOutlined, DeleteOutlined, EyeOutlined, SearchOutlined, CalendarOutlined } from '@ant-design/icons';
 import Pagination from '../common/Pagination';
 import useFollowupTable from '../../hooks/table/useFollowupTable';
 import { Followup } from '../../types/FollowupTypes';
+import AddLeadFollowupForm from './AddFollowup/AddLeadFollowupForm';
 
 const LeadFollowupTable: React.FC = () => {
   const {
+    fetchFollowUps,
     followUps,
     loading,
     searchQuery,
@@ -22,11 +22,13 @@ const LeadFollowupTable: React.FC = () => {
     totalPages,
     currentPage,
     setCurrentPage,
+    isAddModalOpen,
     isEditModalOpen,
     isViewModalOpen,
     selectedFollowup,
     setEditModalOpen,
     setViewModalOpen,
+    setAddModalOpen,
     openEditModal,
     closeEditModal,
     openViewModal,
@@ -70,7 +72,7 @@ const LeadFollowupTable: React.FC = () => {
     },
     {
       key: 'actions',
-      label: '',
+      label: 'Actions',
       render: (item) => (
         <>
           <button onClick={() => openViewModal(item)} className="btn-view">
@@ -110,6 +112,9 @@ const LeadFollowupTable: React.FC = () => {
             <SearchOutlined className="search-icon" />
             <input className="search-bar" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
           </div>
+          <button onClick={() => setAddModalOpen(true)} className="add-button">
+            <PlusOutlined />
+          </button>
           <button onClick={deleteSelected} className="delete-button">
             <DeleteOutlined />
           </button>
@@ -133,9 +138,13 @@ const LeadFollowupTable: React.FC = () => {
       )}
       <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
 
+      <Modal isOpen={isAddModalOpen} onClose={() => setAddModalOpen(false)} title="Add Followup">
+        <AddLeadFollowupForm onClose={() => setAddModalOpen(false)} onSuccess={fetchFollowUps} />
+      </Modal>
+
       {/* Edit Followup Modal */}
-      <Modal isOpen={isEditModalOpen} onClose={() => setEditModalOpen(false)} title="Edit Followup">
-        {selectedFollowup && <EditFuForm followup={selectedFollowup} onClose={() => setEditModalOpen(false)} onUpdate={updateFollowup} />}
+      <Modal isOpen={isEditModalOpen} onClose={closeEditModal} title="Edit Followup">
+        {selectedFollowup && <EditFuForm followup={selectedFollowup} onClose={closeEditModal} onUpdate={updateFollowup} />}
       </Modal>
 
       {/* View Followup Modal */}

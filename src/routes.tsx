@@ -7,13 +7,15 @@ const RegisterPage = lazy(() => import('./pages/Auth/RegisterPage'));
 const LoginPage = lazy(() => import('./pages/Auth/LoginPage'));
 const Dashboard = lazy(() => import('./pages/Dashboard'));
 const LeadsPage = lazy(() => import('./pages/CRM/LeadsPage'));
-const LeadFollowupPage = lazy(() => import('./pages/CRM/LeadFollowupPage'));
+const EmpLeadsPage = lazy(() => import('./pages/CRM Employee/EmpLeadsPage'));
+const LeadFollowupPage = lazy(() => import('./pages/CRM Employee/LeadFollowupPage'));
 const LeadQuotesPage = lazy(() => import('./pages/Sales/LeadQuotesPage'));
+const ShipmentPage = lazy(() => import('./pages/Shipments/ShipmentPage'));
 const CustomersPage = lazy(() => import('./pages/Customers/CustomersPage'));
 const OrderPage = lazy(() => import('./pages/Orders/OrderPage'));
-const CarrierPage = lazy(() => import('./pages/Carriers&Co/CarrierPage'));
-const VendorPage = lazy(() => import('./pages/Carriers&Co/VendorPage'));
-const BrokerPage = lazy(() => import('./pages/Carriers&Co/BrokerPage'));
+const CarrierPage = lazy(() => import('../../CarrierUI_backup/Carriers&Co/CarrierPage'));
+const VendorPage = lazy(() => import('../../CarrierUI_backup/Carriers&Co/VendorPage'));
+const BrokerPage = lazy(() => import('../../CarrierUI_backup/Carriers&Co/BrokerPage'));
 const UserPage = lazy(() => import('./pages/Users/UserPage'));
 const QuotePage = lazy(() => import('./pages/Sales/QuotePage'));
 const DispatchPage = lazy(() => import('./pages/Orders/DispatchPage'));
@@ -42,10 +44,18 @@ const AppRoutes: React.FC = () => (
         {/* CRM */}
 
         <Route
-          path="/lead"
+          path="/lead-admin"
           element={
             <ProtectedRoute>
               <LeadsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/lead-employee"
+          element={
+            <ProtectedRoute>
+              <EmpLeadsPage />
             </ProtectedRoute>
           }
         />
@@ -73,6 +83,17 @@ const AppRoutes: React.FC = () => (
           element={
             <ProtectedRoute>
               <QuotePage />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Shipments */}
+
+        <Route
+          path="/shipment"
+          element={
+            <ProtectedRoute>
+              <ShipmentPage />
             </ProtectedRoute>
           }
         />

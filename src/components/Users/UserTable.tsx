@@ -100,7 +100,7 @@ const UserTable: React.FC = () => {
       {loading ? (
         <div>Loading...</div>
       ) : users.length === 0 ? (
-        <div>No records found</div>
+        <div className='no-record'>No records found</div>
       ) : (
         <Table
           data={paginatedData}

@@ -1,44 +1,40 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import type { Role } from "./config/menuConfig";
 
 export interface UserContextType {
-  userRole: string | null;
-  setUserRole: (role: string | null) => void;
+  userRole: Role | null;
+  setUserRole: (role: Role | null) => void;
 }
 
-export const UserContext = createContext<UserContextType | undefined>(undefined);
+const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [userRole, setUserRole] = useState<string | null>(localStorage.getItem('userRole'));
+  const storedRole = localStorage.getItem("userRole")?.toLowerCase() as Role | null;
+  const [userRole, setUserRole] = useState<Role | null>(storedRole);
 
   useEffect(() => {
     const syncUserRole = () => {
-      setUserRole(localStorage.getItem('userRole'));
+      const role = localStorage.getItem("userRole")?.toLowerCase() as Role | null;
+      setUserRole(role);
     };
-
-    window.addEventListener('storage', syncUserRole);
-
-    const resetTokenExpiry = () => {
-      const expiryTime = Date.now() + 1 * 60 * 60 * 1000;
-      localStorage.setItem('tokenExpiry', expiryTime.toString());
-    };
-
-    window.addEventListener('mousemove', resetTokenExpiry);
-    window.addEventListener('keydown', resetTokenExpiry);
+    window.addEventListener("storage", syncUserRole);
 
     return () => {
-      window.removeEventListener('storage', syncUserRole);
-      window.removeEventListener('mousemove', resetTokenExpiry);
-      window.removeEventListener('keydown', resetTokenExpiry);
+      window.removeEventListener("storage", syncUserRole);
     };
   }, []);
 
-  return <UserContext.Provider value={{ userRole, setUserRole }}>{children}</UserContext.Provider>;
+  return (
+    <UserContext.Provider value={{ userRole, setUserRole }}>
+      {children}
+    </UserContext.Provider>
+  );
 };
 
 export const useUser = (): UserContextType => {
   const context = useContext(UserContext);
   if (!context) {
-    throw new Error('useUser must be used within a UserProvider');
+    throw new Error("useUser must be used within a UserProvider");
   }
   return context;
 };

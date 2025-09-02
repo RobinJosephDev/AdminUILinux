@@ -1,51 +1,44 @@
-import EditFuAddress from './EditFuAddress';
-import EditFuAddInfo from './EditFuAddInfo';
+import '../../../styles/Form.css';
+import LeadInfo from './LeadInfo';
+import AddressDetails from './AddressDetails';
+import AdditionalInfo from './AdditionalInfo';
 import { PlusOutlined } from '@ant-design/icons';
-import FuContactForm from '../FuContactForm';
+import { useAddFollowup } from '../../../hooks/add/useAddFollowup';
 import FuProductForm from '../FuProductForm';
-import { Followup } from '../../../types/FollowupTypes';
-import useEditFollowup from '../../../hooks/edit/useEditFollowup';
-import EditLeadInfo from './EditLeadInfo';
+import FuContactForm from '../FuContactForm';
 
-interface EditFuFormProps {
-  followup: Followup | null;
+interface AddLeadFollowupProps {
   onClose: () => void;
-  onUpdate: (updatedFollowUp: Followup) => void;
+  onSuccess: () => void;
 }
 
-const EditFuForm: React.FC<EditFuFormProps> = ({ followup, onClose, onUpdate }) => {
+const AddLeadFollowupForm: React.FC<AddLeadFollowupProps> = ({ onClose, onSuccess }) => {
   const {
-    followupEdit,
-    setFollowupEdit,
+    followup,
+    setFollowup,
     handleAddContact,
-    handleAddProduct,
-    handleContactChange,
     handleRemoveContact,
-    handleProductChange,
+    handleContactChange,
+    handleAddProduct,
     handleRemoveProduct,
-    updateFollowup,
-  } = useEditFollowup(followup, onClose, onUpdate);
+    handleProductChange,
+    handleSubmit,
+  } = useAddFollowup(onClose, onSuccess);
 
   return (
     <div className="form-container">
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          updateFollowup();
-        }}
-        className="form-main"
-      >
-        <EditLeadInfo followupEdit={followupEdit} setFollowupEdit={setFollowupEdit} />
-        <EditFuAddress followupEdit={followupEdit} setFollowupEdit={setFollowupEdit} />
-        <EditFuAddInfo followupEdit={followupEdit} setFollowupEdit={setFollowupEdit} />
+      <form onSubmit={handleSubmit} className="form-main">
+        <LeadInfo followup={followup} setFollowup={setFollowup} />
+        <AddressDetails followup={followup} setFollowup={setFollowup} />
+        <AdditionalInfo followup={followup} setFollowup={setFollowup} />
         <fieldset className="form-section">
           <legend>Contacts</legend>
           <hr />
           <div className="form-row">
-            {followupEdit.contacts.map((contact, index) => (
+            {followup.contacts.map((contact, index) => (
               <FuContactForm
                 key={index}
-                contacts={followupEdit.contacts}
+                contacts={followup.contacts}
                 index={index}
                 onAddContact={handleAddContact}
                 handleContactChange={handleContactChange}
@@ -53,7 +46,7 @@ const EditFuForm: React.FC<EditFuFormProps> = ({ followup, onClose, onUpdate }) 
               />
             ))}
           </div>
-          {followupEdit.contacts.length === 0 && (
+          {followup.contacts.length === 0 && (
             <button type="button" onClick={handleAddContact} className="add-button">
               <PlusOutlined />
             </button>
@@ -63,10 +56,10 @@ const EditFuForm: React.FC<EditFuFormProps> = ({ followup, onClose, onUpdate }) 
           <legend>Products</legend>
           <hr />
           <div className="form-row">
-            {followupEdit.products.map((product, index) => (
+            {followup.products.map((product, index) => (
               <FuProductForm
                 key={index}
-                products={followupEdit.products}
+                products={followup.products}
                 index={index}
                 onAddProduct={handleAddProduct}
                 handleProductChange={handleProductChange}
@@ -74,16 +67,15 @@ const EditFuForm: React.FC<EditFuFormProps> = ({ followup, onClose, onUpdate }) 
               />
             ))}
           </div>
-          {followupEdit.products.length === 0 && (
+          {followup.products.length === 0 && (
             <button type="button" onClick={handleAddProduct} className="add-button">
               <PlusOutlined />
             </button>
           )}
         </fieldset>
-
         <div className="form-actions">
           <button type="submit" className="btn-submit">
-            Save
+            Create Follow-up
           </button>
           <button type="button" className="btn-cancel" onClick={onClose}>
             Cancel
@@ -94,4 +86,4 @@ const EditFuForm: React.FC<EditFuFormProps> = ({ followup, onClose, onUpdate }) 
   );
 };
 
-export default EditFuForm;
+export default AddLeadFollowupForm;

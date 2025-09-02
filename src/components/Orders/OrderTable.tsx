@@ -155,7 +155,7 @@ const OrderTable: React.FC = () => {
             <input className="search-bar" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
           </div>
           <button onClick={() => setAddModalOpen(true)} className="add-button">
-            <PlusOutlined />
+            <PlusOutlined /> &nbsp;New
           </button>
           <button onClick={() => setAddModalOpen(true)} className="dispatch-button" disabled={selectedIds.length !== 1}>
             <TruckOutlined />
@@ -175,7 +175,7 @@ const OrderTable: React.FC = () => {
       {loading ? (
         <div>Loading...</div>
       ) : orders.length === 0 ? (
-        <div>No records found</div>
+        <div className='no-record'>No records found</div>
       ) : (
         <Table
           data={paginatedData}

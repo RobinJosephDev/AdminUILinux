@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Followup } from '../../../styles/types/FollowupTypes';
+import { Lead } from '../../../types/LeadTypes';
 import { z } from 'zod';
 import DOMPurify from 'dompurify';
 import { useGoogleAutocomplete } from '../../../hooks/useGoogleAutocomplete';
@@ -10,9 +10,9 @@ declare global {
   }
 }
 
-interface AddressDetailsProps {
-  followupEdit: Followup;
-  setFollowupEdit: React.Dispatch<React.SetStateAction<Followup>>;
+interface EditAddressDetailsProps {
+  formLead: Lead;
+  setFormLead: React.Dispatch<React.SetStateAction<Lead>>;
 }
 
 const addressSchema = z.object({
@@ -43,17 +43,17 @@ const addressSchema = z.object({
     .optional(),
   unit_no: z
     .string()
-    .max(20, 'Unit no. cannot exceed 20 characters')
-    .regex(/^[a-zA-Z0-9\s,.'-]*$/, 'Invalid unit no. format')
+    .max(30, 'Phone cannot exceed 30 characters')
+    .regex(/^[0-9-+()\s]*$/, 'Invalid phone format')
     .optional(),
 });
 
-const EditFuAddress: React.FC<AddressDetailsProps> = ({ followupEdit, setFollowupEdit }) => {
+const EditAddressDetails: React.FC<EditAddressDetailsProps> = ({ formLead, setFormLead }) => {
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const updateAddressFields = (place: google.maps.places.PlaceResult) => {
     const getComponent = (type: string) => place.address_components?.find((c) => c.types.includes(type))?.long_name || '';
-    setFollowupEdit((prev) => ({
+    setFormLead((prev) => ({
       ...prev,
       address: `${getComponent('street_number')} ${getComponent('route')}`.trim(),
       city: getComponent('locality'),
@@ -64,11 +64,11 @@ const EditFuAddress: React.FC<AddressDetailsProps> = ({ followupEdit, setFollowu
   };
   const addressRef = useGoogleAutocomplete(updateAddressFields);
 
-  const validateAndSetField = (field: keyof Followup, value: string) => {
+  const validateAndSetField = (field: keyof Lead, value: string) => {
     const sanitizedValue = DOMPurify.sanitize(value);
     let error = '';
 
-    const tempLead = { ...followupEdit, [field]: sanitizedValue };
+    const tempLead = { ...formLead, [field]: sanitizedValue };
     const result = addressSchema.safeParse(tempLead);
 
     if (!result.success) {
@@ -77,7 +77,7 @@ const EditFuAddress: React.FC<AddressDetailsProps> = ({ followupEdit, setFollowu
     }
 
     setErrors((prevErrors) => ({ ...prevErrors, [field]: error }));
-    setFollowupEdit(tempLead);
+    setFormLead(tempLead);
   };
 
   const fields = [
@@ -85,7 +85,7 @@ const EditFuAddress: React.FC<AddressDetailsProps> = ({ followupEdit, setFollowu
     { label: 'City', key: 'city', placeholder: 'Enter city name' },
     { label: 'State', key: 'state', placeholder: 'Enter state' },
     { label: 'Country', key: 'country', placeholder: 'Enter country' },
-    { label: 'Postal Code', key: 'postal_cide', placeholder: 'Enter postal code' },
+    { label: 'Postal Code', key: 'postal_code', placeholder: 'Enter postal code' },
     { label: 'Unit No.', key: 'unit_no', placeholder: 'Enter unit number' },
   ];
 
@@ -101,8 +101,8 @@ const EditFuAddress: React.FC<AddressDetailsProps> = ({ followupEdit, setFollowu
               type="text"
               id={key}
               placeholder={placeholder}
-              value={(followupEdit[key as keyof Followup] as string | number) || ''}
-              onChange={(e) => validateAndSetField(key as keyof Followup, e.target.value)}
+              value={(formLead[key as keyof Lead] as string | number) || ''}
+              onChange={(e) => validateAndSetField(key as keyof Lead, e.target.value)}
               ref={key === 'address' ? addressRef : undefined}
             />
             {errors[key] && (
@@ -117,4 +117,4 @@ const EditFuAddress: React.FC<AddressDetailsProps> = ({ followupEdit, setFollowu
   );
 };
 
-export default EditFuAddress;
+export default EditAddressDetails;

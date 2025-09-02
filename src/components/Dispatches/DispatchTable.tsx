@@ -13,7 +13,6 @@ import {
   TruckOutlined,
 } from '@ant-design/icons';
 import EditDispatchForm from './EditDispatch/EditDispatchForm';
-import AddDispatchForm from './AddDispatch/AddDispatchForm';
 import ViewDispatchForm from './ViewDispatch/ViewDispatchForm';
 import useDispatchTable from '../../hooks/table/useDispatchTable';
 import Pagination from '../common/Pagination';
@@ -192,9 +191,6 @@ Clear copy of ACI/ACE manifest, shipper packing slip, Bill of Lading, and signed
             <SearchOutlined className="search-icon" />
             <input className="search-bar" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
           </div>
-          <button onClick={() => setAddModalOpen(true)} className="add-button">
-            <PlusOutlined />
-          </button>
           <button onClick={generatePdf} className="pdf-button" disabled={selectedIds.length !== 1}>
             <FilePdfOutlined />
           </button>
@@ -207,7 +203,7 @@ Clear copy of ACI/ACE manifest, shipper packing slip, Bill of Lading, and signed
       {loading ? (
         <div>Loading...</div>
       ) : dispatches.length === 0 ? (
-        <div>No records found</div>
+        <div className='no-record'>No records found</div>
       ) : (
         <Table
           data={paginatedData}
@@ -224,10 +220,6 @@ Clear copy of ACI/ACE manifest, shipper packing slip, Bill of Lading, and signed
 
       <Modal isOpen={isEditModalOpen} onClose={() => setEditModalOpen(false)} title="Edit Dispatch">
         {selectedDispatch && <EditDispatchForm dispatch={selectedDispatch} onClose={() => setEditModalOpen(false)} onUpdate={updateDispatch} />}
-      </Modal>
-
-      <Modal isOpen={isAddModalOpen} onClose={() => setAddModalOpen(false)} title="Add Dispatch">
-        <AddDispatchForm onClose={() => setAddModalOpen(false)} onSuccess={fetchDispatches} />
       </Modal>
       <Modal isOpen={isViewModalOpen} onClose={() => setViewModalOpen(false)} title="Dispatch Details">
         {selectedDispatch && <ViewDispatchForm dispatch={selectedDispatch} onClose={() => setViewModalOpen(false)} />}

@@ -4,8 +4,8 @@ import { z } from 'zod';
 import { Followup } from '../../../types/FollowupTypes';
 
 interface leadInfoProps {
-  followupEdit: Followup;
-  setFollowupEdit: React.Dispatch<React.SetStateAction<Followup>>;
+  followup: Followup;
+  setFollowup: React.Dispatch<React.SetStateAction<Followup>>;
 }
 
 const leadInfoSchema = z.object({
@@ -14,11 +14,7 @@ const leadInfoSchema = z.object({
     .min(1, 'Lead No is required')
     .max(100, 'Lead No must be at most 100 characters long')
     .regex(/^[a-zA-Z0-9\s.,'-]+$/, 'Only letters, numbers,spaces, apostrophes, periods, commas, and hyphens allowed'),
-  lead_date: z
-    .string()
-    .min(1, 'Lead Date is required')
-    .regex(/^\d{2}-\d{2}-\d{4}$/, { message: 'Date must be in DD-MM-YYYY format' })
-    .optional(),
+  lead_date: z.string().min(1, 'Lead Date is required'),
   customer_name: z
     .string()
     .max(200, 'Customer Name must be at most 200 characters long')
@@ -38,7 +34,7 @@ const leadInfoSchema = z.object({
   }),
 });
 
-const EditLeadInfo: React.FC<leadInfoProps> = ({ followupEdit, setFollowupEdit }) => {
+const LeadInfo: React.FC<leadInfoProps> = ({ followup, setFollowup }) => {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const leadTypeOptions = ['AB', 'BC', 'BDS', 'CA', 'DPD MAGMA', 'MB', 'ON', 'Super Leads', 'TBAB', 'USA'];
   const leadStatusOptions = ['New', 'In Progress', 'Completed', 'On Hold', 'Lost'];
@@ -46,15 +42,8 @@ const EditLeadInfo: React.FC<leadInfoProps> = ({ followupEdit, setFollowupEdit }
   const validateAndSetFollowup = (field: keyof Followup, value: string) => {
     const sanitizedValue = DOMPurify.sanitize(value);
     let error = '';
-    let transformedValue = sanitizedValue;
 
-    // Convert YYYY-MM-DD to DD-MM-YYYY before validation
-    if (field === 'lead_date' && /^\d{4}-\d{2}-\d{2}$/.test(sanitizedValue)) {
-      const [yyyy, mm, dd] = sanitizedValue.split('-');
-      transformedValue = `${dd}-${mm}-${yyyy}`;
-    }
-
-    const tempLead = { ...followupEdit, [field]: transformedValue };
+    const tempLead = { ...followup, [field]: sanitizedValue };
     const result = leadInfoSchema.safeParse(tempLead);
 
     if (!result.success) {
@@ -63,7 +52,7 @@ const EditLeadInfo: React.FC<leadInfoProps> = ({ followupEdit, setFollowupEdit }
     }
 
     setErrors((prevErrors) => ({ ...prevErrors, [field]: error }));
-    setFollowupEdit((prevFollowup) => ({ ...prevFollowup, [field]: sanitizedValue }));
+    setFollowup(tempLead);
   };
 
   const fields = [
@@ -88,7 +77,7 @@ const EditLeadInfo: React.FC<leadInfoProps> = ({ followupEdit, setFollowupEdit }
               type={type}
               id={key}
               placeholder={placeholder}
-              value={(followupEdit[key as keyof Followup] as string | number) || ''}
+              value={(followup[key as keyof Followup] as string | number) || ''}
               onChange={(e) => validateAndSetFollowup(key as keyof Followup, e.target.value)}
             />
             {errors[key] && (
@@ -104,8 +93,8 @@ const EditLeadInfo: React.FC<leadInfoProps> = ({ followupEdit, setFollowupEdit }
           </label>
           <select
             id="lead_type"
-            value={followupEdit.lead_type || ''}
-            onChange={(e) => setFollowupEdit((prevFollowup) => ({ ...prevFollowup, lead_type: e.target.value }))}
+            value={followup.lead_type || ''}
+            onChange={(e) => setFollowup((prevLead) => ({ ...prevLead, lead_type: e.target.value }))}
           >
             <option value="" disabled>
               Select Lead Type
@@ -128,8 +117,8 @@ const EditLeadInfo: React.FC<leadInfoProps> = ({ followupEdit, setFollowupEdit }
           </label>
           <select
             id="lead_status"
-            value={followupEdit.lead_status || ''}
-            onChange={(e) => setFollowupEdit((prevFollowup) => ({ ...prevFollowup, lead_status: e.target.value }))}
+            value={followup.lead_status || ''}
+            onChange={(e) => setFollowup((prevLead) => ({ ...prevLead, lead_status: e.target.value }))}
           >
             <option value="" disabled>
               Select Lead Status
@@ -151,4 +140,4 @@ const EditLeadInfo: React.FC<leadInfoProps> = ({ followupEdit, setFollowupEdit }
   );
 };
 
-export default EditLeadInfo;
+export default LeadInfo;

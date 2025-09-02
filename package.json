@@ -63,6 +63,7 @@
     "@vitejs/plugin-react": "^4.3.4",
     "@vitest/ui": "^3.0.6",
     "babel-jest": "^29.7.0",
+    "crypto": "^1.0.1",
     "dotenv": "^16.4.7",
     "eslint": "^9.19.0",
     "eslint-plugin-react": "^7.37.4",

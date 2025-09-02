@@ -11,28 +11,32 @@ interface CargoInsuranceProps {
   handleCargoChange: (index: number, updatedCargo: Cargo) => void;
   handleRemoveCargo: (index: number) => void;
 }
+const parseDate = (dateStr: string) => new Date(dateStr); // Correct for 'yyyy-mm-dd' input format
 
-const cargoSchema = z.object({
-  company: z
-    .string()
-    .max(200, 'Name must be at most 200 characters')
-    .regex(/^[a-zA-Z\s.,'-]+$/, 'Only letters, spaces, apostrophes, periods,commas and hyphens allowed')
-    .optional(),
-  policy_start: z
-    .string()
-    .max(30, 'Phone cannot exceed 30 characters')
-    .regex(/^[0-9-+()\s]*$/, 'Invalid phone format')
-    .optional(),
-  policy_end: z
-    .string()
-    .max(255, 'Address is too long')
-    .regex(/^[a-zA-Z0-9\s,.'-]*$/, 'Invalid street format')
-    .optional(),
-  amount: z
-    .string()
-    .regex(/^\d+(\.\d{1,2})?$/, 'Enter a valid amount (e.g., 5.00)')
-    .optional(),
-});
+const cargoSchema = z
+  .object({
+    company: z
+      .string()
+      .max(200, 'Name must be at most 200 characters')
+      .regex(/^[a-zA-Z\s.,'-]*$/, 'Only letters, spaces, apostrophes, periods,commas and hyphens allowed')
+      .optional(),
+    policy_start: z
+      .string()
+      .regex(/^\d{4}-\d{2}-\d{2}$/, { message: 'Start date must be in YYYY-MM-DD format' })
+      .optional(),
+    policy_end: z
+      .string()
+      .regex(/^\d{4}-\d{2}-\d{2}$/, { message: 'End date must be in YYYY-MM-DD format' })
+      .optional(),
+    amount: z
+      .string()
+      .regex(/^\d+(\.\d{1,2})?$/, 'Enter a valid amount (e.g., 5.00)')
+      .optional(),
+  })
+  .refine((data) => !data.policy_start || !data.policy_end || parseDate(data.policy_start) <= parseDate(data.policy_end), {
+    message: 'End date must be after or equal to start date',
+    path: ['policy_end'],
+  });
 
 const CargoInsurance: FC<CargoInsuranceProps> = ({ cargo_insurance, index, handleCargoChange, handleRemoveCargo, onAddCargo }) => {
   const cargo_ins = cargo_insurance[index] ?? {};

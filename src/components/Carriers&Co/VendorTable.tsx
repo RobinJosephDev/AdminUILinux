@@ -112,7 +112,7 @@ const VendorTable: React.FC = () => {
       {loading ? (
         <div>Loading...</div>
       ) : vendors.length === 0 ? (
-        <div>No records found</div>
+        <div className='no-record'>No records found</div>
       ) : (
         <Table
           data={paginatedData}

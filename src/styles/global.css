@@ -12,13 +12,13 @@
 main {
   overflow: hidden;
   height: 85vh;
-  background-color: #fafbfd !important;
+  background-color: #f0f0f0 !important;
 }
 body {
   margin: 0;
   font-family: 'Poppins', sans-serif;
   overflow-y: hidden;
-}
+  background-color: #f0f0f0 !important;}
 
 header {
   background-color: #333333 !important;

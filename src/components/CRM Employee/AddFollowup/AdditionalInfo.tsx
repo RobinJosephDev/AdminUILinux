@@ -4,15 +4,12 @@ import { z } from 'zod';
 import { Followup } from '../../../types/FollowupTypes';
 
 interface AdditionalInfoProps {
-  followupEdit: Followup;
-  setFollowupEdit: React.Dispatch<React.SetStateAction<Followup>>;
+  followup: Followup;
+  setFollowup: React.Dispatch<React.SetStateAction<Followup>>;
 }
 
 const addInfoSchema = z.object({
-  next_follow_up_date: z
-    .string()
-    .regex(/^\d{2}-\d{2}-\d{4}$/, { message: 'Date must be in DD-MM-YYYY format' })
-    .optional(),
+  next_follow_up_date: z.string().optional(),
   contact_person: z
     .string()
     .max(200, 'Contact name must be at most 200 characters long')
@@ -20,7 +17,7 @@ const addInfoSchema = z.object({
     .optional(),
   equipment: z.enum(['Van', 'Reefer', 'Flatbed', 'Triaxle', 'Maxi', 'Btrain', 'Roll tite'], {
     errorMap: () => ({ message: 'Invalid equipment type' }),
-  }).optional(),
+  }),
   notes: z
     .string()
     .max(500, 'Notes must be at most 500 characters long')
@@ -28,20 +25,14 @@ const addInfoSchema = z.object({
     .optional(),
 });
 
-const EditFuAddInfo: React.FC<AdditionalInfoProps> = ({ followupEdit, setFollowupEdit }) => {
+const AdditionalInfo: React.FC<AdditionalInfoProps> = ({ followup, setFollowup }) => {
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const validateAndSetFollowup = (field: keyof Followup, value: string) => {
     const sanitizedValue = DOMPurify.sanitize(value);
     let error = '';
-    let transformedValue = sanitizedValue;
 
-    if (field === 'next_follow_up_date' && /^\d{4}-\d{2}-\d{2}$/.test(sanitizedValue)) {
-      const [yyyy, mm, dd] = sanitizedValue.split('-');
-      transformedValue = `${dd}-${mm}-${yyyy}`;
-    }
-
-    const tempFollowup = { ...followupEdit, [field]: transformedValue };
+    const tempFollowup = { ...followup, [field]: sanitizedValue };
     const result = addInfoSchema.safeParse(tempFollowup);
 
     if (!result.success) {
@@ -50,7 +41,7 @@ const EditFuAddInfo: React.FC<AdditionalInfoProps> = ({ followupEdit, setFollowu
     }
 
     setErrors((prevErrors) => ({ ...prevErrors, [field]: error }));
-    setFollowupEdit((prevFollowup) => ({ ...prevFollowup, [field]: sanitizedValue }));
+    setFollowup(tempFollowup);
   };
 
   const fields = [
@@ -70,7 +61,7 @@ const EditFuAddInfo: React.FC<AdditionalInfoProps> = ({ followupEdit, setFollowu
               type={type}
               id={key}
               placeholder={placeholder}
-              value={(followupEdit[key as keyof Followup] as string | number) || ''}
+              value={(followup[key as keyof Followup] as string | number) || ''}
               onChange={(e) => validateAndSetFollowup(key as keyof Followup, e.target.value)}
             />
             {errors[key] && (
@@ -85,8 +76,8 @@ const EditFuAddInfo: React.FC<AdditionalInfoProps> = ({ followupEdit, setFollowu
           <label htmlFor="equipmentType">Equipment Type</label>
           <select
             id="equipmentType"
-            value={followupEdit.equipment || ''}
-            onChange={(e) => setFollowupEdit((prevFollowup) => ({ ...prevFollowup, equipment: e.target.value }))}
+            value={followup.equipment || ''}
+            onChange={(e) => setFollowup((prevFollowup) => ({ ...prevFollowup, equipment: e.target.value }))}
           >
             <option value="">Select Equipment Type</option>
             <option value="Van">Van</option>
@@ -110,7 +101,7 @@ const EditFuAddInfo: React.FC<AdditionalInfoProps> = ({ followupEdit, setFollowu
           <textarea
             id="notes"
             placeholder="Enter notes"
-            value={followupEdit.notes || ''}
+            value={followup.notes || ''}
             onChange={(e) => validateAndSetFollowup('notes', e.target.value)}
             style={{ width: '100%', minHeight: '100px' }}
           />
@@ -125,4 +116,4 @@ const EditFuAddInfo: React.FC<AdditionalInfoProps> = ({ followupEdit, setFollowu
   );
 };
 
-export default EditFuAddInfo;
+export default AdditionalInfo;

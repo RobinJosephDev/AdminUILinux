@@ -139,16 +139,27 @@ const LeadTable: React.FC = () => {
           </div>
           <button onClick={() => setAddModalOpen(true)} className="add-button">
             <PlusOutlined />
-          </button>
-          <button onClick={deleteSelected} className="delete-button">
-            <DeleteOutlined />
+            &nbsp;New
           </button>
         </div>
       </div>
+
+      {/* Selection Banner */}
+      {selectedIds.length > 0 && (
+        <div className="selection-banner">
+          <span>
+            {selectedIds.length} item{selectedIds.length > 1 ? 's' : ''} selected
+          </span>
+          <button className="text-delete-btn" onClick={deleteSelected}>
+            <DeleteOutlined /> &nbsp;Delete
+          </button>
+        </div>
+      )}
+
       {loading ? (
         <div>Loading...</div>
       ) : leads.length === 0 ? (
-        <div>No records found</div>
+        <div className="no-record">No records found</div>
       ) : (
         <Table
           data={paginatedData}
@@ -161,14 +172,17 @@ const LeadTable: React.FC = () => {
           sortDesc={sortDesc}
         />
       )}
+
       <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
 
       <Modal isOpen={isEditModalOpen} onClose={() => setEditModalOpen(false)} title="Edit Lead">
         {selectedLead && <EditLeadForm lead={selectedLead} onClose={() => setEditModalOpen(false)} onUpdate={updateLead} />}
       </Modal>
+
       <Modal isOpen={isAddModalOpen} onClose={() => setAddModalOpen(false)} title="Add Lead">
         <AddLeadForm onClose={() => setAddModalOpen(false)} onSuccess={fetchLeads} />
       </Modal>
+
       <Modal isOpen={isViewModalOpen} onClose={() => setViewModalOpen(false)} title="Lead Details">
         {selectedLead && <ViewLeadForm lead={selectedLead} onClose={() => setViewModalOpen(false)} />}
       </Modal>

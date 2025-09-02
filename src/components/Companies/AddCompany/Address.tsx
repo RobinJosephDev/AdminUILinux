@@ -74,7 +74,7 @@ const addressSchema = z.object({
   carrier_code: z
     .string()
     .max(30, 'Carrier Code cannot exceed 30 characters')
-    .regex(/^[0-9-+()\s]*$/, 'Invalid phone format')
+    .regex(/^[0-9-+()\s]*$/, 'Invalid format')
     .optional(),
   gst_hst_no: z
     .string()

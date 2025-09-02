@@ -1,10 +1,12 @@
 /* Table buttons */
 
 .add-button {
-  width: 2rem;
-  height: 2rem;
+  width: 5rem;
+  height: 2.2rem;
   border: none;
-  background-color: #287a0f;
+  border-radius: 6px;
+  padding: 0.2rem 1.5rem 0.2rem 2rem;
+  background-color: #096dd9;
   color: #fff;
   display: flex;
   align-items: center;
@@ -14,7 +16,7 @@
 }
 
 .add-button:hover {
-  background-color: #167abc;
+  background-color: #40a9ff;
 }
 
 .add-button svg {
@@ -39,6 +41,46 @@
   width: 1rem;
   height: 1rem;
 }
+.text-delete-btn {
+  width: 5rem;
+  height: 2rem;
+  border: none;
+  border-radius: 6px;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  background-color: #db1c1c;
+  transition: background-color 0.3s;
+}
+
+.text-delete-btn:hover {
+  background-color: #b91616;
+}
+
+.text-email-btn {
+  width: 5rem;
+  height: 2rem;
+  border: none;
+  border-radius: 6px;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  background-color: #1c6ddb; /* blue for email */
+  transition: background-color 0.3s;
+}
+
+.text-email-btn:disabled {
+  background-color: #a0a0a0;
+  cursor: not-allowed;
+}
+
+.text-email-btn:hover:not(:disabled) {
+  background-color: #1558b0;
+}
 
 .delete-button {
   width: 2rem;
@@ -58,6 +100,12 @@
   height: 1rem;
 }
 
+.delete-email-button:disabled {
+  background-color: #d9d9d9;
+  color: #a6a6a6;
+  cursor: not-allowed;
+}
+
 .send-email-button {
   display: flex;
   align-items: center;
@@ -66,8 +114,7 @@
   width: 2rem;
   height: 2rem;
   border: none;
-  background-color: #52c41a;
-  color: white;
+  color: #000;
   cursor: pointer;
   transition: background-color 0.3s, box-shadow 0.3s;
 }
@@ -98,7 +145,6 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  background-color: #003366;
   transition: background-color 0.3s;
 }
 .pdf-button:disabled {
@@ -106,15 +152,14 @@
   cursor: not-allowed;
 }
 .dispatch-button {
-  width: 2rem;
-  height: 2rem;
+  width: 3rem;
+  height: 2.2rem;
   border: none;
-  color: #fff;
+  color: #000;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  background-color: orange;
   transition: background-color 0.3s;
 }
 .invoice-button {
@@ -126,7 +171,6 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  background-color: blue;
   transition: background-color 0.3s;
 }
 .button-group {

@@ -6,7 +6,7 @@ import ViewFuAddInfo from './ViewFuAddInfo';
 import ViewFuDetail from './ViewFuDetail';
 import ViewFuContactForm from './ViewFuContactForm';
 import ViewFuProductForm from './ViewFuProductForm';
-import { Followup, Contact, Product, Customer } from '../../../styles/types/FollowupTypes';
+import { Followup, Contact, Product, Customer } from '../../../types/FollowupTypes';
 
 interface ViewFuFormProps {
   followUp?: Followup;
@@ -37,8 +37,6 @@ const ViewFuForm: React.FC<ViewFuFormProps> = ({ followUp, onClose }) => {
     remarks: '',
     equipment: '',
     contacts: [],
-    created_at: '',
-    updated_at: '',
   });
 
   useEffect(() => {
@@ -81,7 +79,7 @@ const ViewFuForm: React.FC<ViewFuFormProps> = ({ followUp, onClose }) => {
         </fieldset>
 
         <div className="form-actions">
-          <button type="button" className="btn-cancel" onClick={onClose} style={{ padding: '9px 15px' }}>
+          <button type="button" className="btn-cancel" onClick={onClose}>
             Cancel
           </button>
         </div>

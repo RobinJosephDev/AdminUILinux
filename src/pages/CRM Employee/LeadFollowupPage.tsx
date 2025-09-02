@@ -1,4 +1,4 @@
-import LeadFollowupTable from '../../components/CRM/LeadFollowupTable'; 
+import LeadFollowupTable from '../../components/CRM Employee/LeadFollowupTable'; 
 
 const LeadFollowupPage = () => {
   return (

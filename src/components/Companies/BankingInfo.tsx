@@ -32,12 +32,12 @@ const bankSchema = z.object({
   us_account_no: z
     .string()
     .max(100, 'US Account# must be at most 100 characters')
-    .regex(/^[a-zA-Z\s.,'-]+$/, 'Only letters, spaces, apostrophes, periods,commas and hyphens allowed')
+    .regex(/^[a-zA-Z0-9\s.,'-]+$/, 'Only letters, numbers, spaces, apostrophes, periods,commas and hyphens allowed')
     .optional(),
   cdn_account_no: z
     .string()
     .max(100, 'CAN Account# must be at most 100 characters')
-    .regex(/^[a-zA-Z\s.,'-]+$/, 'Only letters, spaces, apostrophes, periods,commas and hyphens allowed')
+    .regex(/^[a-zA-Z0-9\s.,'-]+$/, 'Only letters, numbers, spaces, apostrophes, periods,commas and hyphens allowed')
     .optional(),
 });
 
