@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
 import { FaShippingFast, FaChartLine, FaDollarSign, FaUsers } from 'react-icons/fa';
 import '../styles/dashboard.css';
+const API_URL = import.meta.env.VITE_API_BASE_URL;
 
 interface OrderTrend {
   date: string;
@@ -25,7 +26,7 @@ const Dashboard: React.FC = () => {
       console.error('No token found');
       return;
     }
-    fetch('http://127.0.0.1:8000/api/dashboard-data', {
+    fetch(`${API_URL}/dashboard-data`, {
       headers: {
         Accept: 'application/json',
         Authorization: `Bearer ${token}`,
