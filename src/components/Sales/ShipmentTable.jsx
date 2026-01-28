@@ -6,11 +6,11 @@ import Modal from '../common/Modal';
 import EditShipmentForm from './EditShipment/EditShipmentForm';
 import AddShipmentForm from './AddShipment/AddShipmentForm';
 import { EditOutlined, DeleteOutlined, SearchOutlined, PlusOutlined, EyeOutlined } from '@ant-design/icons';
-import { UserContext } from '../../UserProvider';
+import { useUser } from '../../../UserProvider';
 import ViewShipmentForm from './ViewShipment/ViewShipmentForm';
 
 const ShipmentTable = () => {
-  const users = useContext(UserContext);
+  const { users } = useUser();
   const [shipments, setShipments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
