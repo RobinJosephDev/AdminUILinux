@@ -2,6 +2,9 @@
 
 AdminUI is a React + TypeScript web application built with Vite. It serves as the admin panel for managing leads, employees, customers, shipments, orders, and more. The backend is powered by Laravel, with PostgreSQL as the database.
 
+## Live Demo
+https://admin-ui-linux-ojei1ilgf-robinjo1776-5d95d5ba.vercel.app
+
 ## Features
 - **Lead Management**: Admin can add and assign leads to employees.
 - **Lead Follow-Up Tracking**: Admin can view lead follow-ups created by employees.
