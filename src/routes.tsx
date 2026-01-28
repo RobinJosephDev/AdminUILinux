@@ -13,6 +13,9 @@ const LeadQuotesPage = lazy(() => import('./pages/Sales/LeadQuotesPage'));
 const ShipmentPage = lazy(() => import('./pages/Shipments/ShipmentPage'));
 const CustomersPage = lazy(() => import('./pages/Customers/CustomersPage'));
 const OrderPage = lazy(() => import('./pages/Orders/OrderPage'));
+const CarrierPage = lazy(() => import('./pages/Carriers&Co/CarrierPage'));
+const VendorPage = lazy(() => import('./pages/Carriers&Co/VendorPage'));
+const BrokerPage = lazy(() => import('./pages/Carriers&Co/BrokerPage'));
 const UserPage = lazy(() => import('./pages/Users/UserPage'));
 const QuotePage = lazy(() => import('./pages/Sales/QuotePage'));
 const DispatchPage = lazy(() => import('./pages/Orders/DispatchPage'));
@@ -138,7 +141,7 @@ const AppRoutes: React.FC = () => (
 
         {/* CarrierS&Co */}
 
-        {/* <Route
+        <Route
           path="/carrier"
           element={
             <ProtectedRoute>
@@ -161,7 +164,7 @@ const AppRoutes: React.FC = () => (
               <BrokerPage />
             </ProtectedRoute>
           }
-        /> */}
+        />
 
         {/* Company */}
 
