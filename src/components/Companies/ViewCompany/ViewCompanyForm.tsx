@@ -1,5 +1,5 @@
 import { useEffect, useState, useContext } from 'react';
-import { UserContext } from '../../../UserProvider';
+import { useUser } from '../../../UserProvider';
 import ViewGeneral from './ViewGeneral';
 import ViewAddress from './ViewAddress';
 import ViewOtherInfo from './ViewOtherInfo';
@@ -15,7 +15,7 @@ interface ViewCompanyFormProps {
 }
 
 const ViewCompanyForm: React.FC<ViewCompanyFormProps> = ({ company, onClose }) => {
-  const users = useContext(UserContext);
+  const { userRole, setUserRole } = useUser();
   const [formCompany, setFormCompany] = useState<Company>({
     id: 0,
     name: '',
