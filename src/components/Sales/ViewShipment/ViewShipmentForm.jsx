@@ -1,11 +1,11 @@
 import { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
-import { UserContext } from '../../../UserProvider';
+import { useUser } from '../../../UserProvider';
 import EditShipmentDetails from './ViewShipmentDetails';
 
 const ViewShipmentForm = ({ shipment, onClose, onUpdate }) => {
-  const users = useContext(UserContext);
+  const { userRole, setUserRole } = useUser();
   const [formShipment, setFormShipment] = useState({
     id: '',
     ship_load_date: '',

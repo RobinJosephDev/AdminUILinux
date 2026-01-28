@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { UserContext } from '../../../UserProvider';
+import { useUser } from '../../../UserProvider';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import '../../../styles/Form.css';
@@ -25,7 +25,7 @@ interface AddShipmentFormProps {
 }
 
 const AddShipmentForm: React.FC<AddShipmentFormProps> = ({ onClose, onAddShipment }) => {
-  const { currentUser } = useContext(UserContext);
+  const { userRole, setUserRole } = useUser();
   const [shipment, setShipment] = useState<Shipment>({
     ship_load_date: '',
     ship_pickup_location: '',
