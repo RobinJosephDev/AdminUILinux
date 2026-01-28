@@ -1,5 +1,5 @@
 import { useEffect, useState, useContext } from 'react';
-import { UserContext } from '../../../UserProvider';
+import { useUser } from '../../../UserProvider';
 import ViewGeneral from './ViewGeneral';
 import ViewCarrierDetails from './ViewCarrierDetails';
 import ViewLiabilityInsurance from './ViewLiabilityInsurance';
@@ -17,7 +17,7 @@ interface ViewCarrierFormProps {
 }
 
 const ViewCarrierForm: React.FC<ViewCarrierFormProps> = ({ carrier, onClose }) => {
-  const users = useContext(UserContext);
+  const { userRole, setUserRole } = useUser();
   const [formCarrier, setFormCarrier] = useState<Carrier>({
     id: 0,
     dba: '',
